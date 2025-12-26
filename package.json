@@ -9,9 +9,19 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@polkadot/api": "^16.5.4",
+    "@polkadot/extension-dapp": "^0.62.6",
+    "@solana/web3.js": "^1.98.4",
+    "@supabase/auth-helpers-nextjs": "^0.15.0",
+    "@supabase/supabase-js": "^2.89.0",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.23.26",
     "next": "16.1.1",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "recharts": "^3.6.0",
+    "sass": "^1.97.1",
+    "zustand": "^5.0.9"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
