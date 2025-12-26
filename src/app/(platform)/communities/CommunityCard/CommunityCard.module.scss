@@ -1,0 +1,81 @@
+// File: src/components/communities/CommunityCard/CommunityCard.module.scss
+// ============================================================================
+
+@use '@/styles/abstracts' as *;
+
+.card {
+  @include glass-surface(0.05);
+  @include transition(background, border-color, transform);
+  border-radius: 12px;
+  padding: $spacing-lg;
+  cursor: pointer;
+  
+  &:hover {
+    background: rgba($color-frozen-water, 0.08);
+    border-color: rgba($color-frozen-water, 0.15);
+  }
+}
+
+.card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-lg;
+}
+
+.card__badge {
+  font-size: $font-size-xs;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 4px $spacing-sm;
+  border-radius: 4px;
+  background: rgba($color-medium-jungle, 0.2);
+  color: $color-medium-jungle;
+}
+
+.card__body {
+  margin-bottom: $spacing-lg;
+}
+
+.card__title {
+  font-size: $font-size-xl;
+  font-weight: 700;
+  color: $color-text-primary;
+  margin-bottom: $spacing-sm;
+}
+
+.card__description {
+  @include line-clamp(2);
+  color: $color-text-secondary;
+  font-size: $font-size-sm;
+  margin-bottom: $spacing-lg;
+}
+
+.card__stats {
+  display: flex;
+  gap: $spacing-xl;
+}
+
+.card__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.card__stat_value {
+  font-size: $font-size-lg;
+  font-weight: 700;
+  color: $color-text-primary;
+}
+
+.card__stat_label {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.card__footer {
+  padding-top: $spacing-md;
+  border-top: 1px solid rgba($color-frozen-water, 0.1);
+}

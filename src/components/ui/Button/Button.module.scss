@@ -1,0 +1,93 @@
+// File: src/components/ui/Button/Button.module.scss
+
+@use '@/styles/abstracts' as *;
+
+.button {
+  @include transition(background, color, border-color, opacity);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  position: relative;
+  
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+  
+  // Variants
+  &--primary {
+    background: $color-medium-jungle;
+    color: $color-onyx;
+    
+    &:hover:not(:disabled) {
+      background: lighten($color-medium-jungle, 5%);
+    }
+  }
+  
+  &--secondary {
+    @include glass-surface(0.05);
+    color: $color-text-primary;
+    
+    &:hover:not(:disabled) {
+      background: rgba($color-frozen-water, 0.1);
+    }
+  }
+  
+  &--ghost {
+    background: transparent;
+    color: $color-text-primary;
+    
+    &:hover:not(:disabled) {
+      background: rgba($color-frozen-water, 0.05);
+    }
+  }
+  
+  &--locked {
+    background: $color-night-bordeaux;
+    color: $color-frozen-water;
+  }
+  
+  &--unlocked {
+    background: $color-medium-jungle;
+    color: $color-onyx;
+  }
+  
+  // Sizes
+  &--sm {
+    padding: $spacing-xs $spacing-md;
+    font-size: $font-size-sm;
+  }
+  
+  &--md {
+    padding: $spacing-sm $spacing-lg;
+    font-size: $font-size-base;
+  }
+  
+  &--lg {
+    padding: $spacing-md $spacing-xl;
+    font-size: $font-size-lg;
+  }
+  
+  &--loading {
+    pointer-events: none;
+  }
+}
+
+.button__spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

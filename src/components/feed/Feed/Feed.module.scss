@@ -1,0 +1,35 @@
+// File: src/components/feed/Feed/Feed.module.scss
+// ============================================================================
+
+@use '@/styles/abstracts' as *;
+
+.feed {
+  max-width: $max-content-width;
+  margin: 0 auto;
+  padding: $spacing-lg;
+  
+  @include responsive(mobile) {
+    padding: $spacing-md;
+  }
+}
+
+.feed__composer {
+  margin-bottom: $spacing-xl;
+}
+
+.feed__posts {
+  position: relative;
+}
+
+.feed__loading {
+  display: flex;
+  justify-content: center;
+  padding: $spacing-xl;
+}
+
+.feed__end {
+  text-align: center;
+  padding: $spacing-xl;
+  color: $color-text-secondary;
+  font-size: $font-size-sm;
+}

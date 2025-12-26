@@ -1,0 +1,137 @@
+// File: src/app/(auth)/onboarding/page.module.scss
+// ============================================================================
+
+@use '@/styles/abstracts' as *;
+
+.onboarding {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-lg;
+}
+
+.onboarding__progress {
+  display: flex;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-2xl;
+}
+
+.onboarding__progress_dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba($color-frozen-water, 0.2);
+  transition: all 0.3s;
+  
+  &--active {
+    background: $color-medium-jungle;
+    transform: scale(1.2);
+  }
+}
+
+.onboarding__card {
+  @include glass-surface(0.08);
+  border-radius: 16px;
+  padding: $spacing-3xl;
+  max-width: 600px;
+  width: 100%;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  
+  @include responsive(mobile) {
+    padding: $spacing-xl;
+  }
+}
+
+.onboarding__header {
+  margin-bottom: $spacing-2xl;
+  text-align: center;
+}
+
+.onboarding__title {
+  font-size: $font-size-3xl;
+  font-weight: 700;
+  color: $color-text-primary;
+  margin-bottom: $spacing-sm;
+}
+
+.onboarding__description {
+  font-size: $font-size-base;
+  color: $color-text-secondary;
+}
+
+.onboarding__actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: $spacing-2xl;
+}
+
+.onboarding__actions_right {
+  display: flex;
+  gap: $spacing-md;
+}
+
+.step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.step__input {
+  @include glass-surface(0.05);
+  width: 100%;
+  max-width: 400px;
+  padding: $spacing-lg;
+  border-radius: 8px;
+  font-size: $font-size-xl;
+  color: $color-text-primary;
+  text-align: center;
+  margin-bottom: $spacing-md;
+  
+  &::placeholder {
+    color: $color-text-secondary;
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: $color-medium-jungle;
+  }
+}
+
+.step__hint {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  font-style: italic;
+}
+
+.step__visual {
+  margin-bottom: $spacing-xl;
+}
+
+.step__list {
+  list-style: none;
+  max-width: 400px;
+  
+  li {
+    padding: $spacing-md;
+    margin-bottom: $spacing-sm;
+    color: $color-text-primary;
+    font-size: $font-size-base;
+    position: relative;
+    padding-left: $spacing-xl;
+    
+    &::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: $color-medium-jungle;
+      font-weight: bold;
+    }
+  }
+}

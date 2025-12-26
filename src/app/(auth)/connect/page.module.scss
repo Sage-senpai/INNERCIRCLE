@@ -1,0 +1,113 @@
+// File: src/app/(auth)/connect/page.module.scss
+// ============================================================================
+
+@use '@/styles/abstracts' as *;
+
+.connect {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-lg;
+  background: linear-gradient(
+    135deg,
+    rgba($color-medium-jungle, 0.05),
+    rgba($color-night-bordeaux, 0.05)
+  );
+}
+
+.connect__card {
+  @include glass-surface(0.08);
+  border-radius: 16px;
+  padding: $spacing-3xl;
+  max-width: 480px;
+  width: 100%;
+  
+  @include responsive(mobile) {
+    padding: $spacing-xl;
+  }
+}
+
+.connect__header {
+  text-align: center;
+  margin-bottom: $spacing-2xl;
+}
+
+.connect__icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto $spacing-lg;
+  color: $color-medium-jungle;
+}
+
+.connect__title {
+  font-size: $font-size-4xl;
+  font-weight: 800;
+  color: $color-text-primary;
+  margin-bottom: $spacing-sm;
+}
+
+.connect__tagline {
+  font-size: $font-size-lg;
+  color: $color-text-secondary;
+  font-style: italic;
+}
+
+.connect__wallets {
+  margin-bottom: $spacing-2xl;
+}
+
+.connect__subtitle {
+  font-size: $font-size-xl;
+  font-weight: 600;
+  color: $color-text-primary;
+  margin-bottom: $spacing-lg;
+  text-align: center;
+}
+
+.connect__options {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.connect__button {
+  width: 100%;
+  justify-content: flex-start;
+  position: relative;
+  
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.connect__badge {
+  margin-left: auto;
+  font-size: $font-size-xs;
+  padding: 2px $spacing-sm;
+  background: rgba($color-frozen-water, 0.1);
+  border-radius: 4px;
+  color: $color-text-secondary;
+}
+
+.connect__error {
+  @include glass-surface(0.05);
+  border: 1px solid rgba($color-night-bordeaux, 0.3);
+  border-radius: 8px;
+  padding: $spacing-md;
+  margin-top: $spacing-lg;
+  color: lighten($color-night-bordeaux, 30%);
+  font-size: $font-size-sm;
+  text-align: center;
+}
+
+.connect__footer {
+  text-align: center;
+}
+
+.connect__disclaimer {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  line-height: 1.5;
+}

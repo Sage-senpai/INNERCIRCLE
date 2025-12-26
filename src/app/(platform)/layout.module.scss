@@ -1,0 +1,19 @@
+// File: src/app/(platform)/layout.module.scss
+// ============================================================================
+
+@use '@/styles/abstracts' as *;
+
+.platform {
+  display: flex;
+  min-height: 100vh;
+}
+
+.platform__main {
+  flex: 1;
+  margin-left: $sidebar-width;
+  
+  @include responsive(mobile) {
+    margin-left: 0;
+    padding-bottom: 80px; // Space for mobile nav
+  }
+}

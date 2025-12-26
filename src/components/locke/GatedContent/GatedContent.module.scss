@@ -1,0 +1,98 @@
+// File: src/components/locke/GatedContent/GatedContent.module.scss
+
+@use '@/styles/abstracts' as *;
+
+.gated {
+  position: relative;
+  min-height: 200px;
+}
+
+.gated__skeleton {
+  @include glass-surface(0.03);
+  border-radius: 12px;
+  height: 200px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.gated__locked {
+  @include glass-surface(0.05);
+  @include locked-state;
+  border-radius: 12px;
+  padding: $spacing-2xl;
+  text-align: center;
+}
+
+.gated__teaser {
+  margin-bottom: $spacing-xl;
+  opacity: 0.4;
+  filter: blur(8px);
+  pointer-events: none;
+  user-select: none;
+}
+
+.gated__barrier {
+  position: relative;
+  z-index: 2;
+}
+
+.gated__icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto $spacing-lg;
+  color: $color-locked;
+}
+
+.gated__title {
+  font-size: $font-size-2xl;
+  font-weight: 700;
+  color: $color-locked;
+  margin-bottom: $spacing-sm;
+}
+
+.gated__reason {
+  color: $color-text-secondary;
+  font-size: $font-size-base;
+  margin-bottom: $spacing-lg;
+}
+
+.gated__requirements {
+  @include glass-surface(0.03);
+  border-radius: 8px;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-xl;
+  text-align: left;
+}
+
+.gated__requirements_title {
+  font-weight: 600;
+  color: $color-text-primary;
+  margin-bottom: $spacing-sm;
+}
+
+.gated__requirements_list {
+  list-style: none;
+  
+  li {
+    color: $color-text-secondary;
+    font-size: $font-size-sm;
+    padding: $spacing-xs 0;
+    padding-left: $spacing-lg;
+    position: relative;
+    
+    &::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: $color-locked;
+    }
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}

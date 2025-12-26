@@ -1,0 +1,108 @@
+// File: src/components/navigation/Sidebar/Sidebar.module.scss
+// ============================================================================
+
+@use '@/styles/abstracts' as *;
+
+.sidebar {
+  @include glass-surface(0.03);
+  @include transition(width);
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: $sidebar-width;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid rgba($color-frozen-water, 0.1);
+  z-index: $z-dropdown;
+  
+  @include responsive(mobile) {
+    display: none;
+  }
+  
+  &--collapsed {
+    width: $sidebar-width-collapsed;
+  }
+}
+
+.sidebar__header {
+  padding: $spacing-xl $spacing-lg;
+  border-bottom: 1px solid rgba($color-frozen-water, 0.1);
+}
+
+.sidebar__logo {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.sidebar__logo_text {
+  font-size: $font-size-xl;
+  font-weight: 700;
+  color: $color-text-primary;
+  
+  .sidebar--collapsed & {
+    display: none;
+  }
+}
+
+.sidebar__nav {
+  flex: 1;
+  padding: $spacing-lg 0;
+  overflow-y: auto;
+}
+
+.sidebar__list {
+  list-style: none;
+}
+
+.sidebar__link {
+  @include transition(background, color);
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md $spacing-lg;
+  color: $color-text-secondary;
+  position: relative;
+  
+  &:hover {
+    background: rgba($color-frozen-water, 0.05);
+    color: $color-text-primary;
+  }
+  
+  &--active {
+    color: $color-medium-jungle;
+    background: rgba($color-medium-jungle, 0.1);
+  }
+  
+  .sidebar--collapsed & {
+    justify-content: center;
+  }
+}
+
+.sidebar__icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.sidebar__label {
+  font-size: $font-size-base;
+  font-weight: 500;
+}
+
+.sidebar__indicator {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  background: $color-medium-jungle;
+  border-radius: 0 2px 2px 0;
+}
+
+.sidebar__footer {
+  padding: $spacing-lg 0;
+  border-top: 1px solid rgba($color-frozen-water, 0.1);
+}

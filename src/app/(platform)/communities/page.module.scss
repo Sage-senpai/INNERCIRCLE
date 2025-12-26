@@ -1,0 +1,36 @@
+// File: src/app/(platform)/communities/page.module.scss
+// ============================================================================
+
+@use '@/styles/abstracts' as *;
+
+.communities {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: $spacing-lg;
+  
+  @include responsive(mobile) {
+    padding: $spacing-md;
+  }
+}
+
+.communities__filters {
+  display: flex;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-xl;
+}
+
+.communities__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: $spacing-lg;
+  
+  @include responsive(mobile) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.communities__empty {
+  text-align: center;
+  padding: $spacing-3xl;
+  color: $color-text-secondary;
+}

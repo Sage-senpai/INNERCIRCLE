@@ -1,0 +1,59 @@
+// File: src/styles/components/_card.scss
+
+@use '../abstracts' as *;
+
+.card {
+  @include glass-surface(0.05);
+  @include transition(background, border-color, transform);
+  border-radius: 12px;
+  padding: $spacing-lg;
+  
+  &:hover {
+    background: rgba($color-frozen-water, 0.08);
+    border-color: rgba($color-frozen-water, 0.15);
+  }
+  
+  &--locked {
+    @include locked-state;
+    cursor: not-allowed;
+    
+    .card__content {
+      opacity: 0.5;
+      filter: blur(4px);
+    }
+  }
+  
+  &--interactive {
+    cursor: pointer;
+    
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+}
+
+.card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+}
+
+.card__title {
+  font-size: $font-size-lg;
+  font-weight: 600;
+  color: $color-text-primary;
+}
+
+.card__content {
+  @include transition(opacity, filter);
+}
+
+.card__footer {
+  margin-top: $spacing-lg;
+  padding-top: $spacing-md;
+  border-top: 1px solid rgba($color-frozen-water, 0.1);
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}

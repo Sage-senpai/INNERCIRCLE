@@ -1,0 +1,55 @@
+// File: src/components/feed/PostComposer/PostComposer.module.scss
+// ============================================================================
+
+@use '@/styles/abstracts' as *;
+
+.composer {
+  @include glass-surface(0.05);
+  border-radius: 12px;
+  padding: $spacing-lg;
+}
+
+.composer__prompt {
+  text-align: center;
+  color: $color-text-secondary;
+  padding: $spacing-xl;
+}
+
+.composer__header {
+  margin-bottom: $spacing-md;
+}
+
+.composer__input {
+  @include transition(background, border-color);
+  width: 100%;
+  background: rgba($color-frozen-water, 0.03);
+  border: 1px solid rgba($color-frozen-water, 0.1);
+  border-radius: 8px;
+  padding: $spacing-md;
+  color: $color-text-primary;
+  font-size: $font-size-base;
+  resize: vertical;
+  min-height: 80px;
+  
+  &::placeholder {
+    color: $color-text-secondary;
+  }
+  
+  &:focus {
+    outline: none;
+    background: rgba($color-frozen-water, 0.05);
+    border-color: rgba($color-frozen-water, 0.2);
+  }
+}
+
+.composer__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: $spacing-md;
+}
+
+.composer__actions {
+  display: flex;
+  gap: $spacing-sm;
+}

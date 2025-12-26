@@ -6,6 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "type-check": "tsc --noEmit",
+    "db:migrate": "supabase db push",
+    "db:reset": "supabase db reset",
     "lint": "eslint"
   },
   "dependencies": {

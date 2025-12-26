@@ -1,0 +1,46 @@
+// File: src/app/(platform)/leaderboards/page.module.scss
+// ============================================================================
+
+@use '@/styles/abstracts' as *;
+
+.leaderboards {
+  max-width: $max-content-width;
+  margin: 0 auto;
+  padding: $spacing-lg;
+  
+  @include responsive(mobile) {
+    padding: $spacing-md;
+  }
+}
+
+.leaderboards__controls {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-xl;
+  
+  @include responsive(mobile) {
+    gap: $spacing-md;
+  }
+}
+
+.leaderboards__metrics {
+  display: flex;
+  gap: $spacing-sm;
+  
+  @include responsive(mobile) {
+    flex-direction: column;
+  }
+}
+
+.leaderboards__periods {
+  display: flex;
+  gap: $spacing-sm;
+  flex-wrap: wrap;
+}
+
+.leaderboards__list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}

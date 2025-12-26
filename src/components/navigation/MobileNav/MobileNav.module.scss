@@ -1,0 +1,48 @@
+// File: src/components/navigation/MobileNav/MobileNav.module.scss
+// ============================================================================
+
+@use '@/styles/abstracts' as *;
+
+.mobile_nav {
+  display: none;
+  
+  @include responsive(mobile) {
+    @include glass-surface(0.05);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: $spacing-sm;
+    border-top: 1px solid rgba($color-frozen-water, 0.1);
+    backdrop-filter: $blur-glass;
+    z-index: $z-dropdown;
+  }
+}
+
+.mobile_nav__link {
+  @include transition(color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: $spacing-sm;
+  color: $color-text-secondary;
+  flex: 1;
+  
+  &--active {
+    color: $color-medium-jungle;
+  }
+}
+
+.mobile_nav__icon {
+  width: 24px;
+  height: 24px;
+}
+
+.mobile_nav__label {
+  font-size: $font-size-xs;
+  font-weight: 500;
+}
