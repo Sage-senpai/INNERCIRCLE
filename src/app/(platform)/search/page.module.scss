@@ -1,0 +1,91 @@
+// File: src/app/(platform)/search/page.module.scss
+
+@use '../../../styles/abstracts' as *;
+
+.search {
+  max-width: $max-content-width;
+  margin: 0 auto;
+  padding: $spacing-lg;
+  
+  @include responsive(mobile) {
+    padding: $spacing-md;
+  }
+}
+
+.search__input_wrapper {
+  margin-bottom: $spacing-xl;
+}
+
+.search__input {
+  @include glass-surface(0.05);
+  @include transition(background, border-color);
+  width: 100%;
+  padding: $spacing-lg;
+  border-radius: 12px;
+  font-size: $font-size-lg;
+  color: $color-text-primary;
+  
+  &::placeholder {
+    color: $color-text-secondary;
+  }
+  
+  &:focus {
+    outline: none;
+    background: rgba($color-frozen-water, 0.08);
+    border-color: rgba($color-frozen-water, 0.2);
+  }
+}
+
+.search__tabs {
+  display: flex;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-xl;
+}
+
+.search__results {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.search__result {
+  @include glass-surface(0.05);
+  @include transition(background, border-color);
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md $spacing-lg;
+  border-radius: 8px;
+  cursor: pointer;
+  
+  &:hover {
+    background: rgba($color-frozen-water, 0.08);
+    border-color: rgba($color-frozen-water, 0.15);
+  }
+}
+
+.search__result_info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.search__result_name {
+  font-weight: 600;
+  color: $color-text-primary;
+  font-size: $font-size-base;
+}
+
+.search__result_username {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.search__loading,
+.search__empty,
+.search__prompt {
+  text-align: center;
+  padding: $spacing-3xl;
+  color: $color-text-secondary;
+}

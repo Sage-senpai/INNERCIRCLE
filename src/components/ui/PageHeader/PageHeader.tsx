@@ -1,6 +1,6 @@
 // File: src/components/ui/PageHeader/PageHeader.tsx
 // ============================================================================
-
+"use client"
 import { motion } from 'framer-motion';
 import styles from './PageHeader.module.scss';
 

@@ -10,6 +10,7 @@ import { WalletManager } from '@/lib/wallets/adapter';
 import { useAuthStore } from '@/store/auth.store';
 import { Button } from '@/components/ui/Button/Button';
 import { LockIcon } from '@/components/locke/LockIcon/LockIcon';
+import { PhantomIcon, SolflareIcon, PolkadotIcon } from '@/components/icons';
 import styles from './page.module.scss';
 
 export default function ConnectPage() {
@@ -42,8 +43,9 @@ export default function ConnectPage() {
         // New user - go to onboarding
         router.push(`/onboarding?wallet=${connection.address}&chain=${connection.chain}`);
       }
-    } catch (err: any) {
-      setError(err.message || 'Failed to connect wallet');
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to connect wallet';
+      setError(errorMessage);
       setConnecting(false);
     }
   };
@@ -111,7 +113,7 @@ export default function ConnectPage() {
 
         <div className={styles.connect__footer}>
           <p className={styles.connect__disclaimer}>
-            By connecting, you agree to InnerCircle's Terms of Service and Privacy Policy.
+            By connecting, you agree to InnerCircle&apos;s Terms of Service and Privacy Policy.
           </p>
         </div>
       </motion.div>

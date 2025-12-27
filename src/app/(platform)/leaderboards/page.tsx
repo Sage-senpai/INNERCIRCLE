@@ -5,7 +5,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { PageHeader } from '@/components/ui/PageHeader/PageHeader';
-import { LeaderboardEntry } from '@/components/leaderboards/LeaderboardEntry/LeaderboardEntry';
+import { LeaderboardEntry } from '@/components/leaderboards/LeaderboardEntry';
 import { Button } from '@/components/ui/Button/Button';
 import styles from './page.module.scss';
 

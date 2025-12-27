@@ -1,7 +1,7 @@
 // File: src/components/navigation/Sidebar/Sidebar.module.scss
 // ============================================================================
 
-@use '@/styles/abstracts' as *;
+@use '../../../styles/abstracts' as *;
 
 .sidebar {
   @include glass-surface(0.03);

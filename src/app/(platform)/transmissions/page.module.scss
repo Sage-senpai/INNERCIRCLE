@@ -1,0 +1,41 @@
+// File: src/app/(platform)/transmissions/page.module.scss
+
+@use '../../../styles/abstracts' as *;
+
+.transmissions {
+  max-width: $max-content-width;
+  margin: 0 auto;
+  padding: $spacing-lg;
+  
+  @include responsive(mobile) {
+    padding: $spacing-md;
+  }
+}
+
+.transmissions__empty {
+  @include glass-surface(0.05);
+  border-radius: 16px;
+  padding: $spacing-3xl;
+  text-align: center;
+}
+
+.transmissions__empty_icon {
+  font-size: 64px;
+  margin-bottom: $spacing-xl;
+}
+
+.transmissions__empty_title {
+  font-size: $font-size-2xl;
+  font-weight: 700;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.transmissions__empty_description {
+  color: $color-text-secondary;
+  font-size: $font-size-base;
+  line-height: 1.6;
+  max-width: 500px;
+  margin: 0 auto;
+}
+

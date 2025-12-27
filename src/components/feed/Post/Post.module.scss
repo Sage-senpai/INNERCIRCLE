@@ -1,7 +1,7 @@
 // File: src/components/feed/Post/Post.module.scss
 // ============================================================================
 
-@use '@/styles/abstracts' as *;
+@use '../../../styles/abstracts' as *;
 
 .post {
   @include glass-surface(0.05);

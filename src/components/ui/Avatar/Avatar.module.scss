@@ -1,6 +1,6 @@
 // File: src/components/ui/Avatar/Avatar.module.scss
 
-@use '@/styles/abstracts' as *;
+@use '../../../styles/abstracts' as *;
 
 .avatar {
   border-radius: 50%;
@@ -58,3 +58,4 @@
     font-size: $font-size-3xl;
   }
 }
+

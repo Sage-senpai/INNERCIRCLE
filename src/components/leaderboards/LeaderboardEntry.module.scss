@@ -1,0 +1,114 @@
+// File: src/components/leaderboards/LeaderboardEntry/LeaderboardEntry.module.scss
+
+@use '../../styles/abstracts' as *;
+
+.entry {
+  @include glass-surface(0.05);
+  @include transition(background, border-color, transform);
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md $spacing-lg;
+  border-radius: 8px;
+  cursor: pointer;
+  
+  &:hover {
+    background: rgba($color-frozen-water, 0.08);
+    border-color: rgba($color-frozen-water, 0.15);
+    transform: translateX(4px);
+  }
+  
+  &--gold {
+    background: linear-gradient(
+      135deg,
+      rgba(#ffd700, 0.1),
+      rgba($color-frozen-water, 0.05)
+    );
+    border-color: rgba(#ffd700, 0.3);
+  }
+  
+  &--silver {
+    background: linear-gradient(
+      135deg,
+      rgba(#c0c0c0, 0.1),
+      rgba($color-frozen-water, 0.05)
+    );
+    border-color: rgba(#c0c0c0, 0.3);
+  }
+  
+  &--bronze {
+    background: linear-gradient(
+      135deg,
+      rgba(#cd7f32, 0.1),
+      rgba($color-frozen-water, 0.05)
+    );
+    border-color: rgba(#cd7f32, 0.3);
+  }
+}
+
+.entry__rank {
+  font-size: $font-size-xl;
+  font-weight: 700;
+  color: $color-text-secondary;
+  min-width: 48px;
+  text-align: center;
+  
+  .entry--gold &,
+  .entry--silver &,
+  .entry--bronze & {
+    color: $color-text-primary;
+  }
+}
+
+.entry__user {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.entry__name {
+  font-weight: 600;
+  color: $color-text-primary;
+  font-size: $font-size-base;
+}
+
+.entry__username {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.entry__score {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.entry__score_value {
+  font-size: $font-size-lg;
+  font-weight: 700;
+  color: $color-text-primary;
+}
+
+.entry__change {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: $font-size-xs;
+  font-weight: 600;
+  
+  svg {
+    width: 12px;
+    height: 12px;
+  }
+  
+  &--up {
+    color: $color-medium-jungle;
+  }
+  
+  &--down {
+    color: $color-night-bordeaux;
+  }
+}
+

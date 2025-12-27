@@ -1,0 +1,30 @@
+// File: src/components/ui/LoadingSpinner/LoadingSpinner.module.scss
+
+@use '../../../styles/abstracts' as *;
+
+.spinner {
+  display: inline-block;
+  
+  &--sm {
+    width: 20px;
+    height: 20px;
+  }
+  
+  &--md {
+    width: 32px;
+    height: 32px;
+  }
+  
+  &--lg {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+.spinner__ring {
+  width: 100%;
+  height: 100%;
+  border: 3px solid rgba($color-frozen-water, 0.1);
+  border-top-color: $color-medium-jungle;
+  border-radius: 50%;
+}

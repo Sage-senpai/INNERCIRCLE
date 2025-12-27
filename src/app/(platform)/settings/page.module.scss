@@ -1,0 +1,57 @@
+
+// File: src/app/(platform)/settings/page.module.scss
+
+@use '../../../styles/abstracts' as *;
+
+.settings {
+  max-width: $max-content-width;
+  margin: 0 auto;
+  padding: $spacing-lg;
+  
+  @include responsive(mobile) {
+    padding: $spacing-md;
+  }
+}
+
+.settings__section {
+  @include glass-surface(0.05);
+  border-radius: 12px;
+  padding: $spacing-xl;
+  margin-bottom: $spacing-lg;
+}
+
+.settings__section_title {
+  font-size: $font-size-xl;
+  font-weight: 700;
+  color: $color-text-primary;
+  margin-bottom: $spacing-lg;
+}
+
+.settings__field {
+  margin-bottom: $spacing-lg;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.settings__label {
+  display: block;
+  font-size: $font-size-sm;
+  font-weight: 600;
+  color: $color-text-secondary;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: $spacing-sm;
+}
+
+.settings__value {
+  font-size: $font-size-base;
+  color: $color-text-primary;
+}
+
+.settings__value_mono {
+  font-family: $font-family-mono;
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+}

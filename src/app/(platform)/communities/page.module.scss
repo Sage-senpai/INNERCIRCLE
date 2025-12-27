@@ -1,7 +1,7 @@
 // File: src/app/(platform)/communities/page.module.scss
 // ============================================================================
 
-@use '@/styles/abstracts' as *;
+@use '../../../styles/abstracts' as *;
 
 .communities {
   max-width: 1200px;
@@ -34,3 +34,4 @@
   padding: $spacing-3xl;
   color: $color-text-secondary;
 }
+

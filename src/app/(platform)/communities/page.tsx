@@ -5,7 +5,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { PageHeader } from '@/components/ui/PageHeader/PageHeader';
-import { CommunityCard } from '@/components/communities/CommunityCard/CommunityCard';
+import { CommunityCard } from '@/components/communities/CommunityCard';
 import { Button } from '@/components/ui/Button/Button';
 import styles from './page.module.scss';
 

@@ -1,7 +1,7 @@
 // File: src/app/(auth)/connect/page.module.scss
 // ============================================================================
 
-@use '@/styles/abstracts' as *;
+@use '../../../styles/abstracts' as *;
 
 .connect {
   min-height: 100vh;
@@ -111,3 +111,4 @@
   color: $color-text-secondary;
   line-height: 1.5;
 }
+

@@ -1,5 +1,4 @@
 // File: src/components/ui/LoadingSpinner/LoadingSpinner.tsx
-// ============================================================================
 
 import { motion } from 'framer-motion';
 import styles from './LoadingSpinner.module.scss';

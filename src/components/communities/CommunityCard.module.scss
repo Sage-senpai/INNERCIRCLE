@@ -1,7 +1,6 @@
 // File: src/components/communities/CommunityCard/CommunityCard.module.scss
-// ============================================================================
 
-@use '../../../../styles/abstracts' as *;
+@use '../../styles/abstracts' as *;
 
 .card {
   @include glass-surface(0.05);
@@ -79,4 +78,3 @@
   padding-top: $spacing-md;
   border-top: 1px solid rgba($color-frozen-water, 0.1);
 }
-

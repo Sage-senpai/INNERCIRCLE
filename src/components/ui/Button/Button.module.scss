@@ -1,6 +1,6 @@
 // File: src/components/ui/Button/Button.module.scss
 
-@use '@/styles/abstracts' as *;
+@use '../../../styles/abstracts' as *;
 
 .button {
   @include transition(background, color, border-color, opacity);

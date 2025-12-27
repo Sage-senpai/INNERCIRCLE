@@ -1,5 +1,7 @@
 // File: src/styles/base/_reset.scss
 
+@use '../abstracts/variables' as *;
+
 *,
 *::before,
 *::after {

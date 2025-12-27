@@ -1,6 +1,6 @@
 // File: src/components/ui/PageHeader/PageHeader.module.scss
 
-@use '@/styles/abstracts' as *;
+@use '../../../styles/abstracts' as *;
 
 .header {
   @include glass-surface(0.03);

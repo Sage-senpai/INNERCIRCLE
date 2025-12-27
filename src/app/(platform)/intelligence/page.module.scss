@@ -1,0 +1,87 @@
+// File: src/app/(platform)/intelligence/page.module.scss
+
+@use '../../../styles/abstracts' as *;
+
+.intelligence {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: $spacing-lg;
+  
+  @include responsive(mobile) {
+    padding: $spacing-md;
+  }
+}
+
+.intelligence__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: $spacing-lg;
+  margin-bottom: $spacing-3xl;
+}
+
+.intelligence__card {
+  @include glass-surface(0.05);
+  border-radius: 12px;
+  padding: $spacing-xl;
+}
+
+.intelligence__card_title {
+  font-size: $font-size-xl;
+  font-weight: 700;
+  color: $color-text-primary;
+  margin-bottom: $spacing-sm;
+}
+
+.intelligence__card_description {
+  color: $color-text-secondary;
+  font-size: $font-size-sm;
+  line-height: 1.6;
+  margin-bottom: $spacing-lg;
+}
+
+.intelligence__placeholder {
+  @include glass-surface(0.03);
+  border-radius: 8px;
+  padding: $spacing-2xl;
+  text-align: center;
+  color: $color-text-secondary;
+  font-size: $font-size-lg;
+}
+
+.intelligence__premium {
+  @include glass-surface(0.08);
+  border: 2px solid rgba($color-medium-jungle, 0.2);
+  border-radius: 16px;
+  padding: $spacing-3xl;
+  text-align: center;
+}
+
+.intelligence__premium_title {
+  font-size: $font-size-3xl;
+  font-weight: 700;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.intelligence__premium_description {
+  color: $color-text-secondary;
+  font-size: $font-size-lg;
+  margin-bottom: $spacing-xl;
+}
+
+.intelligence__premium_button {
+  @include transition(background, transform);
+  background: $color-medium-jungle;
+  color: $color-onyx;
+  font-weight: 600;
+  font-size: $font-size-lg;
+  padding: $spacing-md $spacing-2xl;
+  border-radius: 8px;
+  cursor: not-allowed;
+  opacity: 0.6;
+  
+  &:hover {
+    transform: scale(1.02);
+  }
+}
+

@@ -1,7 +1,7 @@
 // File: src/app/(platform)/leaderboards/page.module.scss
 // ============================================================================
 
-@use '@/styles/abstracts' as *;
+@use '../../../styles/abstracts' as *;
 
 .leaderboards {
   max-width: $max-content-width;

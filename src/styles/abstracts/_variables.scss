@@ -37,6 +37,7 @@ $font-size-xl: 1.25rem;
 $font-size-2xl: 1.5rem;
 $font-size-3xl: 2rem;
 $font-size-4xl: 2.5rem;
+
 // Layout
 $sidebar-width: 260px;
 $sidebar-width-collapsed: 80px;
@@ -44,10 +45,12 @@ $max-content-width: 680px;
 $breakpoint-mobile: 768px;
 $breakpoint-tablet: 1024px;
 $breakpoint-desktop: 1280px;
+
 // Effects
 $blur-glass: blur(20px);
 $transition-speed: 0.2s;
 $transition-easing: cubic-bezier(0.4, 0, 0.2, 1);
+
 // Z-index layers
 $z-base: 1;
 $z-dropdown: 100;
