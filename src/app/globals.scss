@@ -1,4 +1,5 @@
 // File: src/app/globals.scss
+// ============================================================================
 
 @use '@/styles/abstracts/variables' as *;
 @use '@/styles/base/reset';
@@ -15,4 +16,35 @@ body {
   background: $color-bg-primary;
   color: $color-text-primary;
   overflow-x: hidden;
+  
+  // Custom scrollbar
+  &::-webkit-scrollbar {
+    width: 12px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba($color-frozen-water, 0.03);
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba($color-frozen-water, 0.2);
+    border-radius: $radius-full;
+    border: 3px solid $color-bg-primary;
+    
+    &:hover {
+      background: rgba($color-frozen-water, 0.3);
+    }
+  }
+}
+
+// Selection styling
+::selection {
+  background: rgba($color-medium-jungle, 0.3);
+  color: $color-text-primary;
+}
+
+// Focus visible styles
+:focus-visible {
+  outline: 2px solid $color-medium-jungle;
+  outline-offset: 2px;
 }

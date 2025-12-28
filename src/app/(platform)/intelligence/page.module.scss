@@ -1,9 +1,10 @@
 // File: src/app/(platform)/intelligence/page.module.scss
+// ============================================================================
 
 @use '../../../styles/abstracts' as *;
 
 .intelligence {
-  max-width: 1200px;
+  max-width: $max-content-width-wide;
   margin: 0 auto;
   padding: $spacing-lg;
   
@@ -17,49 +18,80 @@
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: $spacing-lg;
   margin-bottom: $spacing-3xl;
+  
+  @include responsive(mobile) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .intelligence__card {
   @include glass-surface(0.05);
-  border-radius: 12px;
+  border-radius: $radius-lg;
   padding: $spacing-xl;
+  @include transition(transform, box-shadow);
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-lg;
+  }
+}
+
+.intelligence__card_header {
+  @include flex-between;
+  align-items: center;
+  margin-bottom: $spacing-sm;
 }
 
 .intelligence__card_title {
   font-size: $font-size-xl;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   color: $color-text-primary;
-  margin-bottom: $spacing-sm;
+}
+
+.intelligence__card_icon {
+  width: 24px;
+  height: 24px;
+  color: $color-medium-jungle;
+}
+
+.intelligence__card_badge {
+  @include badge($color-medium-jungle);
 }
 
 .intelligence__card_description {
   color: $color-text-secondary;
   font-size: $font-size-sm;
-  line-height: 1.6;
+  line-height: $line-height-relaxed;
   margin-bottom: $spacing-lg;
 }
 
 .intelligence__placeholder {
   @include glass-surface(0.03);
-  border-radius: 8px;
+  border-radius: $radius-md;
   padding: $spacing-2xl;
   text-align: center;
   color: $color-text-secondary;
-  font-size: $font-size-lg;
+  @include flex-column;
+  @include flex-center;
+  gap: $spacing-md;
+}
+
+.intelligence__placeholder_icon {
+  font-size: 48px;
 }
 
 .intelligence__premium {
   @include glass-surface(0.08);
   border: 2px solid rgba($color-medium-jungle, 0.2);
-  border-radius: 16px;
+  border-radius: $radius-xl;
   padding: $spacing-3xl;
   text-align: center;
 }
 
 .intelligence__premium_title {
   font-size: $font-size-3xl;
-  font-weight: 700;
-  color: $color-text-primary;
+  font-weight: $font-weight-extrabold;
+  @include text-gradient($color-frozen-water, $color-medium-jungle);
   margin-bottom: $spacing-md;
 }
 
@@ -67,21 +99,45 @@
   color: $color-text-secondary;
   font-size: $font-size-lg;
   margin-bottom: $spacing-xl;
+  line-height: $line-height-relaxed;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.intelligence__premium_features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $spacing-md;
+  margin-bottom: $spacing-2xl;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.intelligence__premium_feature {
+  @include glass-surface(0.05);
+  padding: $spacing-md;
+  border-radius: $radius-md;
+  font-size: $font-size-base;
+  color: $color-text-primary;
+  
+  span {
+    color: $color-medium-jungle;
+    font-weight: $font-weight-bold;
+    margin-right: $spacing-xs;
+  }
 }
 
 .intelligence__premium_button {
   @include transition(background, transform);
-  background: $color-medium-jungle;
-  color: $color-onyx;
-  font-weight: 600;
+  background: rgba($color-medium-jungle, 0.2);
+  color: $color-medium-jungle;
+  font-weight: $font-weight-semibold;
   font-size: $font-size-lg;
   padding: $spacing-md $spacing-2xl;
-  border-radius: 8px;
+  border-radius: $radius-md;
   cursor: not-allowed;
-  opacity: 0.6;
-  
-  &:hover {
-    transform: scale(1.02);
-  }
+  opacity: 0.7;
+  border: 1px solid rgba($color-medium-jungle, 0.3);
 }
-

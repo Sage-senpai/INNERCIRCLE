@@ -1,15 +1,14 @@
 // File: src/components/ui/PageHeader/PageHeader.module.scss
-
 @use '../../../styles/abstracts' as *;
 
 .header {
-  @include glass-surface(0.03);
-  border-bottom: 1px solid rgba($color-frozen-water, 0.1);
-  padding: $spacing-lg;
   position: sticky;
   top: 0;
-  z-index: $z-dropdown - 1;
-  backdrop-filter: $blur-glass;
+  z-index: $z-sticky;
+  background: $color-onyx; // Matches sidebar
+  color: white;
+  padding: $spacing-lg;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); // Depth when scrolling
   
   @include responsive(mobile) {
     padding: $spacing-md;
@@ -19,20 +18,20 @@
 .header__content {
   max-width: $max-content-width;
   margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  @include flex-between;
   gap: $spacing-lg;
 }
 
 .header__text {
   flex: 1;
+  min-width: 0;
 }
 
 .header__title {
   font-size: $font-size-2xl;
-  font-weight: 700;
-  color: $color-text-primary;
+  font-weight: $font-weight-extrabold;
+  color: white;
+  line-height: $line-height-tight;
   
   @include responsive(mobile) {
     font-size: $font-size-xl;
@@ -41,11 +40,24 @@
 
 .header__subtitle {
   font-size: $font-size-base;
-  color: $color-text-secondary;
-  margin-top: 4px;
+  color: rgba(white, 0.8);
+  margin-top: $spacing-xs;
+  line-height: $line-height-normal;
 }
 
 .header__actions {
   display: flex;
-  gap: $spacing-sm;
+  gap: $spacing-md;
+  align-items: center;
+  
+  // Assuming actions are buttons/icons – make them stand out on purple
+  button, .btn {
+    background: rgba(white, 0.2);
+    color: white;
+    border: none;
+    
+    &:hover {
+      background: rgba(white, 0.3);
+    }
+  }
 }

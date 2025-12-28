@@ -1,5 +1,4 @@
 // File: src/components/locke/GatedContent/GatedContent.module.scss
-
 @use '../../../styles/abstracts' as *;
 
 .gated {
@@ -9,23 +8,38 @@
 
 .gated__skeleton {
   @include glass-surface(0.03);
-  border-radius: 12px;
+  border-radius: $radius-lg;
   height: 200px;
-  animation: pulse 1.5s ease-in-out infinite;
+  @include skeleton-pulse;
 }
 
 .gated__locked {
   @include glass-surface(0.05);
-  @include locked-state;
-  border-radius: 12px;
+  @include gradient-bg-error;
+  border: 1px solid rgba($color-night-bordeaux, 0.3);
+  border-radius: $radius-lg;
   padding: $spacing-2xl;
   text-align: center;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      rgba($color-night-bordeaux, 0.1),
+      transparent
+    );
+    pointer-events: none;
+  }
 }
 
 .gated__teaser {
   margin-bottom: $spacing-xl;
+  filter: blur($blur-content);
   opacity: 0.4;
-  filter: blur(8px);
   pointer-events: none;
   user-select: none;
 }
@@ -36,37 +50,47 @@
 }
 
 .gated__icon {
-  width: 48px;
-  height: 48px;
+  width: 64px;
+  height: 64px;
   margin: 0 auto $spacing-lg;
   color: $color-locked;
+  filter: drop-shadow($shadow-glow-bordeaux);
 }
 
 .gated__title {
   font-size: $font-size-2xl;
-  font-weight: 700;
-  color: $color-locked;
+  font-weight: $font-weight-bold;
+  color: $color-error; // Using pre-calculated color instead of lighten
   margin-bottom: $spacing-sm;
+  letter-spacing: -0.5px;
 }
 
 .gated__reason {
   color: $color-text-secondary;
   font-size: $font-size-base;
   margin-bottom: $spacing-lg;
+  line-height: $line-height-normal;
 }
 
 .gated__requirements {
   @include glass-surface(0.03);
-  border-radius: 8px;
+  border: 1px solid rgba($color-night-bordeaux, 0.2);
+  border-radius: $radius-md;
   padding: $spacing-lg;
   margin-bottom: $spacing-xl;
   text-align: left;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .gated__requirements_title {
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   color: $color-text-primary;
   margin-bottom: $spacing-sm;
+  font-size: $font-size-sm;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .gated__requirements_list {
@@ -78,21 +102,14 @@
     padding: $spacing-xs 0;
     padding-left: $spacing-lg;
     position: relative;
+    line-height: $line-height-relaxed;
     
     &::before {
       content: '→';
       position: absolute;
       left: 0;
       color: $color-locked;
+      font-weight: $font-weight-bold;
     }
-  }
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 0.8;
   }
 }

@@ -1,4 +1,5 @@
 // File: src/app/(platform)/transmissions/page.module.scss
+// ============================================================================
 
 @use '../../../styles/abstracts' as *;
 
@@ -14,19 +15,19 @@
 
 .transmissions__empty {
   @include glass-surface(0.05);
-  border-radius: 16px;
+  border-radius: $radius-xl;
   padding: $spacing-3xl;
   text-align: center;
 }
 
 .transmissions__empty_icon {
-  font-size: 64px;
+  font-size: 80px;
   margin-bottom: $spacing-xl;
 }
 
 .transmissions__empty_title {
-  font-size: $font-size-2xl;
-  font-weight: 700;
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-extrabold;
   color: $color-text-primary;
   margin-bottom: $spacing-md;
 }
@@ -34,8 +35,59 @@
 .transmissions__empty_description {
   color: $color-text-secondary;
   font-size: $font-size-base;
-  line-height: 1.6;
-  max-width: 500px;
+  line-height: $line-height-relaxed;
+  max-width: 600px;
+  margin: 0 auto $spacing-3xl;
+}
+
+.transmissions__features {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+  max-width: 600px;
   margin: 0 auto;
 }
 
+.transmissions__feature {
+  @include glass-surface(0.03);
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-md;
+  padding: $spacing-lg;
+  border-radius: $radius-md;
+  text-align: left;
+  @include transition(background, border-color);
+  
+  &:hover {
+    background: rgba($color-frozen-water, 0.08);
+    border-color: $color-border-hover;
+  }
+}
+
+.transmissions__feature_icon {
+  font-size: 32px;
+  flex-shrink: 0;
+  
+  svg {
+    width: 32px;
+    height: 32px;
+    color: $color-medium-jungle;
+  }
+}
+
+.transmissions__feature_content {
+  flex: 1;
+}
+
+.transmissions__feature_title {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-xs;
+}
+
+.transmissions__feature_description {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: $line-height-normal;
+}

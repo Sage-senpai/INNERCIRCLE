@@ -1,8 +1,10 @@
 // File: src/app/(admin)/control/page.tsx
+// ============================================================================
 
 'use client';
 
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '@/store/auth.store';
 import { PageHeader } from '@/components/ui/PageHeader/PageHeader';
 import { Button } from '@/components/ui/Button/Button';
@@ -16,19 +18,33 @@ export default function AdminControlPage() {
     return (
       <div className={styles.admin}>
         <PageHeader title="Access Denied" />
-        <div className={styles.admin__denied}>
-          <p>You do not have permission to access this area.</p>
-        </div>
+        <motion.div 
+          className={styles.admin__denied}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+        >
+          <div className={styles.admin__denied_icon}>🔒</div>
+          <p className={styles.admin__denied_text}>
+            You do not have permission to access this area.
+          </p>
+        </motion.div>
       </div>
     );
   }
 
   return (
     <>
-      <PageHeader title="Admin Control Panel" />
+      <PageHeader 
+        title="Admin Control Panel" 
+        subtitle="Manage communities, users, and platform content"
+      />
       
       <div className={styles.admin}>
-        <div className={styles.admin__tabs}>
+        <motion.div 
+          className={styles.admin__tabs}
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
           <Button
             variant={activeTab === 'communities' ? 'primary' : 'ghost'}
             onClick={() => setActiveTab('communities')}
@@ -53,14 +69,23 @@ export default function AdminControlPage() {
           >
             Featured
           </Button>
-        </div>
+        </motion.div>
 
-        <div className={styles.admin__content}>
-          {activeTab === 'communities' && <CommunitiesAdmin />}
-          {activeTab === 'users' && <UsersAdmin />}
-          {activeTab === 'reports' && <ReportsAdmin />}
-          {activeTab === 'featured' && <FeaturedAdmin />}
-        </div>
+        <AnimatePresence mode="wait">
+          <motion.div 
+            key={activeTab}
+            className={styles.admin__content}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            {activeTab === 'communities' && <CommunitiesAdmin />}
+            {activeTab === 'users' && <UsersAdmin />}
+            {activeTab === 'reports' && <ReportsAdmin />}
+            {activeTab === 'featured' && <FeaturedAdmin />}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </>
   );
@@ -69,9 +94,14 @@ export default function AdminControlPage() {
 function CommunitiesAdmin() {
   return (
     <div className={styles.admin__panel}>
-      <h2>Manage Communities</h2>
-      <p>Community management interface will be implemented here.</p>
-      {/* Community list, approval queue, etc. */}
+      <h2 className={styles.admin__panel_title}>Manage Communities</h2>
+      <p className={styles.admin__panel_description}>
+        Review, approve, and manage token-gated communities on the platform.
+      </p>
+      <div className={styles.admin__panel_placeholder}>
+        <span>🏘️</span>
+        <p>Community management interface</p>
+      </div>
     </div>
   );
 }
@@ -79,9 +109,14 @@ function CommunitiesAdmin() {
 function UsersAdmin() {
   return (
     <div className={styles.admin__panel}>
-      <h2>Manage Users</h2>
-      <p>User management interface will be implemented here.</p>
-      {/* User search, role management, suspension, etc. */}
+      <h2 className={styles.admin__panel_title}>Manage Users</h2>
+      <p className={styles.admin__panel_description}>
+        Search users, manage roles, and handle account issues.
+      </p>
+      <div className={styles.admin__panel_placeholder}>
+        <span>👥</span>
+        <p>User management interface</p>
+      </div>
     </div>
   );
 }
@@ -89,9 +124,14 @@ function UsersAdmin() {
 function ReportsAdmin() {
   return (
     <div className={styles.admin__panel}>
-      <h2>Review Reports</h2>
-      <p>Content moderation interface will be implemented here.</p>
-      {/* Report queue, action buttons, etc. */}
+      <h2 className={styles.admin__panel_title}>Review Reports</h2>
+      <p className={styles.admin__panel_description}>
+        Handle content moderation and user reports.
+      </p>
+      <div className={styles.admin__panel_placeholder}>
+        <span>⚠️</span>
+        <p>Report queue interface</p>
+      </div>
     </div>
   );
 }
@@ -99,9 +139,14 @@ function ReportsAdmin() {
 function FeaturedAdmin() {
   return (
     <div className={styles.admin__panel}>
-      <h2>Featured Content</h2>
-      <p>Feature management interface will be implemented here.</p>
-      {/* Curated posts, communities, users, etc. */}
+      <h2 className={styles.admin__panel_title}>Featured Content</h2>
+      <p className={styles.admin__panel_description}>
+        Curate and promote content, communities, and users.
+      </p>
+      <div className={styles.admin__panel_placeholder}>
+        <span>⭐</span>
+        <p>Featured content manager</p>
+      </div>
     </div>
   );
 }

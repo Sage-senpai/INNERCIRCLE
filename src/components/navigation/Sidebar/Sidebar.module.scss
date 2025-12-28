@@ -1,55 +1,84 @@
-// File: src/components/navigation/Sidebar/Sidebar.module.scss
-// ============================================================================
-
 @use '../../../styles/abstracts' as *;
 
 .sidebar {
-  @include glass-surface(0.03);
-  @include transition(width);
   position: fixed;
   left: 0;
   top: 0;
   bottom: 0;
   width: $sidebar-width;
+  background: $color-onyx; 
+  color: white;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid rgba($color-frozen-water, 0.1);
-  z-index: $z-dropdown;
+  z-index: $z-sidebar;
+  @include custom-scrollbar; // Keep if you want thin scrollbar, or remove for default
   
   @include responsive(mobile) {
     display: none;
-  }
-  
-  &--collapsed {
-    width: $sidebar-width-collapsed;
   }
 }
 
 .sidebar__header {
   padding: $spacing-xl $spacing-lg;
-  border-bottom: 1px solid rgba($color-frozen-water, 0.1);
+  // No border on purple background
 }
 
 .sidebar__logo {
   display: flex;
   align-items: center;
   gap: $spacing-md;
+  @include transition(transform);
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.sidebar__logo_icon {
+  width: 36px;
+  height: 36px;
+  color: white; // Force white for visibility on purple
+  flex-shrink: 0;
+}
+
+.sidebar__logo_text_wrapper {
+  @include flex-column;
+  gap: 4px;
 }
 
 .sidebar__logo_text {
-  font-size: $font-size-xl;
-  font-weight: 700;
-  color: $color-text-primary;
-  
-  .sidebar--collapsed & {
-    display: none;
-  }
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-extrabold;
+  color: white;
+  line-height: 1;
+}
+
+.sidebar__tagline {
+  font-size: $font-size-xs;
+  color: rgba(white, 0.7);
+  font-style: italic;
+  letter-spacing: 0.5px;
 }
 
 .sidebar__nav {
   flex: 1;
-  padding: $spacing-lg 0;
+  padding: $spacing-md 0;
   overflow-y: auto;
+  @include custom-scrollbar;
+}
+
+.sidebar__section {
+  margin-bottom: $spacing-xl;
+}
+
+.sidebar__section_title {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  color: rgba(white, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  padding: 0 $spacing-lg;
+  margin-bottom: $spacing-sm;
 }
 
 .sidebar__list {
@@ -57,52 +86,103 @@
 }
 
 .sidebar__link {
-  @include transition(background, color);
+  @include transition(all);
   display: flex;
   align-items: center;
   gap: $spacing-md;
-  padding: $spacing-md $spacing-lg;
-  color: $color-text-secondary;
+  padding: $spacing-sm $spacing-lg;
+  color: rgba(white, 0.9);
   position: relative;
+  font-weight: $font-weight-medium;
+  font-size: $font-size-base;
   
   &:hover {
-    background: rgba($color-frozen-water, 0.05);
-    color: $color-text-primary;
+    background: rgba(white, 0.1);
+    color: white;
   }
   
   &--active {
-    color: $color-medium-jungle;
-    background: rgba($color-medium-jungle, 0.1);
-  }
-  
-  .sidebar--collapsed & {
-    justify-content: center;
+    color: white;
+    background: rgba(white, 0.15);
+    font-weight: $font-weight-semibold;
+    
+    // Left white border indicator like in the screenshot
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 70%;
+      background: white;
+      border-radius: 0 $radius-sm $radius-sm 0;
+    }
   }
 }
 
 .sidebar__icon {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   flex-shrink: 0;
+  color: inherit; // Inherits white/opacity
 }
 
 .sidebar__label {
-  font-size: $font-size-base;
-  font-weight: 500;
+  flex: 1;
 }
 
+// Remove the green indicator — we now use left border
 .sidebar__indicator {
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 3px;
-  height: 60%;
-  background: $color-medium-jungle;
-  border-radius: 0 2px 2px 0;
+  display: none;
 }
 
 .sidebar__footer {
   padding: $spacing-lg 0;
-  border-top: 1px solid rgba($color-frozen-water, 0.1);
+  // No top border needed on solid background
+}
+
+.sidebar__user {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-sm $spacing-lg;
+  margin: 0 $spacing-lg $spacing-md;
+  background: rgba(white, 0.1);
+  border-radius: $radius-lg;
+  @include transition(background);
+  
+  &:hover {
+    background: rgba(white, 0.2);
+  }
+}
+
+.sidebar__user_avatar {
+  @include flex-center;
+  width: 40px;
+  height: 40px;
+  border-radius: $radius-full;
+  background: rgba(white, 0.2);
+  color: white;
+  font-weight: $font-weight-bold;
+  font-size: $font-size-lg;
+  flex-shrink: 0;
+}
+
+.sidebar__user_info {
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar__user_name {
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: white;
+  @include truncate;
+}
+
+.sidebar__user_wallet {
+  font-size: $font-size-xs;
+  color: rgba(white, 0.7);
+  font-family: $font-family-mono;
 }

@@ -1,9 +1,11 @@
 // File: src/components/navigation/MobileNav/MobileNav.tsx
+// ============================================================================
 
 'use client';
 
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { 
   FeedIcon, 
   CommunitiesIcon, 
@@ -25,7 +27,12 @@ export function MobileNav() {
   ];
 
   return (
-    <nav className={styles.mobile_nav}>
+    <motion.nav 
+      className={styles.mobile_nav}
+      initial={{ y: 100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+    >
       {navItems.map((item) => {
         const Icon = item.icon;
         const isActive = pathname === item.href;
@@ -38,9 +45,16 @@ export function MobileNav() {
           >
             <Icon className={styles.mobile_nav__icon} />
             <span className={styles.mobile_nav__label}>{item.label}</span>
+            {isActive && (
+              <motion.div
+                className={styles.mobile_nav__indicator}
+                layoutId="mobileActiveIndicator"
+                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              />
+            )}
           </Link>
         );
       })}
-    </nav>
+    </motion.nav>
   );
 }

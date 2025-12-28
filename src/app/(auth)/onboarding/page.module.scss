@@ -1,137 +1,184 @@
 // File: src/app/(auth)/onboarding/page.module.scss
-// ============================================================================
 
 @use '../../../styles/abstracts' as *;
 
 .onboarding {
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: $spacing-lg;
-}
-
-.onboarding__progress {
-  display: flex;
-  gap: $spacing-sm;
-  margin-bottom: $spacing-2xl;
-}
-
-.onboarding__progress_dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: rgba($color-frozen-water, 0.2);
-  transition: all 0.3s;
-  
-  &--active {
-    background: $color-medium-jungle;
-    transform: scale(1.2);
-  }
-}
-
-.onboarding__card {
-  @include glass-surface(0.08);
-  border-radius: 16px;
-  padding: $spacing-3xl;
-  max-width: 600px;
-  width: 100%;
-  min-height: 400px;
-  display: flex;
-  flex-direction: column;
-  
-  @include responsive(mobile) {
-    padding: $spacing-xl;
-  }
-}
-
-.onboarding__header {
-  margin-bottom: $spacing-2xl;
-  text-align: center;
-}
-
-.onboarding__title {
-  font-size: $font-size-3xl;
-  font-weight: 700;
+  background: $color-bg-primary;
   color: $color-text-primary;
-  margin-bottom: $spacing-sm;
+  @include flex-column;
+  @include flex-center;
+  padding: $spacing-xl;
+  position: relative;
 }
 
-.onboarding__description {
-  font-size: $font-size-base;
-  color: $color-text-secondary;
-}
-
-.onboarding__actions {
-  display: flex;
-  justify-content: space-between;
-  margin-top: auto;
-  padding-top: $spacing-2xl;
-}
-
-.onboarding__actions_right {
+.progress {
+  position: absolute;
+  top: $spacing-2xl;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   gap: $spacing-md;
 }
 
-.step {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+.progressDot {
+  width: 12px;
+  height: 12px;
+  border-radius: $radius-full;
+  background: rgba($color-frozen-water, 0.2);
+  transition: all $transition-speed-slow $transition-easing;
+
+  &.active {
+    background: $color-medium-jungle;
+    transform: scale(1.3);
+    box-shadow: $shadow-glow-green;
+  }
 }
 
-.step__input {
-  @include glass-surface(0.05);
+.cardWrapper {
   width: 100%;
-  max-width: 400px;
-  padding: $spacing-lg;
-  border-radius: 8px;
-  font-size: $font-size-xl;
-  color: $color-text-primary;
-  text-align: center;
-  margin-bottom: $spacing-md;
-  
-  &::placeholder {
-    color: $color-text-secondary;
+  max-width: 600px;
+  perspective: 1200px;
+}
+
+.card {
+  width: 100%;
+  background: $color-surface;
+  backdrop-filter: $blur-glass;
+  -webkit-backdrop-filter: $blur-glass;
+  border-radius: $radius-2xl;
+  padding: $spacing-3xl;
+  box-shadow: $shadow-xl;
+  border: 1px solid $color-border;
+  min-height: 600px;
+  @include flex-column;
+  @include flex-center;
+  position: relative;
+  overflow: hidden;
+
+  @include responsive(mobile) {
+    min-height: 500px;
+    padding: $spacing-2xl;
+    border-radius: $radius-xl;
   }
-  
+}
+
+.cardContent {
+  text-align: center;
+  width: 100%;
+  max-width: 500px;
+}
+
+.iconWrapper {
+  margin-bottom: $spacing-3xl;
+}
+
+.stepIcon {
+  font-size: 80px;
+}
+
+.lockIcon {
+  width: 100px;
+  height: 100px;
+  color: $color-medium-jungle;
+  filter: drop-shadow($shadow-glow-green);
+}
+
+.title {
+  font-size: $font-size-4xl;
+  font-weight: $font-weight-extrabold;
+  margin-bottom: $spacing-xl;
+  line-height: $line-height-tight;
+
+  @include responsive(mobile) {
+    font-size: $font-size-3xl;
+  }
+}
+
+.description {
+  font-size: $font-size-lg;
+  color: $color-text-secondary;
+  line-height: $line-height-relaxed;
+  margin-bottom: $spacing-2xl;
+}
+
+.inputWrapper {
+  margin: $spacing-3xl 0;
+  width: 100%;
+}
+
+.usernameInput {
+  width: 100%;
+  padding: $spacing-xl;
+  background: $color-surface-hover;
+  border: 1px solid $color-border;
+  border-radius: $radius-xl;
+  font-size: $font-size-2xl;
+  text-align: center;
+  color: $color-text-primary;
+  font-weight: $font-weight-semibold;
+
+  &::placeholder {
+    color: $color-text-tertiary;
+  }
+
   &:focus {
     outline: none;
     border-color: $color-medium-jungle;
+    box-shadow: $shadow-glow-green;
   }
 }
 
-.step__hint {
+.hint {
+  margin-top: $spacing-lg;
   font-size: $font-size-sm;
   color: $color-text-secondary;
   font-style: italic;
 }
 
-.step__visual {
-  margin-bottom: $spacing-xl;
+.bullets {
+  list-style: none;
+  margin: $spacing-2xl 0 $spacing-3xl;
+  width: 100%;
 }
 
-.step__list {
-  list-style: none;
-  max-width: 400px;
-  
-  li {
-    padding: $spacing-md;
-    margin-bottom: $spacing-sm;
-    color: $color-text-primary;
-    font-size: $font-size-base;
-    position: relative;
-    padding-left: $spacing-xl;
-    
-    &::before {
-      content: '→';
-      position: absolute;
-      left: 0;
-      color: $color-medium-jungle;
-      font-weight: bold;
-    }
+.bullets li {
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  background: $color-surface-hover;
+  border-radius: $radius-lg;
+  text-align: left;
+  font-size: $font-size-base;
+  line-height: $line-height-relaxed;
+  border-left: 4px solid $color-medium-jungle;
+}
+
+.footerText {
+  margin-top: auto;
+  padding-top: $spacing-3xl;
+  font-size: $font-size-xl;
+  font-style: italic;
+  color: $color-text-secondary;
+}
+
+.actions {
+  margin-top: $spacing-3xl;
+  width: 100%;
+  max-width: 600px;
+  @include flex-between;
+  gap: $spacing-lg;
+
+  @include responsive(mobile) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.actionsRight {
+  display: flex;
+  gap: $spacing-lg;
+
+  @include responsive(mobile) {
+    flex-direction: column;
   }
 }

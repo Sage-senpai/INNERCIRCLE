@@ -1,30 +1,37 @@
-// File: src/components/ui/Button/Button.module.scss
+// File: src/components/ui/Button/Button.module.scss 
 
 @use '../../../styles/abstracts' as *;
 
 .button {
-  @include transition(background, color, border-color, opacity);
+  @include transition(background, color, border-color, opacity, box-shadow);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: $spacing-sm;
-  font-weight: 500;
-  border-radius: 8px;
+  font-weight: $font-weight-semibold;
+  border-radius: $radius-md;
   cursor: pointer;
   position: relative;
+  border: 1px solid transparent;
+  white-space: nowrap;
   
   &:disabled {
     cursor: not-allowed;
     opacity: 0.5;
+    pointer-events: none;
   }
+  
+  @include focus-ring;
   
   // Variants
   &--primary {
     background: $color-medium-jungle;
     color: $color-onyx;
+    box-shadow: $shadow-glow-green;
     
     &:hover:not(:disabled) {
-      background: lighten($color-medium-jungle, 5%);
+      background: $color-medium-jungle-hover; // Pre-calculated color
+      box-shadow: 0 0 25px rgba($color-medium-jungle, 0.4);
     }
   }
   
@@ -34,6 +41,7 @@
     
     &:hover:not(:disabled) {
       background: rgba($color-frozen-water, 0.1);
+      border-color: $color-border-hover;
     }
   }
   
@@ -49,11 +57,21 @@
   &--locked {
     background: $color-night-bordeaux;
     color: $color-frozen-water;
+    box-shadow: $shadow-glow-bordeaux;
+    
+    &:hover:not(:disabled) {
+      background: $color-night-bordeaux-hover; // Pre-calculated color
+    }
   }
   
   &--unlocked {
     background: $color-medium-jungle;
     color: $color-onyx;
+    box-shadow: $shadow-glow-green;
+    
+    &:hover:not(:disabled) {
+      background: $color-medium-jungle-hover; // Pre-calculated color
+    }
   }
   
   // Sizes
@@ -82,7 +100,7 @@
   height: 16px;
   border: 2px solid currentColor;
   border-top-color: transparent;
-  border-radius: 50%;
+  border-radius: $radius-full;
   animation: spin 0.6s linear infinite;
 }
 

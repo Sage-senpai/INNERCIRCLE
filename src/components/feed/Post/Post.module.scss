@@ -1,23 +1,21 @@
-// File: src/components/feed/Post/Post.module.scss
-// ============================================================================
-
 @use '../../../styles/abstracts' as *;
 
 .post {
-  @include glass-surface(0.05);
-  @include transition(background, border-color);
-  border-radius: 12px;
-  padding: $spacing-lg;
-  margin-bottom: $spacing-md;
+  background: $color-bg-primary; // Dark onyx background
+  border-radius: $radius-xl;
+  overflow: hidden;
+  box-shadow: $shadow-md;
+  @include transition-all;
   
   &:hover {
-    background: rgba($color-frozen-water, 0.08);
-    border-color: rgba($color-frozen-water, 0.15);
+    box-shadow: $shadow-xl;
+    transform: translateY(-4px);
+    background: $color-surface-hover; // Subtle frozen-water tint on hover (no green!)
   }
 }
 
 .post__content {
-  position: relative;
+  padding: $spacing-lg;
 }
 
 .post__header {
@@ -29,26 +27,27 @@
 
 .post__author {
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
 }
 
 .post__display_name {
-  font-weight: 600;
+  font-weight: $font-weight-bold;
   font-size: $font-size-base;
-  color: $color-text-primary;
+  color: $color-text-primary; // Bright frozen-water
 }
 
 .post__username {
   font-size: $font-size-sm;
   color: $color-text-secondary;
+  margin-top: 2px;
 }
 
 .post__time {
   font-size: $font-size-sm;
   color: $color-text-secondary;
-  margin-left: auto;
+  white-space: nowrap;
 }
 
 .post__body {
@@ -56,71 +55,81 @@
 }
 
 .post__text {
-  color: $color-text-primary;
   font-size: $font-size-base;
   line-height: 1.6;
+  color: $color-text-primary;
   white-space: pre-wrap;
-  word-wrap: break-word;
+  word-break: break-word;
 }
 
 .post__media {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $spacing-sm;
   margin-top: $spacing-md;
-  border-radius: 8px;
+  border-radius: $radius-lg;
   overflow: hidden;
 }
 
 .post__image {
   width: 100%;
   height: auto;
-  display: block;
+  object-fit: cover;
+  border-radius: $radius-md;
+  background: rgba($color-frozen-water, 0.05);
 }
 
 .post__actions {
   display: flex;
-  align-items: center;
-  gap: $spacing-lg;
+  justify-content: space-around;
   padding-top: $spacing-md;
-  border-top: 1px solid rgba($color-frozen-water, 0.1);
+  border-top: 1px solid $color-border;
+  margin: 0 -#{$spacing-lg};
+  padding-left: $spacing-lg;
+  padding-right: $spacing-lg;
 }
 
 .post__action {
-  @include transition(color, background);
   display: flex;
   align-items: center;
-  gap: $spacing-sm;
-  padding: $spacing-xs $spacing-md;
-  border-radius: 6px;
+  gap: $spacing-xs;
   color: $color-text-secondary;
   font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
   cursor: pointer;
-  background: transparent;
-  border: none;
-  
-  svg {
-    width: 18px;
-    height: 18px;
-  }
+  @include transition(color);
   
   &:hover {
-    background: rgba($color-frozen-water, 0.05);
-    color: $color-text-primary;
+    color: $color-medium-jungle;
   }
   
   &--active {
     color: $color-medium-jungle;
     
     svg {
-      fill: currentColor;
+      fill: $color-medium-jungle;
     }
+  }
+  
+  svg {
+    width: 20px;
+    height: 20px;
+    transition: fill 0.2s;
   }
 }
 
+// Gated teaser styles - improved readability & subtlety
 .post__teaser {
-  margin-bottom: $spacing-lg;
+  padding: $spacing-lg;
+  @include locked-state; // Subtle bordeaux gradient overlay from your mixin
+  position: relative;
 }
 
 .post__teaser_text {
-  color: $color-text-secondary;
   font-size: $font-size-base;
+  color: $color-text-secondary; // Rosy-granite for better contrast
   margin-top: $spacing-md;
+  opacity: 0.85;
+  font-style: italic;
+  line-height: 1.6;
 }

@@ -1,6 +1,5 @@
-// File: src/lib/locke/engine.ts
-
-import { GateRule, GateEvaluation, LockeContext, HolderTier } from './types';
+// src/lib/locke/engine.ts
+import { GateRule, GateEvaluation, LockeContext, HolderTier, Chain, TokenHolding } from './types'; // ← Added Chain & TokenHolding
 import { BagsAPI } from '../bags-api/client';
 
 /**
@@ -189,16 +188,10 @@ export class LockeEngine {
     rule: GateRule,
     context: LockeContext
   ): Promise<GateEvaluation> {
-    // Custom logic evaluation
-    // This allows for complex rules defined in customLogic JSONB field
-    // Example: (TokenA AND TokenB) OR (TokenC with minimum balance)
-    
     if (!rule.customLogic) {
       return { granted: false, reason: 'No custom logic defined' };
     }
 
-    // Implementation would parse customLogic and recursively evaluate
-    // For MVP, return a placeholder
     return {
       granted: false,
       reason: 'Custom rule evaluation not yet implemented'
@@ -224,9 +217,6 @@ export class LockeEngine {
   }
 
   private calculateTier(balance: number, holderRank?: number): HolderTier {
-    // Tier calculation logic based on balance percentiles
-    // This would be customized per token/community
-    
     if (balance > 1000000 || (holderRank && holderRank <= 10)) {
       return 'elite';
     } else if (balance > 100000 || (holderRank && holderRank <= 100)) {

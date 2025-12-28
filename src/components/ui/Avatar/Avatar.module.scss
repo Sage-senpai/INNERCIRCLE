@@ -1,15 +1,16 @@
 // File: src/components/ui/Avatar/Avatar.module.scss
+// ============================================================================
 
 @use '../../../styles/abstracts' as *;
 
 .avatar {
-  border-radius: 50%;
+  border-radius: $radius-full;
   overflow: hidden;
   flex-shrink: 0;
-  background: rgba($color-frozen-water, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include glass-surface(0.1);
+  @include flex-center;
+  position: relative;
+  @include transition(transform);
   
   &--sm {
     width: 32px;
@@ -39,8 +40,9 @@
 }
 
 .avatar__placeholder {
-  font-weight: 600;
+  font-weight: $font-weight-bold;
   color: $color-text-primary;
+  @include text-gradient($color-frozen-water, $color-medium-jungle);
   
   .avatar--sm & {
     font-size: $font-size-sm;
@@ -59,3 +61,14 @@
   }
 }
 
+.avatar__status {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 25%;
+  height: 25%;
+  background: $color-medium-jungle;
+  border-radius: $radius-full;
+  border: 2px solid $color-bg-primary;
+  box-shadow: $shadow-glow-green;
+}

@@ -1,0 +1,104 @@
+// File: src/components/leaderboards/LeaderboardEntry/LeaderboardEntry.module.scss
+// ============================================================================
+
+@use '../../../styles/abstracts' as *;
+
+// LeaderboardEntry.module.scss - Modernized
+.entry {
+  @include glass-surface(0.06);
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+  padding: $spacing-lg;
+  border-radius: $radius-xl;
+  @include transition-all;
+  cursor: pointer;
+  position: relative;
+
+  &:hover {
+    background: $color-surface-hover;
+    transform: translateY(-4px);
+    box-shadow: $shadow-xl;
+  }
+
+  // Top 3 - Larger, highlighted
+  &:nth-child(1), &:nth-child(2), &:nth-child(3) {
+    padding: $spacing-xl;
+    .entry__avatar { width: 64px; height: 64px; }
+    .entry__rank { font-size: $font-size-4xl; }
+    .entry__score_value { font-size: $font-size-2xl; }
+  }
+
+  // Subtle stripe for readability in lower ranks
+  &:nth-child(n+4) {
+    background: rgba($color-frozen-water, 0.03);
+
+    &:hover {
+      background: rgba($color-frozen-water, 0.08);
+    }
+  }
+}
+
+.entry__rank {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-extrabold;
+  min-width: 60px;
+  text-align: center;
+  color: $color-text-secondary;
+}
+
+.entry__avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: $radius-full;
+  border: 2px solid rgba($color-frozen-water, 0.1);
+}
+
+.entry__user {
+  flex: 1;
+  min-width: 0;
+}
+
+.entry__name {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  @include truncate;
+}
+
+.entry__username {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.entry__score {
+  text-align: right;
+}
+
+.entry__score_value {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-extrabold;
+  font-family: $font-family-mono;
+  color: $color-text-primary;
+}
+
+.entry__change {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  padding: 4px 8px;
+  border-radius: $radius-md;
+  margin-top: 4px;
+
+  &--up {
+    background: rgba($color-medium-jungle, 0.15);
+    color: $color-medium-jungle;
+  }
+
+  &--down {
+    background: rgba($color-night-bordeaux, 0.15);
+    color: $color-night-bordeaux;
+  }
+}

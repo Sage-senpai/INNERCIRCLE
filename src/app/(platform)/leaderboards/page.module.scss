@@ -1,10 +1,9 @@
 // File: src/app/(platform)/leaderboards/page.module.scss
 // ============================================================================
-
 @use '../../../styles/abstracts' as *;
 
 .leaderboards {
-  max-width: $max-content-width;
+  max-width: $max-content-width-wide;
   margin: 0 auto;
   padding: $spacing-lg;
   
@@ -13,34 +12,79 @@
   }
 }
 
-.leaderboards__controls {
+.leaderboards__filters {
   display: flex;
   flex-direction: column;
   gap: $spacing-lg;
-  margin-bottom: $spacing-xl;
-  
-  @include responsive(mobile) {
-    gap: $spacing-md;
-  }
+  margin-bottom: $spacing-2xl;
+  align-items: flex-start;
 }
 
-.leaderboards__metrics {
+.segmented {
   display: flex;
-  gap: $spacing-sm;
-  
-  @include responsive(mobile) {
-    flex-direction: column;
+  background: rgba($color-frozen-water, 0.05);
+  border-radius: $radius-full;
+  padding: 4px;
+  gap: 4px;
+
+  button {
+    flex: 1;
+    padding: $spacing-sm $spacing-lg;
+    border-radius: $radius-full;
+    font-weight: $font-weight-semibold;
+    color: $color-text-secondary;
+    @include transition-all;
+
+    &.active {
+      background: $color-medium-jungle;
+      color: $color-onyx;
+      box-shadow: $shadow-glow-green;
+    }
+
+    &:hover:not(.active) {
+      background: rgba($color-frozen-water, 0.1);
+      color: $color-text-primary;
+    }
   }
 }
 
-.leaderboards__periods {
+.pills {
   display: flex;
   gap: $spacing-sm;
   flex-wrap: wrap;
+
+  button {
+    padding: $spacing-xs $spacing-md;
+    border-radius: $radius-full;
+    background: rgba($color-frozen-water, 0.05);
+    color: $color-text-secondary;
+    font-size: $font-size-sm;
+    @include transition-all;
+
+    &.active {
+      background: rgba($color-medium-jungle, 0.2);
+      color: $color-medium-jungle;
+      border: 1px solid rgba($color-medium-jungle, 0.3);
+    }
+
+    &:hover:not(.active) {
+      background: rgba($color-frozen-water, 0.1);
+    }
+  }
 }
 
-.leaderboards__list {
+.loading {
   display: flex;
   flex-direction: column;
-  gap: $spacing-sm;
+  gap: $spacing-md;
+}
+
+.skeleton {
+  margin-bottom: $spacing-sm;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
 }

@@ -1,5 +1,4 @@
-
-// File: src/app/(platform)/settings/page.module.scss
+// File: src/app/(platform)/settings/page.module.scss 
 
 @use '../../../styles/abstracts' as *;
 
@@ -15,16 +14,23 @@
 
 .settings__section {
   @include glass-surface(0.05);
-  border-radius: 12px;
+  border-radius: $radius-lg;
   padding: $spacing-xl;
   margin-bottom: $spacing-lg;
+  
+  &--danger {
+    border: 1px solid rgba($color-night-bordeaux, 0.3);
+    background: rgba($color-night-bordeaux, 0.05);
+  }
 }
 
 .settings__section_title {
   font-size: $font-size-xl;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   color: $color-text-primary;
   margin-bottom: $spacing-lg;
+  padding-bottom: $spacing-md;
+  border-bottom: 1px solid $color-border;
 }
 
 .settings__field {
@@ -38,7 +44,7 @@
 .settings__label {
   display: block;
   font-size: $font-size-sm;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   color: $color-text-secondary;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -48,10 +54,113 @@
 .settings__value {
   font-size: $font-size-base;
   color: $color-text-primary;
+  font-weight: $font-weight-medium;
 }
 
 .settings__value_mono {
   font-family: $font-family-mono;
   font-size: $font-size-sm;
   color: $color-text-primary;
+  @include glass-surface(0.03);
+  padding: $spacing-sm $spacing-md;
+  border-radius: $radius-sm;
+  display: inline-block;
+}
+
+.settings__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-md;
+  background: rgba($color-medium-jungle, 0.2);
+  color: $color-medium-jungle;
+  border-radius: $radius-sm;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+}
+
+.settings__toggle {
+  @include flex-between;
+  padding: $spacing-md 0;
+  gap: $spacing-lg;
+  
+  &:not(:last-child) {
+    border-bottom: 1px solid $color-border;
+  }
+}
+
+.settings__toggle_info {
+  @include flex-column;
+  gap: 4px;
+  flex: 1;
+}
+
+.settings__toggle_label {
+  font-size: $font-size-base;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+.settings__toggle_description {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.settings__toggle_switch {
+  input[type="checkbox"] {
+    display: none;
+    
+    & + label {
+      @include transition(background);
+      display: block;
+      width: 48px;
+      height: 26px;
+      background: rgba($color-frozen-water, 0.1);
+      border-radius: $radius-full;
+      position: relative;
+      cursor: pointer;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 20px;
+        height: 20px;
+        background: $color-frozen-water;
+        border-radius: $radius-full;
+        @include transition(transform, background);
+      }
+    }
+    
+    &:checked + label {
+      background: $color-medium-jungle;
+      
+      &::after {
+        transform: translateX(22px);
+        background: $color-onyx;
+      }
+    }
+  }
+}
+
+.settings__danger {
+  @include flex-between;
+  gap: $spacing-lg;
+}
+
+.settings__danger_info {
+  flex: 1;
+}
+
+.settings__danger_title {
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: $color-error; // Using pre-calculated color
+  margin-bottom: $spacing-xs;
+}
+
+.settings__danger_description {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
 }

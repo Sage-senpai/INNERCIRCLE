@@ -1,0 +1,39 @@
+@use '../../../styles/abstracts' as *;
+
+.composerObserver {
+  position: absolute;
+  top: 0;
+  height: 1px;
+  width: 100%;
+  pointer-events: none;
+}
+
+.fab {
+  position: fixed;
+  right: $spacing-xl;
+  bottom: $spacing-xl;
+  width: 60px;
+  height: 60px;
+  background: $color-medium-jungle;
+  color: $color-onyx;
+  border-radius: $radius-full;
+  box-shadow: $shadow-xl, $shadow-glow-green;
+  border: none;
+  cursor: pointer;
+  @include flex-center;
+  z-index: $z-sticky;
+
+  svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  &:hover {
+    background: $color-medium-jungle-hover;
+  }
+
+  @include responsive(mobile) {
+    right: $spacing-lg;
+    bottom: calc(#{$mobile-nav-height} + #{$spacing-lg});
+  }
+}

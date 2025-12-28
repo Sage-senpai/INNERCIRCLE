@@ -1,0 +1,116 @@
+// File: src/components/interactions/CreateCommunityModal/CreateCommunityModal.module.scss
+// ============================================================================
+
+@use '../../../styles/abstracts' as *;
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba($color-onyx, 0.8);
+  backdrop-filter: $blur-glass;
+  z-index: $z-overlay;
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  @include glass-surface-strong(0.1);
+  border-radius: $radius-xl;
+  padding: $spacing-2xl;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  z-index: $z-modal;
+  box-shadow: $shadow-xl;
+}
+
+.modal__header {
+  @include flex-between;
+  margin-bottom: $spacing-xl;
+}
+
+.modal__title {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+}
+
+.modal__close {
+  width: 32px;
+  height: 32px;
+  @include flex-center;
+  border-radius: $radius-full;
+  font-size: $font-size-2xl;
+  color: $color-text-secondary;
+  @include transition(background, color);
+  
+  &:hover {
+    background: rgba($color-frozen-water, 0.1);
+    color: $color-text-primary;
+  }
+}
+
+.modal__form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.modal__field {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.modal__label {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.modal__input,
+.modal__textarea,
+.modal__select {
+  @include glass-surface(0.05);
+  padding: $spacing-md;
+  border-radius: $radius-md;
+  font-size: $font-size-base;
+  color: $color-text-primary;
+  @include transition(background, border-color);
+  
+  &::placeholder {
+    color: $color-text-secondary;
+  }
+  
+  &:focus {
+    outline: none;
+    background: rgba($color-frozen-water, 0.08);
+    border-color: $color-medium-jungle;
+  }
+}
+
+.modal__textarea {
+  resize: vertical;
+  font-family: $font-family-primary;
+}
+
+.modal__error {
+  padding: $spacing-md;
+  background: rgba($color-night-bordeaux, 0.1);
+  border: 1px solid rgba($color-night-bordeaux, 0.3);
+  border-radius: $radius-md;
+  color: $color-error;
+  font-size: $font-size-sm;
+}
+
+.modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-md;
+  margin-top: $spacing-lg;
+}

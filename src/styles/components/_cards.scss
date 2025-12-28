@@ -1,59 +1,67 @@
 // File: src/styles/components/_cards.scss
+// ============================================================================
 
 @use '../abstracts' as *;
 
 .card {
-  @include glass-surface(0.05);
-  @include transition(background, border-color, transform);
-  border-radius: 12px;
-  padding: $spacing-lg;
+  @include card-base;
   
-  &:hover {
-    background: rgba($color-frozen-water, 0.08);
-    border-color: rgba($color-frozen-water, 0.15);
+  &--interactive {
+    @include card-interactive;
   }
   
   &--locked {
-    @include locked-state;
-    cursor: not-allowed;
-    
-    .card__content {
-      opacity: 0.5;
-      filter: blur(4px);
-    }
+    @include card-locked;
   }
   
-  &--interactive {
-    cursor: pointer;
-    
-    &:active {
-      transform: scale(0.98);
-    }
+  &--glow-green {
+    box-shadow: $shadow-glow-green;
+  }
+  
+  &--glow-bordeaux {
+    box-shadow: $shadow-glow-bordeaux;
   }
 }
 
 .card__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  @include flex-between;
   margin-bottom: $spacing-md;
+  padding-bottom: $spacing-md;
+  border-bottom: 1px solid $color-border;
 }
 
 .card__title {
-  font-size: $font-size-lg;
-  font-weight: 600;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
   color: $color-text-primary;
 }
 
-.card__content {
+.card__subtitle {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-top: $spacing-xs;
+}
+
+.card__body {
   @include transition(opacity, filter);
 }
 
 .card__footer {
   margin-top: $spacing-lg;
   padding-top: $spacing-md;
-  border-top: 1px solid rgba($color-frozen-water, 0.1);
-  display: flex;
-  align-items: center;
+  border-top: 1px solid $color-border;
+  @include flex-between;
   gap: $spacing-md;
+}
+
+.card__badge {
+  @include badge($color-medium-jungle);
+  
+  &--locked {
+    @include badge($color-night-bordeaux);
+  }
+  
+  &--elite {
+    @include badge(#ffd700);
+  }
 }

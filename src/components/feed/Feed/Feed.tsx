@@ -1,12 +1,12 @@
-// File: src/components/feed/Feed/Feed.tsx
-
+// src/components/feed/Feed/Feed.tsx
 'use client';
 
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Post } from '../Post/Post';
 import { PostComposer } from '../PostComposer/PostComposer';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner/LoadingSpinner';
+import { FloatingActionButton } from '@/components/navigation/FloatingActionButton/FloatingActionButton';
 import styles from './Feed.module.scss';
 
 interface FeedProps {
@@ -20,7 +20,10 @@ export function Feed({ type = 'home', communityId }: FeedProps) {
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(0);
   const observerRef = useRef<IntersectionObserver | null>(null);
-  const lastPostRef = useRef<HTMLDivElement | null>(null);
+  const lastPostRef = useRef<HTMLDivElement>(null);
+
+  // Fixed: Explicitly typed as non-nullable RefObject<HTMLDivElement>
+  const composerRef = useRef<HTMLDivElement>(null) as React.RefObject<HTMLDivElement>;
 
   useEffect(() => {
     loadPosts();
@@ -34,9 +37,6 @@ export function Feed({ type = 'home', communityId }: FeedProps) {
   async function loadPosts() {
     setIsLoading(true);
     
-    // Simulated API call
-    // In production: const data = await supabase.from('posts').select()...
-    
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     const mockPosts = Array.from({ length: 10 }, (_, i) => ({
@@ -47,7 +47,7 @@ export function Feed({ type = 'home', communityId }: FeedProps) {
         displayName: `User ${i}`,
         avatarUrl: undefined,
       },
-      content: `This is post ${page}-${i}. ${i % 3 === 0 ? 'This post contains gated content that requires token ownership.' : 'Public content available to all.'}`,
+      content: `This is post ${page}-${i}. ${i % 3 === 0 ? 'This post contains gated content that requires token ownership to access. Connect your wallet and verify holdings to unlock.' : 'Public content available to all members of the InnerCircle community.'}`,
       isGated: i % 3 === 0,
       gates: i % 3 === 0 ? [{ ruleType: 'minimum_balance', tokenAddress: 'ABC123', minimumBalance: 1000 }] : [],
       signalCount: Math.floor(Math.random() * 100),
@@ -81,32 +81,18 @@ export function Feed({ type = 'home', communityId }: FeedProps) {
     }
   }
 
-  const handleSignal = async (postId: string) => {
-    // Implement signal logic
-    console.log('Signal:', postId);
-  };
-
-  const handleEcho = async (postId: string) => {
-    // Implement echo logic
-    console.log('Echo:', postId);
-  };
-
-  const handleRelay = async (postId: string) => {
-    // Implement relay logic
-    console.log('Relay:', postId);
-  };
-
-  const handleNewPost = (content: string) => {
+  const handleNewPost = (newPostData: any) => {
     const newPost = {
       id: `new-${Date.now()}`,
       author: {
         id: 'current-user',
         username: 'you',
         displayName: 'You',
+        avatarUrl: undefined,
       },
-      content,
-      isGated: false,
-      gates: [],
+      content: typeof newPostData === 'string' ? newPostData : newPostData.content || newPostData,
+      isGated: newPostData.isGated || false,
+      gates: newPostData.isGated ? [{ ruleType: 'minimum_balance', tokenAddress: 'ABC123', minimumBalance: 1000 }] : [],
       signalCount: 0,
       echoCount: 0,
       relayCount: 0,
@@ -119,40 +105,51 @@ export function Feed({ type = 'home', communityId }: FeedProps) {
   return (
     <div className={styles.feed}>
       {type === 'home' && (
-        <div className={styles.feed__composer}>
+        <motion.div 
+          ref={composerRef}
+          className={styles.feed__composer}
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
           <PostComposer onPost={handleNewPost} />
-        </div>
+        </motion.div>
       )}
 
       <div className={styles.feed__posts}>
-        <AnimatePresence>
+        <AnimatePresence mode="popLayout">
           {posts.map((post, index) => (
             <div
               key={post.id}
               ref={index === posts.length - 1 ? lastPostRef : null}
             >
-              <Post
-                post={post}
-                onSignal={handleSignal}
-                onEcho={handleEcho}
-                onRelay={handleRelay}
-              />
+              <Post post={post} />
             </div>
           ))}
         </AnimatePresence>
 
         {isLoading && (
-          <div className={styles.feed__loading}>
-            <LoadingSpinner />
-          </div>
+          <motion.div 
+            className={styles.feed__loading}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            <LoadingSpinner size="lg" />
+          </motion.div>
         )}
 
         {!hasMore && posts.length > 0 && (
-          <div className={styles.feed__end}>
+          <motion.div 
+            className={styles.feed__end}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
             <p>You've reached the end</p>
-          </div>
+          </motion.div>
         )}
       </div>
+
+      {type === 'home' && <FloatingActionButton composerRef={composerRef} onPost={handleNewPost} />}
     </div>
   );
 }

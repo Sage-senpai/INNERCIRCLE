@@ -1,4 +1,21 @@
-// File: src/lib/wallets/adapter.ts
+// src/lib/wallets/adapter.ts
+
+// Extend the global Window interface to include wallet extensions
+declare global {
+  interface Window {
+    solana?: {
+      isPhantom?: boolean;
+      connect: () => Promise<{ publicKey: { toString: () => string } }>;
+      disconnect?: () => Promise<void>;
+      signMessage: (message: Uint8Array) => Promise<{ signature: Uint8Array }>;
+      publicKey: { toString: () => string };
+    };
+    solflare?: {
+      connect: () => Promise<void>;
+      publicKey: { toString: () => string };
+    };
+  }
+}
 
 export type WalletAdapter = 'phantom' | 'solflare' | 'polkadot-js' | 'talisman';
 

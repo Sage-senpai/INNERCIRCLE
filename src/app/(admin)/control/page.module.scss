@@ -1,9 +1,10 @@
 // File: src/app/(admin)/control/page.module.scss
+// ============================================================================
 
 @use '../../../styles/abstracts' as *;
 
 .admin {
-  max-width: 1200px;
+  max-width: $max-content-width-wide;
   margin: 0 auto;
   padding: $spacing-lg;
   
@@ -14,10 +15,22 @@
 
 .admin__denied {
   @include glass-surface(0.05);
-  border-radius: 12px;
+  border: 1px solid rgba($color-night-bordeaux, 0.3);
+  border-radius: $radius-lg;
   padding: $spacing-3xl;
   text-align: center;
+  @include flex-column;
+  @include flex-center;
+  gap: $spacing-lg;
+}
+
+.admin__denied_icon {
+  font-size: 64px;
+}
+
+.admin__denied_text {
   color: $color-text-secondary;
+  font-size: $font-size-lg;
 }
 
 .admin__tabs {
@@ -29,22 +42,39 @@
 
 .admin__content {
   @include glass-surface(0.05);
-  border-radius: 12px;
+  border-radius: $radius-lg;
   padding: $spacing-xl;
-  min-height: 400px;
+  min-height: 500px;
 }
 
-.admin__panel {
-  h2 {
-    font-size: $font-size-2xl;
-    font-weight: 700;
-    color: $color-text-primary;
-    margin-bottom: $spacing-lg;
+.admin__panel_title {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-sm;
+}
+
+.admin__panel_description {
+  color: $color-text-secondary;
+  margin-bottom: $spacing-2xl;
+  line-height: $line-height-relaxed;
+}
+
+.admin__panel_placeholder {
+  @include glass-surface(0.03);
+  border-radius: $radius-md;
+  padding: $spacing-3xl;
+  text-align: center;
+  @include flex-column;
+  @include flex-center;
+  gap: $spacing-md;
+  
+  span {
+    font-size: 64px;
   }
   
   p {
     color: $color-text-secondary;
-    margin-bottom: $spacing-lg;
+    font-size: $font-size-base;
   }
 }
-

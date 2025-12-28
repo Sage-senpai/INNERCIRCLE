@@ -1,4 +1,4 @@
-// File: src/app/(platform)/layout.module.scss
+// File: src/app/(platform)/layout.module.scss (UPDATED WITH 3-COLUMN)
 // ============================================================================
 
 @use '../../styles/abstracts' as *;
@@ -6,14 +6,21 @@
 .platform {
   display: flex;
   min-height: 100vh;
+  position: relative;
 }
 
 .platform__main {
   flex: 1;
   margin-left: $sidebar-width;
+  margin-right: 320px; // Context panel width
+  min-width: 0;
+  
+  @include responsive(tablet) {
+    margin-right: 0; // No context panel on tablet
+  }
   
   @include responsive(mobile) {
     margin-left: 0;
-    padding-bottom: 80px; // Space for mobile nav
+    padding-bottom: calc(#{$mobile-nav-height} + #{$spacing-md});
   }
 }

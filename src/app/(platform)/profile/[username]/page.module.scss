@@ -1,4 +1,5 @@
 // File: src/app/(platform)/profile/[username]/page.module.scss
+// ============================================================================
 
 @use '../../../../styles/abstracts' as *;
 
@@ -13,16 +14,19 @@
 }
 
 .profile__loading {
-  text-align: center;
-  padding: $spacing-3xl;
+  @include flex-center;
+  min-height: 400px;
   color: $color-text-secondary;
 }
 
 .profile__header {
   @include glass-surface(0.05);
-  border-radius: 12px;
+  border-radius: $radius-lg;
   padding: $spacing-xl;
   margin-bottom: $spacing-xl;
+  @include flex-column;
+  @include flex-center;
+  text-align: center;
 }
 
 .profile__info {
@@ -31,7 +35,7 @@
 
 .profile__name {
   font-size: $font-size-3xl;
-  font-weight: 700;
+  font-weight: $font-weight-extrabold;
   color: $color-text-primary;
   margin-bottom: $spacing-xs;
 }
@@ -45,7 +49,9 @@
 .profile__bio {
   color: $color-text-primary;
   font-size: $font-size-base;
-  line-height: 1.6;
+  line-height: $line-height-relaxed;
+  max-width: 500px;
+  margin: 0 auto;
 }
 
 .profile__actions {
@@ -53,22 +59,30 @@
 }
 
 .profile__stats {
+  @include glass-surface(0.05);
   display: flex;
-  gap: $spacing-2xl;
+  justify-content: center;
+  gap: $spacing-3xl;
+  padding: $spacing-xl;
+  border-radius: $radius-lg;
   margin-bottom: $spacing-xl;
-  padding: $spacing-lg 0;
+  
+  @include responsive(mobile) {
+    gap: $spacing-xl;
+  }
 }
 
 .profile__stat {
-  display: flex;
-  flex-direction: column;
+  @include flex-column;
+  @include flex-center;
   gap: 4px;
 }
 
 .profile__stat_value {
   font-size: $font-size-2xl;
-  font-weight: 700;
+  font-weight: $font-weight-extrabold;
   color: $color-text-primary;
+  font-family: $font-family-mono;
 }
 
 .profile__stat_label {
@@ -80,14 +94,14 @@
 
 .profile__content_title {
   font-size: $font-size-xl;
-  font-weight: 700;
+  font-weight: $font-weight-bold;
   color: $color-text-primary;
   margin-bottom: $spacing-lg;
 }
 
 .profile__empty {
   @include glass-surface(0.05);
-  border-radius: 12px;
+  border-radius: $radius-lg;
   padding: $spacing-3xl;
   text-align: center;
   color: $color-text-secondary;

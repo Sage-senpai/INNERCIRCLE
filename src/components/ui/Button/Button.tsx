@@ -1,12 +1,13 @@
-// File: src/components/ui/Button/Button.tsx
-
+// src/components/ui/Button/Button.tsx
 import { ButtonHTMLAttributes, forwardRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, HTMLMotionProps } from 'framer-motion';
 import styles from './Button.module.scss';
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+type MotionButtonProps = HTMLMotionProps<'button'>;
+
+interface ButtonProps extends Omit<MotionButtonProps, 'ref'> {
   variant?: 'primary' | 'secondary' | 'ghost' | 'locked' | 'unlocked';
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   isLoading?: boolean;
 }
 
@@ -15,8 +16,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     children, 
     variant = 'primary', 
     size = 'md', 
-    isLoading, 
-    disabled,
+    isLoading = false, 
+    disabled = false,
     className = '',
     ...props 
   }, ref) => {
@@ -33,11 +34,17 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         className={classNames}
         disabled={disabled || isLoading}
-        whileTap={{ scale: 0.97 }}
-        {...props}
+        whileHover={{ scale: disabled || isLoading ? 1 : 1.02 }}
+        whileTap={{ scale: disabled || isLoading ? 1 : 0.97 }}
+        animate={{ opacity: isLoading ? 0.7 : 1 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+        {...props} // Now safe: only Framer Motion + standard button props
       >
         {isLoading ? (
-          <span className={styles.button__spinner} />
+          <>
+            <span className={styles.button__spinner} />
+            <span>Loading...</span>
+          </>
         ) : (
           children
         )}

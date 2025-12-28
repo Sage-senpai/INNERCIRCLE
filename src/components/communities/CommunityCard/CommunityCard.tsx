@@ -1,4 +1,5 @@
 // File: src/components/communities/CommunityCard/CommunityCard.tsx
+// ============================================================================
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -27,19 +28,31 @@ export function CommunityCard({ community }: CommunityCardProps) {
     <Link href={`/communities/${community.slug}`}>
       <motion.div 
         className={styles.card}
-        whileHover={{ scale: 1.02 }}
-        transition={{ duration: 0.2 }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        whileHover={{ y: -4 }}
+        transition={{ duration: 0.3 }}
       >
         <div className={styles.card__header}>
-          <Avatar
-            src={community.avatarUrl}
-            alt={community.name}
-            size="lg"
-          />
+          <motion.div
+            whileHover={{ scale: 1.1, rotate: 5 }}
+            transition={{ type: 'spring', stiffness: 300 }}
+          >
+            <Avatar
+              src={community.avatarUrl}
+              alt={community.name}
+              size="lg"
+            />
+          </motion.div>
           {community.isMember && community.tier && (
-            <div className={styles.card__badge}>
-              {community.tier}
-            </div>
+            <motion.div 
+              className={styles.card__badge}
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: 'spring', stiffness: 300, delay: 0.2 }}
+            >
+              {community.tier.toUpperCase()}
+            </motion.div>
           )}
         </div>
 
@@ -58,19 +71,26 @@ export function CommunityCard({ community }: CommunityCardProps) {
               <span className={styles.card__stat_value}>
                 {formatNumber(community.postCount)}
               </span>
-              <span className={styles.card__stat_label}>Posts</span>
+              <span className={styles.card__stat_label}>Broadcasts</span>
             </div>
           </div>
         </div>
 
         <div className={styles.card__footer}>
+          <div className={styles.card__token}>
+            <span className={styles.card__token_label}>Token:</span>
+            <span className={styles.card__token_address}>
+              {community.tokenAddress.slice(0, 6)}...{community.tokenAddress.slice(-4)}
+            </span>
+          </div>
+          
           {community.isMember ? (
             <Button variant="unlocked" size="sm">
               Joined
             </Button>
           ) : (
             <Button variant="locked" size="sm">
-              View Requirements
+              View Access
             </Button>
           )}
         </div>

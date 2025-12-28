@@ -1,8 +1,9 @@
-
-// File: src/app/(platform)/layout.tsx
-
+// src/app/(platform)/layout.tsx
 import { Sidebar } from '@/components/navigation/Sidebar/Sidebar';
 import { MobileNav } from '@/components/navigation/MobileNav/MobileNav';
+import { ContextPanel } from '@/components/navigation/ContextPanel/ContextPanel';
+// Remove this import
+// import { FloatingActionButton } from '@/components/navigation/FloatingActionButton/FloatingActionButton';
 import styles from './layout.module.scss';
 
 export default function PlatformLayout({
@@ -16,7 +17,9 @@ export default function PlatformLayout({
       <main className={styles.platform__main}>
         {children}
       </main>
+      <ContextPanel />
       <MobileNav />
+      
     </div>
   );
 }

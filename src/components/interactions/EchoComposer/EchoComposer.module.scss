@@ -1,0 +1,38 @@
+// File: src/components/interactions/EchoComposer/EchoComposer.module.scss
+// ============================================================================
+
+@use '../../../styles/abstracts' as *;
+
+.composer {
+  margin-top: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 1px solid $color-border;
+}
+
+.composer__input {
+  @include glass-surface(0.05);
+  width: 100%;
+  padding: $spacing-sm;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  resize: none;
+  font-family: $font-family-primary;
+  margin-bottom: $spacing-sm;
+  
+  &::placeholder {
+    color: $color-text-secondary;
+  }
+  
+  &:focus {
+    outline: none;
+    background: rgba($color-frozen-water, 0.08);
+    border-color: $color-medium-jungle;
+  }
+}
+
+.composer__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-sm;
+}

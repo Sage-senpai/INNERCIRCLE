@@ -1,0 +1,111 @@
+// File: src/components/communities/CommunityCard/CommunityCard.module.scss
+// ============================================================================
+
+@use '../../../styles/abstracts' as *;
+
+.card {
+  @include glass-surface(0.05);
+  @include transition(background, border-color, transform, box-shadow);
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  cursor: pointer;
+  
+  &:hover {
+    background: rgba($color-frozen-water, 0.08);
+    border-color: $color-border-hover;
+    box-shadow: $shadow-lg;
+  }
+}
+
+.card__header {
+  @include flex-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-lg;
+}
+
+.card__badge {
+  @include badge($color-medium-jungle);
+  font-size: $font-size-xs;
+  
+  &--whale {
+    background: rgba(#3b82f6, 0.2);
+    color: #3b82f6;
+  }
+  
+  &--elite {
+    background: rgba(#ffd700, 0.2);
+    color: #ffd700;
+  }
+}
+
+.card__body {
+  margin-bottom: $spacing-lg;
+}
+
+.card__title {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-sm;
+  @include line-clamp(1);
+}
+
+.card__description {
+  @include line-clamp(2);
+  color: $color-text-secondary;
+  font-size: $font-size-sm;
+  line-height: $line-height-relaxed;
+  margin-bottom: $spacing-lg;
+  min-height: 2.8em;
+}
+
+.card__stats {
+  display: flex;
+  gap: $spacing-xl;
+}
+
+.card__stat {
+  @include flex-column;
+  gap: 4px;
+}
+
+.card__stat_value {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+}
+
+.card__stat_label {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.card__footer {
+  @include flex-between;
+  padding-top: $spacing-md;
+  border-top: 1px solid $color-border;
+  gap: $spacing-md;
+}
+
+.card__token {
+  @include flex-column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.card__token_label {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.card__token_address {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  font-family: $font-family-mono;
+  @include truncate;
+}

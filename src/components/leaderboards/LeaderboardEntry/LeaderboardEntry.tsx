@@ -1,6 +1,8 @@
 // File: src/components/leaderboards/LeaderboardEntry/LeaderboardEntry.tsx
+// ============================================================================
 
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { Avatar } from '@/components/ui/Avatar/Avatar';
 import { TrendUpIcon, TrendDownIcon } from '@/components/icons';
 import styles from './LeaderboardEntry.module.scss';
@@ -28,6 +30,8 @@ export function LeaderboardEntry({ entry, metric }: LeaderboardEntryProps) {
     return '';
   };
 
+ 
+
   const formatScore = (score: number) => {
     if (metric === 'holdings') {
       return `$${(score / 1000).toFixed(1)}K`;
@@ -35,18 +39,42 @@ export function LeaderboardEntry({ entry, metric }: LeaderboardEntryProps) {
     return score.toLocaleString();
   };
 
+  const getRankEmoji = (rank: number) => {
+    if (rank === 1) return '🥇';
+    if (rank === 2) return '🥈';
+    if (rank === 3) return '🥉';
+    return null;
+  };
+   // Add medal badges for top 3
+const getMedal = (rank: number) => {
+  if (rank === 1) return '🥇';
+  if (rank === 2) return '🥈';
+  if (rank === 3) return '🥉';
+  return null;
+};
   return (
     <Link href={`/profile/${entry.user.username}`}>
-      <div className={`${styles.entry} ${getRankClass(entry.rank)}`}>
+      <motion.div 
+        className={`${styles.entry} ${getRankClass(entry.rank)}`}
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        whileHover={{ x: 4, scale: 1.01 }}
+        transition={{ duration: 0.2 }}
+      >
         <div className={styles.entry__rank}>
-          {entry.rank}
+          {getRankEmoji(entry.rank) || entry.rank}
         </div>
 
-        <Avatar
-          src={entry.user.avatarUrl}
-          alt={entry.user.username}
-          size="md"
-        />
+        <motion.div
+          whileHover={{ scale: 1.1 }}
+          transition={{ type: 'spring', stiffness: 300 }}
+        >
+          <Avatar
+            src={entry.user.avatarUrl}
+            alt={entry.user.username}
+            size="md"
+          />
+        </motion.div>
 
         <div className={styles.entry__user}>
           <span className={styles.entry__name}>
@@ -62,15 +90,20 @@ export function LeaderboardEntry({ entry, metric }: LeaderboardEntryProps) {
             {formatScore(entry.score)}
           </span>
           {entry.change !== undefined && entry.change !== 0 && (
-            <span className={`${styles.entry__change} ${
-              entry.change > 0 ? styles['entry__change--up'] : styles['entry__change--down']
-            }`}>
+            <motion.span 
+              className={`${styles.entry__change} ${
+                entry.change > 0 ? styles['entry__change--up'] : styles['entry__change--down']
+              }`}
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: 'spring', stiffness: 300, delay: 0.2 }}
+            >
               {entry.change > 0 ? <TrendUpIcon /> : <TrendDownIcon />}
               {Math.abs(entry.change)}
-            </span>
+            </motion.span>
           )}
         </div>
-      </div>
+      </motion.div>
     </Link>
   );
 }

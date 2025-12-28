@@ -5,31 +5,53 @@
 
 .composer {
   @include glass-surface(0.05);
-  border-radius: 12px;
+  border-radius: $radius-lg;
   padding: $spacing-lg;
+  @include transition(background, border-color, box-shadow);
+  
+  &--focused {
+    background: rgba($color-frozen-water, 0.08);
+    border-color: $color-border-hover;
+    box-shadow: $shadow-md;
+  }
 }
 
 .composer__prompt {
   text-align: center;
   color: $color-text-secondary;
   padding: $spacing-xl;
+  font-size: $font-size-base;
 }
 
 .composer__header {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
   margin-bottom: $spacing-md;
 }
 
+.composer__user {
+  flex: 1;
+}
+
+.composer__username {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
 .composer__input {
-  @include transition(background, border-color);
+  @include transition(background, border-color, height);
   width: 100%;
   background: rgba($color-frozen-water, 0.03);
-  border: 1px solid rgba($color-frozen-water, 0.1);
-  border-radius: 8px;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
   padding: $spacing-md;
   color: $color-text-primary;
   font-size: $font-size-base;
-  resize: vertical;
-  min-height: 80px;
+  line-height: $line-height-normal;
+  resize: none;
+  font-family: $font-family-primary;
   
   &::placeholder {
     color: $color-text-secondary;
@@ -38,18 +60,30 @@
   &:focus {
     outline: none;
     background: rgba($color-frozen-water, 0.05);
-    border-color: rgba($color-frozen-water, 0.2);
+    border-color: $color-border-focus;
   }
 }
 
 .composer__footer {
-  display: flex;
-  justify-content: space-between;
+  @include flex-between;
   align-items: center;
   margin-top: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 1px solid $color-border;
 }
 
-.composer__actions {
+.composer__info {
   display: flex;
-  gap: $spacing-sm;
+  gap: $spacing-md;
+}
+
+.composer__char_count {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  font-family: $font-family-mono;
+}
+.composer__char_count {
+  // existing
+  &--warning { color: #f59e0b; } // $color-warning
+  &--error { color: $color-error; }
 }

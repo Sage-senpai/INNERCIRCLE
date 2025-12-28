@@ -4,7 +4,7 @@
 @use '../../../styles/abstracts' as *;
 
 .communities {
-  max-width: 1200px;
+  max-width: $max-content-width-wide;
   margin: 0 auto;
   padding: $spacing-lg;
   
@@ -17,11 +17,17 @@
   display: flex;
   gap: $spacing-sm;
   margin-bottom: $spacing-xl;
+  flex-wrap: wrap;
+}
+
+.communities__loading {
+  @include flex-center;
+  min-height: 400px;
 }
 
 .communities__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   gap: $spacing-lg;
   
   @include responsive(mobile) {
@@ -30,8 +36,9 @@
 }
 
 .communities__empty {
-  text-align: center;
+  @include glass-surface(0.05);
+  border-radius: $radius-lg;
   padding: $spacing-3xl;
+  text-align: center;
   color: $color-text-secondary;
 }
-

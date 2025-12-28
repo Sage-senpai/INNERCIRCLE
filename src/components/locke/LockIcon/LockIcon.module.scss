@@ -1,7 +1,10 @@
 // File: src/components/locke/LockIcon/LockIcon.module.scss
+// ============================================================================
 
 @use '../../../styles/abstracts' as *;
 
 .lock {
   display: inline-block;
+  width: 24px;
+  height: 24px;
 }
