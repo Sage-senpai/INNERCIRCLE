@@ -1,31 +1,50 @@
-// File: src/store/locke.store.ts
+//UPDATED LOCKE STORE (src/store/locke.store.ts)
+
 
 import { create } from 'zustand';
-import { LockeContext, GateEvaluation } from '@/lib/locke/types';
+import { LockeContext, GateEvaluation, Chain } from '@/lib/locke/types';
+import { lockeEngine } from '@/lib/locke/engine';
 
 interface LockeState {
   context: LockeContext | null;
-  evaluationCache: Map<string, GateEvaluation>;
+  isLoadingContext: boolean;
   
   setContext: (context: LockeContext) => void;
-  cacheEvaluation: (ruleId: string, evaluation: GateEvaluation) => void;
-  getEvaluation: (ruleId: string) => GateEvaluation | undefined;
-  clearCache: () => void;
+  buildContext: (walletAddress: string, chain: Chain) => Promise<void>;
+  refreshContext: (walletAddress: string, chain: Chain) => Promise<void>;
+  clearContext: () => void;
 }
 
 export const useLockeStore = create<LockeState>((set, get) => ({
   context: null,
-  evaluationCache: new Map(),
+  isLoadingContext: false,
   
   setContext: (context) => set({ context }),
   
-  cacheEvaluation: (ruleId, evaluation) => set((state) => {
-    const newCache = new Map(state.evaluationCache);
-    newCache.set(ruleId, evaluation);
-    return { evaluationCache: newCache };
-  }),
+  buildContext: async (walletAddress, chain) => {
+    set({ isLoadingContext: true });
+    try {
+      const context = await lockeEngine.buildContext(walletAddress, chain);
+      set({ context, isLoadingContext: false });
+    } catch (error) {
+      console.error('Failed to build context:', error);
+      set({ isLoadingContext: false });
+    }
+  },
   
-  getEvaluation: (ruleId) => get().evaluationCache.get(ruleId),
+  refreshContext: async (walletAddress, chain) => {
+    set({ isLoadingContext: true });
+    try {
+      const context = await lockeEngine.refreshContext(walletAddress, chain);
+      set({ context, isLoadingContext: false });
+    } catch (error) {
+      console.error('Failed to refresh context:', error);
+      set({ isLoadingContext: false });
+    }
+  },
   
-  clearCache: () => set({ evaluationCache: new Map() })
+  clearContext: () => {
+    set({ context: null });
+    lockeEngine.clearAllCaches();
+  },
 }));
