@@ -1,15 +1,17 @@
-// src/app/(auth)/onboarding/page.tsx
+// File: src/app/(auth)/onboarding/page.tsx
+// ============================================================================
+
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useState, Suspense, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '@/store/auth.store';
 import { Button } from '@/components/ui/Button/Button';
 import { LockIcon } from '@/components/locke/LockIcon/LockIcon';
+import { supabase } from '@/lib/supabase/client';
 import styles from './page.module.scss';
 
-// Separate component that uses useSearchParams()
 function OnboardingContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -18,9 +20,48 @@ function OnboardingContent() {
   const [currentStep, setCurrentStep] = useState(0);
   const [username, setUsername] = useState('');
   const [isCompleting, setIsCompleting] = useState(false);
+  const [isCheckingUser, setIsCheckingUser] = useState(true);
 
   const walletAddress = searchParams.get('wallet');
   const chain = searchParams.get('chain');
+
+  useEffect(() => {
+    checkExistingUser();
+  }, [walletAddress]);
+
+  async function checkExistingUser() {
+    if (!walletAddress) {
+      setIsCheckingUser(false);
+      return;
+    }
+
+    try {
+      const { data: existingUser, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('wallet_address', walletAddress)
+        .single();
+
+      if (existingUser && !error) {
+        // User exists, log them in directly
+        setUser({
+          id: existingUser.id,
+          walletAddress: existingUser.wallet_address,
+          username: existingUser.username,
+          displayName: existingUser.display_name,
+          avatarUrl: existingUser.avatar_url,
+          role: existingUser.role,
+          onboardingCompleted: existingUser.onboarding_completed,
+        });
+        router.push('/feed');
+        return;
+      }
+    } catch (error) {
+      console.error('Error checking for existing user:', error);
+    } finally {
+      setIsCheckingUser(false);
+    }
+  }
 
   const STEPS = [
     {
@@ -85,27 +126,65 @@ function OnboardingContent() {
     setIsCompleting(true);
 
     try {
-      const newUser = {
-        id: 'new-user-id',
-        walletAddress: walletAddress!,
-        username: username.toLowerCase() || 'anonymous',
-        role: 'member' as const,
-        onboardingCompleted: true,
-      };
+      // Create user in database
+      const { data: newUser, error } = await supabase
+        .from('users')
+        .insert({
+          wallet_address: walletAddress!,
+          username: username.toLowerCase() || 'anonymous',
+          role: 'member',
+          onboarding_completed: true,
+        })
+        .select()
+        .single();
 
-      setUser(newUser);
+      if (error) throw error;
+
+      setUser({
+        id: newUser.id,
+        walletAddress: newUser.wallet_address,
+        username: newUser.username,
+        role: newUser.role,
+        onboardingCompleted: newUser.onboarding_completed,
+      });
+      
       router.push('/feed');
     } catch (error) {
       console.error('Onboarding failed:', error);
+      // If username is taken, show error
+      if ((error as any).code === '23505') {
+        alert('Username already taken. Please choose another.');
+        setCurrentStep(0);
+      }
+    } finally {
       setIsCompleting(false);
     }
   };
+
+  if (isCheckingUser) {
+    return (
+      <div className={styles.onboarding}>
+        <motion.div 
+          className={styles.checking}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+        >
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+          >
+            <LockIcon locked={false} className={styles.checking__icon} />
+          </motion.div>
+          <p className={styles.checking__text}>Checking account...</p>
+        </motion.div>
+      </div>
+    );
+  }
 
   const step = STEPS[currentStep];
 
   return (
     <div className={styles.onboarding}>
-      {/* Progress Indicator */}
       <div className={styles.progress}>
         {STEPS.map((_, i) => (
           <div
@@ -115,7 +194,6 @@ function OnboardingContent() {
         ))}
       </div>
 
-      {/* Main Card with Page Flip Effect */}
       <motion.div className={styles.cardWrapper} layout>
         <AnimatePresence mode="wait">
           <motion.div
@@ -127,7 +205,6 @@ function OnboardingContent() {
             transition={{ duration: 0.6, type: 'spring', stiffness: 100, damping: 20 }}
           >
             <div className={styles.cardContent}>
-              {/* Icon */}
               <motion.div 
                 className={styles.iconWrapper}
                 initial={{ scale: 0 }}
@@ -140,7 +217,6 @@ function OnboardingContent() {
                 {currentStep === 3 && <span className={styles.stepIcon}>🏆</span>}
               </motion.div>
 
-              {/* Title */}
               <motion.h1 
                 className={styles.title}
                 initial={{ y: 20, opacity: 0 }}
@@ -150,7 +226,6 @@ function OnboardingContent() {
                 {step.title}
               </motion.h1>
 
-              {/* Description */}
               <motion.p 
                 className={styles.description}
                 initial={{ y: 20, opacity: 0 }}
@@ -160,7 +235,6 @@ function OnboardingContent() {
                 {step.description}
               </motion.p>
 
-              {/* Username Input - Step 1 */}
               {currentStep === 0 && (
                 <motion.div 
                   className={styles.inputWrapper}
@@ -180,7 +254,6 @@ function OnboardingContent() {
                 </motion.div>
               )}
 
-              {/* Bullets - Steps 2-4 */}
               {step.bullets && (
                 <motion.ul 
                   className={styles.bullets}
@@ -201,7 +274,6 @@ function OnboardingContent() {
                 </motion.ul>
               )}
 
-              {/* Footer Text */}
               {step.footer && (
                 <motion.p 
                   className={styles.footerText}
@@ -217,7 +289,6 @@ function OnboardingContent() {
         </AnimatePresence>
       </motion.div>
 
-      {/* Navigation Buttons */}
       <div className={styles.actions}>
         <Button variant="ghost" onClick={handleBack} disabled={currentStep === 0}>
           Back
@@ -241,7 +312,6 @@ function OnboardingContent() {
   );
 }
 
-// Main page component with Suspense boundary
 export default function OnboardingPage() {
   return (
     <Suspense fallback={

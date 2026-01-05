@@ -4,6 +4,9 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Link from 'next/link';
+import { useAuthStore } from '@/store/auth.store';
+import { ProfileIcon, SettingsIcon } from '@/components/icons';
 import styles from './PageHeader.module.scss';
 
 interface PageHeaderProps {
@@ -13,6 +16,8 @@ interface PageHeaderProps {
 }
 
 export function PageHeader({ title, subtitle, actions }: PageHeaderProps) {
+  const { user } = useAuthStore();
+
   return (
     <motion.header 
       className={styles.header}
@@ -34,16 +39,35 @@ export function PageHeader({ title, subtitle, actions }: PageHeaderProps) {
             </motion.p>
           )}
         </div>
-        {actions && (
-          <motion.div 
-            className={styles.header__actions}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            {actions}
-          </motion.div>
-        )}
+        
+        <div className={styles.header__right}>
+          {actions && (
+            <motion.div 
+              className={styles.header__actions}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              {actions}
+            </motion.div>
+          )}
+          
+          {user && (
+            <motion.div 
+              className={styles.header__nav}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <Link href={`/profile/${user.username}`} className={styles.header__nav_link}>
+                <ProfileIcon />
+              </Link>
+              <Link href="/settings" className={styles.header__nav_link}>
+                <SettingsIcon />
+              </Link>
+            </motion.div>
+          )}
+        </div>
       </div>
     </motion.header>
   );

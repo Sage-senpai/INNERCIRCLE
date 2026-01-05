@@ -1,20 +1,21 @@
 // File: src/components/feed/Feed/Feed.module.scss
+// ============================================================================
+
 @use '../../../styles/abstracts' as *;
 
 .feed {
-  // Full viewport height minus any top nav if needed, but flexible
   min-height: 100vh;
-  background: $color-onyx; // Light gray background like many dashboards
+  background: $color-onyx;
   display: flex;
   flex-direction: column;
 }
 
 .feed__inner {
   max-width: $max-content-width;
-  margin: 20px auto; // Top margin to separate from header/sidebar
+  margin: 20px auto;
   padding: $spacing-xl $spacing-lg;
   background: white;
-  border-radius: 30px; // Large rounded corners matching the screenshot's main panel
+  border-radius: 30px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
   flex: 1;
   
@@ -33,7 +34,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: $spacing-lg; // Space between posts
+  gap: $spacing-lg;
 }
 
 .feed__loading {
@@ -48,4 +49,24 @@
   color: $color-text-secondary;
   font-size: $font-size-sm;
   font-style: italic;
+}
+
+.feed__empty {
+  @include glass-surface(0.05);
+  border-radius: $radius-lg;
+  padding: $spacing-4xl;
+  text-align: center;
+  @include flex-column;
+  @include flex-center;
+  gap: $spacing-lg;
+}
+
+.feed__empty_icon {
+  font-size: 64px;
+  opacity: 0.5;
+}
+
+.feed__empty_text {
+  color: $color-text-secondary;
+  font-size: $font-size-lg;
 }

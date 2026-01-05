@@ -9,12 +9,14 @@ import { PageHeader } from '@/components/ui/PageHeader/PageHeader';
 import { CommunityCard } from '@/components/communities/CommunityCard/CommunityCard';
 import { Button } from '@/components/ui/Button/Button';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner/LoadingSpinner';
+import { CreateCommunityModal } from '@/components/interactions/CreateCommunityModal/CreateCommunityModal';
 import styles from './page.module.scss';
 
 export default function CommunitiesPage() {
   const [communities, setCommunities] = useState<any[]>([]);
   const [filter, setFilter] = useState<'all' | 'joined' | 'available'>('all');
   const [isLoading, setIsLoading] = useState(true);
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   useEffect(() => {
     loadCommunities();
@@ -107,6 +109,14 @@ export default function CommunitiesPage() {
       <PageHeader 
         title="Communities" 
         subtitle="Token-gated communities powered by on-chain ownership"
+        actions={
+          <Button
+            variant="primary"
+            onClick={() => setShowCreateModal(true)}
+          >
+            + Create Community
+          </Button>
+        }
       />
       
       <div className={styles.communities}>
@@ -168,6 +178,15 @@ export default function CommunitiesPage() {
           </motion.div>
         )}
       </div>
+
+      <CreateCommunityModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSuccess={() => {
+          setShowCreateModal(false);
+          loadCommunities();
+        }}
+      />
     </>
   );
 }

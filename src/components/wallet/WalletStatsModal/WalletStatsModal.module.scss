@@ -1,0 +1,160 @@
+// File: src/components/wallet/WalletStatsModal/WalletStatsModal.module.scss
+// ============================================================================
+
+@use '../../../styles/abstracts' as *;
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba($color-onyx, 0.8);
+  backdrop-filter: $blur-glass;
+  z-index: $z-overlay;
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  @include glass-surface-strong(0.1);
+  border-radius: $radius-xl;
+  padding: $spacing-2xl;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  z-index: $z-modal;
+  box-shadow: $shadow-xl;
+}
+
+.modal__header {
+  @include flex-between;
+  margin-bottom: $spacing-lg;
+}
+
+.modal__title {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+}
+
+.modal__close {
+  width: 32px;
+  height: 32px;
+  @include flex-center;
+  border-radius: $radius-full;
+  font-size: $font-size-2xl;
+  color: $color-text-secondary;
+  @include transition(background, color);
+  
+  &:hover {
+    background: rgba($color-frozen-water, 0.1);
+    color: $color-text-primary;
+  }
+}
+
+.modal__address {
+  @include glass-surface(0.05);
+  padding: $spacing-md;
+  border-radius: $radius-md;
+  margin-bottom: $spacing-xl;
+  @include flex-column;
+  gap: $spacing-xs;
+}
+
+.modal__address_label {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: $font-weight-semibold;
+}
+
+.modal__address_value {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  font-family: $font-family-mono;
+}
+
+.modal__loading {
+  @include flex-column;
+  @include flex-center;
+  padding: $spacing-3xl;
+  gap: $spacing-lg;
+  
+  p {
+    color: $color-text-secondary;
+    font-size: $font-size-base;
+  }
+}
+
+.modal__stats {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.stat {
+  @include glass-surface(0.05);
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-lg;
+  border-radius: $radius-lg;
+  @include transition(background, transform);
+  
+  &:hover {
+    background: rgba($color-frozen-water, 0.08);
+    transform: translateX(4px);
+  }
+  
+  &--highlight {
+    background: rgba($color-medium-jungle, 0.1);
+    border: 1px solid rgba($color-medium-jungle, 0.2);
+    
+    &:hover {
+      background: rgba($color-medium-jungle, 0.15);
+    }
+  }
+}
+
+.stat__icon {
+  font-size: 32px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.stat__content {
+  @include flex-column;
+  gap: 4px;
+  flex: 1;
+}
+
+.stat__label {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  font-weight: $font-weight-medium;
+}
+
+.stat__value {
+  font-size: $font-size-xl;
+  color: $color-text-primary;
+  font-weight: $font-weight-bold;
+  font-family: $font-family-mono;
+}
+
+.stat__meta {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  font-family: $font-family-mono;
+}
+
+.modal__error {
+  @include flex-center;
+  padding: $spacing-3xl;
+  
+  p {
+    color: $color-error;
+    font-size: $font-size-base;
+  }
+}

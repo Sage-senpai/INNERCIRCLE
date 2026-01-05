@@ -1,14 +1,16 @@
 // File: src/components/ui/PageHeader/PageHeader.module.scss
+// ============================================================================
+
 @use '../../../styles/abstracts' as *;
 
 .header {
   position: sticky;
   top: 0;
   z-index: $z-sticky;
-  background: $color-onyx; // Matches sidebar
+  background: $color-onyx;
   color: white;
   padding: $spacing-lg;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); // Depth when scrolling
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   
   @include responsive(mobile) {
     padding: $spacing-md;
@@ -43,6 +45,16 @@
   color: rgba(white, 0.8);
   margin-top: $spacing-xs;
   line-height: $line-height-normal;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-sm;
+  }
+}
+
+.header__right {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
 }
 
 .header__actions {
@@ -50,7 +62,6 @@
   gap: $spacing-md;
   align-items: center;
   
-  // Assuming actions are buttons/icons – make them stand out on purple
   button, .btn {
     background: rgba(white, 0.2);
     color: white;
@@ -59,5 +70,40 @@
     &:hover {
       background: rgba(white, 0.3);
     }
+  }
+}
+
+.header__nav {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding-left: $spacing-md;
+  border-left: 1px solid rgba(white, 0.2);
+  
+  @include responsive(mobile) {
+    display: none;
+  }
+}
+
+.header__nav_link {
+  @include flex-center;
+  width: 40px;
+  height: 40px;
+  border-radius: $radius-full;
+  color: rgba(white, 0.8);
+  @include transition(background, color);
+  
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  &:hover {
+    background: rgba(white, 0.1);
+    color: white;
+  }
+  
+  &:active {
+    transform: scale(0.95);
   }
 }
