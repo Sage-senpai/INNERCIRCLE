@@ -1,5 +1,7 @@
 // File: src/app/(auth)/onboarding/page.tsx
 // ============================================================================
+// FIXED: Better error handling and user creation
+// ============================================================================
 
 'use client';
 
@@ -21,11 +23,17 @@ function OnboardingContent() {
   const [username, setUsername] = useState('');
   const [isCompleting, setIsCompleting] = useState(false);
   const [isCheckingUser, setIsCheckingUser] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const walletAddress = searchParams.get('wallet');
   const chain = searchParams.get('chain');
 
   useEffect(() => {
+    if (!walletAddress) {
+      console.error('No wallet address provided');
+      router.push('/connect');
+      return;
+    }
     checkExistingUser();
   }, [walletAddress]);
 
@@ -36,14 +44,23 @@ function OnboardingContent() {
     }
 
     try {
+      console.log('Checking for existing user:', walletAddress);
+      
       const { data: existingUser, error } = await supabase
         .from('users')
         .select('*')
         .eq('wallet_address', walletAddress)
-        .single();
+        .maybeSingle(); // Use maybeSingle instead of single to avoid errors on no match
 
-      if (existingUser && !error) {
-        // User exists, log them in directly
+      if (error) {
+        console.error('Error checking user:', error);
+        // Don't throw - just proceed with onboarding
+        setIsCheckingUser(false);
+        return;
+      }
+
+      if (existingUser) {
+        console.log('User exists, logging in');
         setUser({
           id: existingUser.id,
           walletAddress: existingUser.wallet_address,
@@ -56,6 +73,8 @@ function OnboardingContent() {
         router.push('/feed');
         return;
       }
+
+      console.log('No existing user found, proceeding with onboarding');
     } catch (error) {
       console.error('Error checking for existing user:', error);
     } finally {
@@ -120,25 +139,61 @@ function OnboardingContent() {
 
   const completeOnboarding = async () => {
     if (currentStep === 0 && !username.trim()) {
+      setError('Please enter a username');
+      return;
+    }
+
+    if (!walletAddress) {
+      setError('No wallet address found');
       return;
     }
 
     setIsCompleting(true);
+    setError(null);
 
     try {
+      console.log('Creating user:', {
+        wallet_address: walletAddress,
+        username: username.toLowerCase() || 'anonymous',
+        chain: chain || 'solana'
+      });
+
       // Create user in database
-      const { data: newUser, error } = await supabase
+      const { data: newUser, error: insertError } = await supabase
         .from('users')
         .insert({
-          wallet_address: walletAddress!,
-          username: username.toLowerCase() || 'anonymous',
+          wallet_address: walletAddress,
+          username: username.toLowerCase() || `user_${Date.now()}`,
           role: 'member',
           onboarding_completed: true,
         })
         .select()
         .single();
 
-      if (error) throw error;
+      if (insertError) {
+        console.error('Insert error:', insertError);
+        
+        // Check specific error codes
+        if (insertError.code === '23505') {
+          // Unique constraint violation
+          if (insertError.message.includes('username')) {
+            setError('Username already taken. Please choose another.');
+            setCurrentStep(0);
+          } else if (insertError.message.includes('wallet_address')) {
+            setError('Wallet already registered. Redirecting...');
+            setTimeout(() => router.push('/feed'), 2000);
+          } else {
+            setError('This username or wallet is already registered.');
+          }
+        } else if (insertError.code === '42501') {
+          setError('Permission denied. Please check your database policies.');
+        } else {
+          setError(`Failed to create account: ${insertError.message}`);
+        }
+        return;
+      }
+
+      console.log('User created successfully:', newUser);
 
       setUser({
         id: newUser.id,
@@ -151,11 +206,7 @@ function OnboardingContent() {
       router.push('/feed');
     } catch (error) {
       console.error('Onboarding failed:', error);
-      // If username is taken, show error
-      if ((error as any).code === '23505') {
-        alert('Username already taken. Please choose another.');
-        setCurrentStep(0);
-      }
+      setError(error instanceof Error ? error.message : 'Unknown error occurred');
     } finally {
       setIsCompleting(false);
     }
@@ -246,11 +297,23 @@ function OnboardingContent() {
                     type="text"
                     placeholder="your_handle"
                     value={username}
-                    onChange={(e) => setUsername(e.target.value.replace(/\s/g, '').toLowerCase())}
+                    onChange={(e) => {
+                      setUsername(e.target.value.replace(/\s/g, '').toLowerCase());
+                      setError(null);
+                    }}
                     className={styles.usernameInput}
                     autoFocus
                   />
                   <p className={styles.hint}>{step.hint}</p>
+                  {error && (
+                    <motion.p 
+                      className={styles.error}
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                    >
+                      {error}
+                    </motion.p>
+                  )}
                 </motion.div>
               )}
 

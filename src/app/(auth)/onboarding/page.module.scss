@@ -182,3 +182,32 @@
     flex-direction: column;
   }
 }
+
+.error {
+  margin-top: $spacing-md;
+  padding: $spacing-md;
+  background: rgba($color-night-bordeaux, 0.1);
+  border: 1px solid rgba($color-night-bordeaux, 0.3);
+  border-radius: $radius-md;
+  color: $color-error;
+  font-size: $font-size-sm;
+  text-align: center;
+}
+
+.checking {
+  @include flex-column;
+  @include flex-center;
+  gap: $spacing-lg;
+  min-height: 400px;
+}
+
+.checking__icon {
+  width: 64px;
+  height: 64px;
+  color: $color-medium-jungle;
+}
+
+.checking__text {
+  font-size: $font-size-lg;
+  color: $color-text-secondary;
+}
