@@ -1,15 +1,22 @@
-// File: src/styles/abstracts/_variables.scss (UPDATED)
+// src/styles/abstracts/_variables.scss - Updated with new color scheme
 // ============================================================================
 
 // ============================================================================
-// COLOR SYSTEM - InnerCircle Brand Palette
+// COLOR SYSTEM - InnerCircle Brand Palette (Updated)
 // ============================================================================
 
-$color-onyx: #000f08;
-$color-frozen-water: #daffed;
-$color-night-bordeaux: #6c0e23;
-$color-rosy-granite: #948b89;
-$color-medium-jungle: #09a129;
+// Primary Colors - Updated to match new design
+$color-onyx: #0a0e27;
+$color-frozen-water: #f0f4ff;
+$color-night-bordeaux: #ff3333;
+$color-rosy-granite: #a8adc7;
+$color-medium-jungle: #00ff88;
+
+// New accent colors
+$color-cyan-accent: #00d9ff;
+$color-purple-accent: #7c3aed;
+$color-card-bg: #0f1229;
+$color-input-bg: #1a1f3a;
 
 // Semantic Color Mappings
 $color-bg-primary: $color-onyx;
@@ -23,20 +30,20 @@ $color-text-tertiary: rgba($color-frozen-water, 0.6);
 $color-locked: $color-night-bordeaux;
 $color-unlocked: $color-medium-jungle;
 $color-success: $color-medium-jungle;
-$color-error: #a73548; // Lightened bordeaux without using function
+$color-error: $color-night-bordeaux;
 $color-warning: #f59e0b;
 
 $color-surface: rgba($color-frozen-water, 0.05);
 $color-surface-hover: rgba($color-frozen-water, 0.08);
 $color-surface-active: rgba($color-frozen-water, 0.12);
 
-$color-border: rgba($color-frozen-water, 0.1);
-$color-border-hover: rgba($color-frozen-water, 0.15);
-$color-border-focus: rgba($color-frozen-water, 0.2);
+$color-border: rgba($color-medium-jungle, 0.1);
+$color-border-hover: rgba($color-medium-jungle, 0.15);
+$color-border-focus: rgba($color-medium-jungle, 0.2);
 
-// Hover state colors (pre-calculated to avoid lighten/darken)
+// Hover state colors
 $color-medium-jungle-hover: #0aba2d;
-$color-night-bordeaux-hover: #8a1229;
+$color-night-bordeaux-hover: #ff5555;
 
 // ============================================================================
 // SPACING SCALE - Consistent rhythm (ALL IN REM)
@@ -55,8 +62,8 @@ $spacing-4xl: 6rem;       // 96px
 // TYPOGRAPHY SYSTEM
 // ============================================================================
 
-$font-family-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-$font-family-mono: 'IBM Plex Mono', 'Courier New', monospace;
+$font-family-primary: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+$font-family-mono: 'Geist Mono', 'IBM Plex Mono', 'Courier New', monospace;
 $font-family-display: $font-family-primary;
 
 $font-size-xs: 0.75rem;    // 12px
@@ -89,7 +96,7 @@ $max-content-width: 42.5rem;        // 680px
 $max-content-width-wide: 75rem;     // 1200px
 
 $header-height: 4rem;               // 64px
-$mobile-nav-height: 4rem;           // 64px - FIXED: Now in rem
+$mobile-nav-height: 4rem;           // 64px
 
 // ============================================================================
 // BREAKPOINTS - Mobile-first approach
@@ -115,6 +122,8 @@ $shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.6);
 
 $shadow-glow-green: 0 0 20px rgba($color-medium-jungle, 0.3);
 $shadow-glow-bordeaux: 0 0 20px rgba($color-night-bordeaux, 0.3);
+$shadow-glow-cyan: 0 0 20px rgba($color-cyan-accent, 0.3);
+$shadow-glow-purple: 0 0 20px rgba($color-purple-accent, 0.3);
 
 $transition-speed: 0.2s;
 $transition-speed-slow: 0.3s;

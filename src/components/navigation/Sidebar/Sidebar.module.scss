@@ -1,3 +1,4 @@
+// src/components/navigation/Sidebar/Sidebar.module.scss - Updated styling
 @use '../../../styles/abstracts' as *;
 
 .sidebar {
@@ -6,12 +7,13 @@
   top: 0;
   bottom: 0;
   width: $sidebar-width;
-  background: $color-onyx; 
-  color: white;
+  background: linear-gradient(180deg, #0f1229 0%, #0a0e27 100%);
+  color: $color-text-primary;
   display: flex;
   flex-direction: column;
   z-index: $z-sidebar;
-  @include custom-scrollbar; // Keep if you want thin scrollbar, or remove for default
+  border-right: 1px solid rgba($color-medium-jungle, 0.1);
+  @include custom-scrollbar;
   
   @include responsive(mobile) {
     display: none;
@@ -20,7 +22,7 @@
 
 .sidebar__header {
   padding: $spacing-xl $spacing-lg;
-  // No border on purple background
+  border-bottom: 1px solid rgba($color-medium-jungle, 0.1);
 }
 
 .sidebar__logo {
@@ -37,7 +39,8 @@
 .sidebar__logo_icon {
   width: 36px;
   height: 36px;
-  color: white; // Force white for visibility on purple
+  color: $color-medium-jungle;
+  filter: drop-shadow($shadow-glow-green);
   flex-shrink: 0;
 }
 
@@ -49,13 +52,16 @@
 .sidebar__logo_text {
   font-size: $font-size-2xl;
   font-weight: $font-weight-extrabold;
-  color: white;
+  background: linear-gradient(135deg, $color-medium-jungle, $color-cyan-accent);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   line-height: 1;
 }
 
 .sidebar__tagline {
   font-size: $font-size-xs;
-  color: rgba(white, 0.7);
+  color: $color-text-secondary;
   font-style: italic;
   letter-spacing: 0.5px;
 }
@@ -74,7 +80,7 @@
 .sidebar__section_title {
   font-size: $font-size-xs;
   font-weight: $font-weight-bold;
-  color: rgba(white, 0.6);
+  color: rgba($color-frozen-water, 0.6);
   text-transform: uppercase;
   letter-spacing: 1.2px;
   padding: 0 $spacing-lg;
@@ -91,22 +97,21 @@
   align-items: center;
   gap: $spacing-md;
   padding: $spacing-sm $spacing-lg;
-  color: rgba(white, 0.9);
+  color: rgba($color-frozen-water, 0.9);
   position: relative;
   font-weight: $font-weight-medium;
   font-size: $font-size-base;
   
   &:hover {
-    background: rgba(white, 0.1);
-    color: white;
+    background: rgba($color-medium-jungle, 0.1);
+    color: $color-frozen-water;
   }
   
   &--active {
-    color: white;
-    background: rgba(white, 0.15);
+    color: $color-medium-jungle;
+    background: rgba($color-medium-jungle, 0.15);
     font-weight: $font-weight-semibold;
     
-    // Left white border indicator like in the screenshot
     &::before {
       content: '';
       position: absolute;
@@ -115,8 +120,9 @@
       transform: translateY(-50%);
       width: 4px;
       height: 70%;
-      background: white;
+      background: $color-medium-jungle;
       border-radius: 0 $radius-sm $radius-sm 0;
+      box-shadow: $shadow-glow-green;
     }
   }
 }
@@ -125,21 +131,20 @@
   width: 22px;
   height: 22px;
   flex-shrink: 0;
-  color: inherit; // Inherits white/opacity
+  color: inherit;
 }
 
 .sidebar__label {
   flex: 1;
 }
 
-// Remove the green indicator — we now use left border
 .sidebar__indicator {
   display: none;
 }
 
 .sidebar__footer {
   padding: $spacing-lg 0;
-  // No top border needed on solid background
+  border-top: 1px solid rgba($color-medium-jungle, 0.1);
 }
 
 .sidebar__user {
@@ -148,12 +153,14 @@
   gap: $spacing-md;
   padding: $spacing-sm $spacing-lg;
   margin: 0 $spacing-lg $spacing-md;
-  background: rgba(white, 0.1);
+  background: rgba($color-medium-jungle, 0.1);
+  border: 1px solid rgba($color-medium-jungle, 0.2);
   border-radius: $radius-lg;
-  @include transition(background);
+  @include transition(background, border-color);
   
   &:hover {
-    background: rgba(white, 0.2);
+    background: rgba($color-medium-jungle, 0.15);
+    border-color: rgba($color-medium-jungle, 0.3);
   }
 }
 
@@ -162,8 +169,8 @@
   width: 40px;
   height: 40px;
   border-radius: $radius-full;
-  background: rgba(white, 0.2);
-  color: white;
+  background: linear-gradient(135deg, $color-medium-jungle, $color-cyan-accent);
+  color: $color-onyx;
   font-weight: $font-weight-bold;
   font-size: $font-size-lg;
   flex-shrink: 0;
@@ -177,12 +184,12 @@
 .sidebar__user_name {
   font-size: $font-size-base;
   font-weight: $font-weight-semibold;
-  color: white;
+  color: $color-frozen-water;
   @include truncate;
 }
 
 .sidebar__user_wallet {
   font-size: $font-size-xs;
-  color: rgba(white, 0.7);
+  color: $color-text-secondary;
   font-family: $font-family-mono;
 }

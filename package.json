@@ -1,6 +1,6 @@
 {
   "name": "innercircle",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -17,6 +17,7 @@
     "@solana/web3.js": "^1.98.4",
     "@supabase/auth-helpers-nextjs": "^0.15.0",
     "@supabase/supabase-js": "^2.89.0",
+    "@vercel/analytics": "^1.1.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.26",
     "next": "16.1.1",

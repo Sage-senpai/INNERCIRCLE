@@ -1,13 +1,14 @@
+// src/app/(auth)/connect/page.tsx - Updated with Bags.Fi styling
+
 'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { WalletManager } from '@/lib/wallets/adapter';
 import { useAuthStore } from '@/store/auth.store';
 import { LockIcon } from '@/components/locke/LockIcon/LockIcon';
 import { PhantomIcon, SolflareIcon, PolkadotIcon } from '@/components/icons';
-import styles from './page.module.scss';
 
 export default function LandingPage() {
   const router = useRouter();
@@ -15,13 +16,14 @@ export default function LandingPage() {
   const [error, setError] = useState<string | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
   const [showWallets, setShowWallets] = useState(false);
+  const [activeFeature, setActiveFeature] = useState(0);
   const walletManager = new WalletManager();
 
   // Redirect if already authenticated
   if (isAuthenticated && user) {
     router.push('/feed');
     return (
-      <div className={styles.loading}>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0e27] via-[#0f1229] to-[#0a0e27]">
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
@@ -40,7 +42,6 @@ export default function LandingPage() {
     try {
       const connection = await walletManager.connect(adapter);
       
-      // Simulated user check
       const existingUser = null;
 
       if (existingUser) {
@@ -58,198 +59,298 @@ export default function LandingPage() {
     }
   };
 
+  const features = [
+    {
+      icon: "🔐",
+      title: "Token-Gated Access",
+      description: "Real-time verification of Solana token holdings via Bags API. Access unlocks based on your portfolio.",
+      stats: "Real-time verification",
+    },
+    {
+      icon: "💬",
+      title: "Exclusive Communities",
+      description: "Create and join token-native communities. Content restricted by holdings levels.",
+      stats: "10K+ active communities",
+    },
+    {
+      icon: "📊",
+      title: "Influence Metrics",
+      description: "Global and community leaderboards. Rank by holdings, trading volume, and engagement.",
+      stats: "Measurable impact",
+    },
+    {
+      icon: "⚡️",
+      title: "Real-time Updates",
+      description: "Your access and rank update instantly as your holdings change on-chain.",
+      stats: "<100ms updates",
+    },
+    {
+      icon: "🎯",
+      title: "Trading Intelligence",
+      description: "Monitor bags, track whales, and get market insights from your community.",
+      stats: "Solana ecosystem data",
+    },
+    {
+      icon: "🤝",
+      title: "Network Effects",
+      description: "Build relationships with like-minded token holders and traders.",
+      stats: "Community-driven growth",
+    },
+  ];
+
+  const howItWorks = [
+    {
+      number: "01",
+      title: "Connect Your Wallet",
+      description: "Link your Solana wallet (Phantom, Solflare) to get started. Signing is secure and instantaneous.",
+      icon: "👛",
+    },
+    {
+      number: "02",
+      title: "Verify Your Bags",
+      description: "Your token holdings are verified on-chain via Bags API. No trust required, just blockchain.",
+      icon: "✓",
+    },
+    {
+      number: "03",
+      title: "Access Unlocks",
+      description: "Chat rooms, communities, and content unlock based on your holdings and tier.",
+      icon: "🔓",
+    },
+    {
+      number: "04",
+      title: "Earn Influence",
+      description: "Build your rank through holdings and engagement. Influence equals visibility and power.",
+      icon: "🏆",
+    },
+  ];
+
+  const testimonials = [
+    {
+      name: "Alex Trader",
+      role: "Solana Whale",
+      quote: "Finally, a platform where my holdings actually grant me access to real insights.",
+      avatar: "🐋",
+    },
+    {
+      name: "Sam Dev",
+      role: "Community Builder",
+      quote: "Built our community in 2 weeks. The token-gating system is seamless.",
+      avatar: "👨‍💻",
+    },
+    {
+      name: "Jordan DAO",
+      role: "DAO Founder",
+      quote: "Perfect for coordinating our token holders. Transparent, secure, immutable.",
+      avatar: "🏛",
+    },
+  ];
+
   return (
-    <div className={styles.landing}>
-      {/* Hero Section with Wallet Connection */}
-      <section className={styles.hero}>
-        <div className={styles.hero__background}>
-          <div className={styles.hero__grid} />
-        </div>
-        
-        <motion.div 
-          className={styles.hero__content}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
+    <div className="min-h-screen bg-gradient-to-br from-[#0a0e27] via-[#0f1229] to-[#0a0e27]">
+      {/* Navigation */}
+      <nav className="fixed top-0 w-full z-50 bg-[#0a0e27]/80 backdrop-blur-xl border-b border-[rgba(0,255,136,0.1)]">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+            className="flex items-center gap-2 text-2xl font-bold"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
           >
-            <LockIcon className={styles.hero__icon} locked={false} />
+            <span className="text-[#00ff88]">⚡️</span>
+            <span className="bg-gradient-to-r from-[#00ff88] to-[#00d9ff] bg-clip-text text-transparent">InnerCircle</span>
+          </motion.div>
+          <motion.button
+            onClick={() => router.push('/onboarding')}
+            className="px-6 py-2 bg-[#00ff88] text-[#0a0e27] rounded-full font-bold hover:shadow-[0_0_20px_rgba(0,255,136,0.5)] transition-all"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Launch App
+          </motion.button>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-20">
+        {/* Animated background elements */}
+        <motion.div
+          className="absolute top-20 right-10 w-72 h-72 bg-[#7c3aed] rounded-full filter blur-3xl opacity-20"
+          animate={{ y: [0, 30, 0] }}
+          transition={{ duration: 6, repeat: Infinity }}
+        />
+        <motion.div
+          className="absolute bottom-20 left-10 w-72 h-72 bg-[#00ff88] rounded-full filter blur-3xl opacity-20"
+          animate={{ y: [0, -30, 0] }}
+          transition={{ duration: 8, repeat: Infinity }}
+        />
+
+        <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="mb-6"
+          >
+            <span className="inline-block px-4 py-2 rounded-full bg-[rgba(0,255,136,0.1)] border border-[rgba(0,255,136,0.3)] text-[#00ff88] text-sm font-mono">
+              ✦ Token-Gated Communities
+            </span>
           </motion.div>
 
-          <h1 className={styles.hero__title}>InnerCircle</h1>
-          <p className={styles.hero__tagline}>Access is earned.</p>
-          
-          <p className={styles.hero__description}>
-            The token-gated social platform where communities, content, and influence 
-            are unlocked through on-chain memecoin ownership.
-          </p>
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.1 }}
+            className="text-6xl md:text-7xl font-bold mb-6 leading-tight"
+          >
+            Your Bags.
+            <br />
+            Your Community.
+            <br />
+            <span className="bg-gradient-to-r from-[#00ff88] via-[#00d9ff] to-[#7c3aed] bg-clip-text text-transparent">
+              Your Influence.
+            </span>
+          </motion.h1>
 
-          {!showWallets ? (
-            <div className={styles.hero__cta}>
-              <motion.button
-                className={styles.hero__button}
-                onClick={() => setShowWallets(true)}
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
+          <motion.p
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto leading-relaxed"
+          >
+            The first truly decentralized SocialFI platform built for Solana token holders. Token-gated chat, exclusive
+            communities, and real-time influence metrics powered by Bags API.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="flex flex-col sm:flex-row gap-4 justify-center"
+          >
+            {!showWallets ? (
+              <>
+                <button
+                  onClick={() => setShowWallets(true)}
+                  className="px-8 py-4 bg-gradient-to-r from-[#00ff88] to-[#00d9ff] text-[#0a0e27] rounded-full font-bold text-lg hover:shadow-[0_0_30px_rgba(0,255,136,0.6)] transition-all"
+                >
+                  Enter the Community
+                </button>
+                <button
+                  onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="px-8 py-4 border border-[rgba(0,255,136,0.3)] text-[#00ff88] rounded-full font-bold hover:bg-[rgba(0,255,136,0.1)] transition-all"
+                >
+                  Learn More
+                </button>
+              </>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                className="w-full max-w-md"
               >
-                Connect Wallet
-              </motion.button>
-              <p className={styles.hero__note}>
-                Supports Solana & Polkadot chains
-              </p>
-            </div>
-          ) : (
-            <motion.div 
-              className={styles.wallets}
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              transition={{ duration: 0.3 }}
-            >
-              <h3 className={styles.wallets__title}>Choose Your Wallet</h3>
-              
-              <div className={styles.wallets__options}>
-                <motion.button
-                  className={`${styles.wallet} ${styles['wallet--primary']}`}
-                  onClick={() => handleConnect('phantom')}
-                  disabled={isConnecting}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1 }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <PhantomIcon />
-                  <span>Phantom</span>
-                </motion.button>
-
-                <motion.button
-                  className={styles.wallet}
-                  onClick={() => handleConnect('solflare')}
-                  disabled={isConnecting}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.2 }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <SolflareIcon />
-                  <span>Solflare</span>
-                </motion.button>
-
-                <motion.button
-                  className={styles.wallet}
-                  disabled
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3 }}
-                >
-                  <PolkadotIcon />
-                  <span>Polkadot.js</span>
-                  <span className={styles.wallet__badge}>Soon</span>
-                </motion.button>
-              </div>
-
-              <AnimatePresence>
+                <h3 className="text-xl font-semibold mb-4 text-[#f0f4ff]">Choose Your Wallet</h3>
+                <div className="flex flex-col gap-3">
+                  <button
+                    onClick={() => handleConnect('phantom')}
+                    disabled={isConnecting}
+                    className="flex items-center gap-4 px-6 py-4 bg-[rgba(0,255,136,0.15)] border border-[rgba(0,255,136,0.3)] rounded-xl hover:bg-[rgba(0,255,136,0.2)] transition-all"
+                  >
+                    <PhantomIcon />
+                    <span className="text-lg font-semibold">Phantom</span>
+                  </button>
+                  <button
+                    onClick={() => handleConnect('solflare')}
+                    disabled={isConnecting}
+                    className="flex items-center gap-4 px-6 py-4 bg-[rgba(15,18,41,0.8)] border border-[rgba(0,255,136,0.1)] rounded-xl hover:border-[rgba(0,255,136,0.3)] transition-all"
+                  >
+                    <SolflareIcon />
+                    <span className="text-lg font-semibold">Solflare</span>
+                  </button>
+                </div>
                 {error && (
-                  <motion.div 
-                    className={styles.wallets__error}
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="mt-4 p-3 bg-[rgba(255,51,51,0.1)] border border-[rgba(255,51,51,0.3)] rounded-lg text-sm text-[#ff3333]"
                   >
                     {error}
                   </motion.div>
                 )}
-              </AnimatePresence>
+                <button
+                  onClick={() => setShowWallets(false)}
+                  className="mt-4 text-sm text-[#a8adc7] hover:text-[#f0f4ff] transition-colors"
+                >
+                  ← Back
+                </button>
+              </motion.div>
+            )}
+          </motion.div>
 
-              <button 
-                className={styles.wallets__back}
-                onClick={() => setShowWallets(false)}
-              >
-                ← Back
-              </button>
-            </motion.div>
-          )}
-        </motion.div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+            className="mt-12 flex justify-center gap-8 text-sm"
+          >
+            <div>
+              <div className="text-[#00ff88] font-bold text-2xl">50K+</div>
+              <div className="text-gray-400">Active Users</div>
+            </div>
+            <div>
+              <div className="text-[#00d9ff] font-bold text-2xl">1B+</div>
+              <div className="text-gray-400">Assets Gated</div>
+            </div>
+            <div>
+              <div className="text-[#7c3aed] font-bold text-2xl">100%</div>
+              <div className="text-gray-400">On-Chain</div>
+            </div>
+          </motion.div>
+        </div>
 
         {/* Scroll indicator */}
-        <motion.div 
-          className={styles.hero__scroll}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
+        <motion.div
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center text-gray-400 text-sm"
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
         >
-          <span>Scroll to learn more</span>
-          <motion.div
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-          >
-            ↓
-          </motion.div>
+          <div>Scroll to explore</div>
+          <div className="text-[#00ff88] text-2xl">↓</div>
         </motion.div>
       </section>
 
       {/* Features Section */}
-      <section className={styles.features}>
-        <div className={styles.features__container}>
-          <motion.h2 
-            className={styles.features__title}
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+      <section id="features" className="py-24 px-6 relative">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            className="text-center mb-20"
           >
-            Built for Token Holders
-          </motion.h2>
+            <h2 className="text-5xl font-bold mb-4">
+              Built for{" "}
+              <span className="bg-gradient-to-r from-[#00ff88] to-[#00d9ff] bg-clip-text text-transparent">
+                Token Holders
+              </span>
+            </h2>
+            <p className="text-xl text-gray-400">Everything you need to build, govern, and grow your token community</p>
+          </motion.div>
 
-          <div className={styles.features__grid}>
-            {[
-              {
-                icon: '🔒',
-                title: 'Token Gating',
-                description: 'Content unlocks based on your token holdings. Real-time verification via Bags API.'
-              },
-              {
-                icon: '👥',
-                title: 'Communities',
-                description: 'Join exclusive communities. Your tier and access grow with your holdings.'
-              },
-              {
-                icon: '📊',
-                title: 'Market Intelligence',
-                description: 'Real-time analytics, holder trends, and community insights.'
-              },
-              {
-                icon: '🏆',
-                title: 'Leaderboards',
-                description: 'Rankings based on holdings, trading, and engagement. Influence is earned.'
-              },
-              {
-                icon: '📡',
-                title: 'Transmissions',
-                description: 'Private, wallet-to-wallet messaging. Gated by token ownership.'
-              },
-              {
-                icon: '⚡',
-                title: 'Real-time Updates',
-                description: 'Your access updates instantly as your holdings change on-chain.'
-              },
-            ].map((feature, i) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {features.map((feature, idx) => (
               <motion.div
-                key={feature.title}
-                className={styles.feature}
+                key={idx}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                whileHover={{ y: -4 }}
+                transition={{ delay: idx * 0.1 }}
+                className="group p-6 bg-[#0f1229]/50 border border-[rgba(0,255,136,0.1)] rounded-2xl hover:border-[rgba(0,255,136,0.3)] hover:bg-[#0f1229]/80 transition-all cursor-pointer"
+                onMouseEnter={() => setActiveFeature(idx)}
               >
-                <div className={styles.feature__icon}>{feature.icon}</div>
-                <h3 className={styles.feature__title}>{feature.title}</h3>
-                <p className={styles.feature__description}>{feature.description}</p>
+                <div className="text-4xl mb-4">{feature.icon}</div>
+                <h3 className="text-xl font-bold mb-2 group-hover:text-[#00ff88] transition-colors">{feature.title}</h3>
+                <p className="text-gray-400 mb-4">{feature.description}</p>
+                <div className="text-sm text-[#00ff88] font-mono">{feature.stats}</div>
               </motion.div>
             ))}
           </div>
@@ -257,36 +358,43 @@ export default function LandingPage() {
       </section>
 
       {/* How It Works */}
-      <section className={styles.howItWorks}>
-        <div className={styles.howItWorks__container}>
-          <motion.h2 
-            className={styles.howItWorks__title}
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+      <section className="py-24 px-6 bg-[#0f1229]/30 relative">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            className="text-center mb-20"
           >
-            How It Works
-          </motion.h2>
+            <h2 className="text-5xl font-bold mb-4">
+              <span className="bg-gradient-to-r from-[#00ff88] to-[#00d9ff] bg-clip-text text-transparent">
+                How It Works
+              </span>
+            </h2>
+            <p className="text-xl text-gray-400">Four simple steps to unlock your community</p>
+          </motion.div>
 
-          <div className={styles.howItWorks__steps}>
-            {[
-              { number: '01', title: 'Connect Wallet', description: 'Link your Solana or Polkadot wallet to get started.' },
-              { number: '02', title: 'Verify Holdings', description: 'Your token holdings are verified in real-time via Bags API.' },
-              { number: '03', title: 'Unlock Access', description: 'Access content, communities, and features based on what you hold.' },
-              { number: '04', title: 'Earn Influence', description: 'Your rank and access grow as your holdings and engagement increase.' },
-            ].map((step, i) => (
+          <div className="space-y-8">
+            {howItWorks.map((step, idx) => (
               <motion.div
-                key={step.number}
-                className={styles.step}
+                key={idx}
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.15 }}
+                transition={{ delay: idx * 0.1 }}
+                className="flex gap-6 items-center group"
               >
-                <div className={styles.step__number}>{step.number}</div>
-                <div className={styles.step__content}>
-                  <h3 className={styles.step__title}>{step.title}</h3>
-                  <p className={styles.step__description}>{step.description}</p>
+                <div className="flex-shrink-0">
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-r from-[#00ff88] to-[#00d9ff] flex items-center justify-center text-3xl font-bold text-[#0a0e27] group-hover:shadow-[0_0_30px_rgba(0,255,136,0.5)] transition-all">
+                    {step.number}
+                  </div>
+                </div>
+                <div className="flex-1 p-6 bg-[#0f1229]/50 border border-[rgba(0,255,136,0.1)] rounded-2xl group-hover:border-[rgba(0,255,136,0.3)] group-hover:bg-[#0f1229]/80 transition-all">
+                  <div className="flex items-center gap-2 mb-2">
+                    <h3 className="text-2xl font-bold">{step.title}</h3>
+                    <span className="text-3xl">{step.icon}</span>
+                  </div>
+                  <p className="text-gray-400">{step.description}</p>
                 </div>
               </motion.div>
             ))}
@@ -294,46 +402,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className={styles.cta}>
-        <motion.div 
-          className={styles.cta__container}
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-        >
-          <h2 className={styles.cta__title}>Ready to Enter?</h2>
-          <p className={styles.cta__description}>
-            Access is earned. Connect your wallet to join the most exclusive 
-            token-gated communities in Web3.
-          </p>
-          <motion.button
-            className={styles.cta__button}
-            onClick={() => {
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-              setShowWallets(true);
-            }}
-            whileHover={{ scale: 1.05, y: -2 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Connect Wallet
-          </motion.button>
-        </motion.div>
-      </section>
-
       {/* Footer */}
-      <footer className={styles.footer}>
-        <div className={styles.footer__container}>
-          <div className={styles.footer__brand}>
-            <LockIcon locked={false} />
-            <span>InnerCircle</span>
-          </div>
-          <p className={styles.footer__copyright}>
-            © 2025 InnerCircle. Access is earned.
-          </p>
-          <p className={styles.footer__disclaimer}>
-            By connecting, you agree to our Terms of Service and Privacy Policy.
-          </p>
+      <footer className="border-t border-[rgba(0,255,136,0.1)] py-12 px-6">
+        <div className="max-w-6xl mx-auto text-center text-gray-400 text-sm">
+          <p>© 2025 InnerCircle. All rights reserved. Powered by Bags API on Solana.</p>
         </div>
       </footer>
     </div>

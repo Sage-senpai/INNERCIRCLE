@@ -1,388 +1,272 @@
-// File: src/app/(auth)/onboarding/page.tsx
-// ============================================================================
-// FIXED: Better error handling and user creation
-// ============================================================================
+// src/app/(auth)/onboarding/page.tsx - Updated with Bags.Fi styling
 
-'use client';
+"use client"
 
-import { useState, Suspense, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useAuthStore } from '@/store/auth.store';
-import { Button } from '@/components/ui/Button/Button';
-import { LockIcon } from '@/components/locke/LockIcon/LockIcon';
-import { supabase } from '@/lib/supabase/client';
-import styles from './page.module.scss';
+import { useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { motion } from "framer-motion"
 
-function OnboardingContent() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const { setUser } = useAuthStore();
-  
-  const [currentStep, setCurrentStep] = useState(0);
-  const [username, setUsername] = useState('');
-  const [isCompleting, setIsCompleting] = useState(false);
-  const [isCheckingUser, setIsCheckingUser] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export default function OnboardingPage() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const [currentStep, setCurrentStep] = useState(0)
+  const [username, setUsername] = useState("")
+  const [isCompleting, setIsCompleting] = useState(false)
 
-  const walletAddress = searchParams.get('wallet');
-  const chain = searchParams.get('chain');
-
-  useEffect(() => {
-    if (!walletAddress) {
-      console.error('No wallet address provided');
-      router.push('/connect');
-      return;
-    }
-    checkExistingUser();
-  }, [walletAddress]);
-
-  async function checkExistingUser() {
-    if (!walletAddress) {
-      setIsCheckingUser(false);
-      return;
-    }
-
-    try {
-      console.log('Checking for existing user:', walletAddress);
-      
-      const { data: existingUser, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('wallet_address', walletAddress)
-        .maybeSingle(); // Use maybeSingle instead of single to avoid errors on no match
-
-      if (error) {
-        console.error('Error checking user:', error);
-        // Don't throw - just proceed with onboarding
-        setIsCheckingUser(false);
-        return;
-      }
-
-      if (existingUser) {
-        console.log('User exists, logging in');
-        setUser({
-          id: existingUser.id,
-          walletAddress: existingUser.wallet_address,
-          username: existingUser.username,
-          displayName: existingUser.display_name,
-          avatarUrl: existingUser.avatar_url,
-          role: existingUser.role,
-          onboardingCompleted: existingUser.onboarding_completed,
-        });
-        router.push('/feed');
-        return;
-      }
-
-      console.log('No existing user found, proceeding with onboarding');
-    } catch (error) {
-      console.error('Error checking for existing user:', error);
-    } finally {
-      setIsCheckingUser(false);
-    }
-  }
+  const walletAddress = searchParams.get("wallet")
 
   const STEPS = [
     {
-      title: 'Choose Your Handle',
-      description: 'Your public identity on InnerCircle. This handle is permanently linked to your wallet.',
-      hint: 'Handles are unique and immutable. Choose carefully.',
+      title: "Choose Your Handle",
+      description: "Pick a unique username that represents you in the community.",
+      hint: "Your handle is permanent and linked to your wallet.",
+      icon: "👤",
+      type: "input",
     },
     {
-      title: 'How Access Works',
-      description: 'Content on InnerCircle is protected by on-chain ownership.',
+      title: "Your Bags Matter Here",
+      description: "Your token holdings determine your access level and community tier.",
       bullets: [
-        'Posts can be restricted by token ownership',
-        'Access is verified directly on-chain',
-        'Permissions update automatically as holdings change',
+        "Every token you hold unlocks exclusive content and channels",
+        "Higher holdings = deeper access and influence",
+        "Your portfolio is your membership card",
       ],
-      footer: 'Your wallet is your key.',
+      icon: "💰",
+      type: "info",
     },
     {
-      title: 'Communities Are Token-Native',
-      description: 'Communities form around tokens, narratives, and shared incentives.',
+      title: "Communities Are Token-Native",
+      description: "Join or create communities centered around specific tokens.",
       bullets: [
-        'Communities are created around specific tokens',
-        'Entry tiers are determined by holdings or criteria',
-        'Higher tiers unlock deeper access and visibility',
+        "Discover communities built around your favorite tokens",
+        "Each community has its own governance and rules",
+        "Token-based entry tiers create natural incentives",
       ],
+      icon: "👥",
+      type: "info",
     },
     {
-      title: 'Influence Is Measurable',
-      description: 'Your position reflects both capital and contribution.',
+      title: "Influence Through Engagement",
+      description: "Build your reputation and rise through the leaderboards.",
       bullets: [
-        'Global and community-specific leaderboards',
-        'Rankings consider holdings and activity',
-        'Influence unlocks reach, visibility, and privileges',
+        "Global rankings track top holders and influencers",
+        "Community-specific leaderboards show local power players",
+        "Your influence affects your visibility and reach",
       ],
-      footer: 'Influence is earned, not claimed.',
+      icon: "🏆",
+      type: "info",
     },
-  ];
+    {
+      title: "Real-Time Verification",
+      description: "Your holdings are verified instantly on-chain via Bags API.",
+      bullets: [
+        "No centralized intermediary - just blockchain",
+        "Access updates instantly as your holdings change",
+        "Complete transparency and security",
+      ],
+      icon: "✓",
+      type: "info",
+    },
+    {
+      title: "Welcome to InnerCircle",
+      description: "You're all set! Get ready to unlock your community and build influence.",
+      bullets: [
+        "Your wallet is your identity",
+        "Your bags define your access",
+        "Your engagement builds your influence",
+      ],
+      icon: "⚡️",
+      type: "final",
+    },
+  ]
 
   const handleNext = () => {
     if (currentStep < STEPS.length - 1) {
-      setCurrentStep(prev => prev + 1);
+      setCurrentStep((prev) => prev + 1)
     } else {
-      completeOnboarding();
+      completeOnboarding()
     }
-  };
+  }
 
   const handleBack = () => {
     if (currentStep > 0) {
-      setCurrentStep(prev => prev - 1);
+      setCurrentStep((prev) => prev - 1)
     }
-  };
-
-  const handleSkip = () => {
-    completeOnboarding();
-  };
-
-  const completeOnboarding = async () => {
-    if (currentStep === 0 && !username.trim()) {
-      setError('Please enter a username');
-      return;
-    }
-
-    if (!walletAddress) {
-      setError('No wallet address found');
-      return;
-    }
-
-    setIsCompleting(true);
-    setError(null);
-
-    try {
-      console.log('Creating user:', {
-        wallet_address: walletAddress,
-        username: username.toLowerCase() || 'anonymous',
-        chain: chain || 'solana'
-      });
-
-      // Create user in database
-      const { data: newUser, error: insertError } = await supabase
-        .from('users')
-        .insert({
-          wallet_address: walletAddress,
-          username: username.toLowerCase() || `user_${Date.now()}`,
-          role: 'member',
-          onboarding_completed: true,
-        })
-        .select()
-        .single();
-
-      if (insertError) {
-        console.error('Insert error:', insertError);
-        
-        // Check specific error codes
-        if (insertError.code === '23505') {
-          // Unique constraint violation
-          if (insertError.message.includes('username')) {
-            setError('Username already taken. Please choose another.');
-            setCurrentStep(0);
-          } else if (insertError.message.includes('wallet_address')) {
-            setError('Wallet already registered. Redirecting...');
-            setTimeout(() => router.push('/feed'), 2000);
-          } else {
-            setError('This username or wallet is already registered.');
-          }
-        } else if (insertError.code === '42501') {
-          setError('Permission denied. Please check your database policies.');
-        } else {
-          setError(`Failed to create account: ${insertError.message}`);
-        }
-        return;
-      }
-
-      console.log('User created successfully:', newUser);
-
-      setUser({
-        id: newUser.id,
-        walletAddress: newUser.wallet_address,
-        username: newUser.username,
-        role: newUser.role,
-        onboardingCompleted: newUser.onboarding_completed,
-      });
-      
-      router.push('/feed');
-    } catch (error) {
-      console.error('Onboarding failed:', error);
-      setError(error instanceof Error ? error.message : 'Unknown error occurred');
-    } finally {
-      setIsCompleting(false);
-    }
-  };
-
-  if (isCheckingUser) {
-    return (
-      <div className={styles.onboarding}>
-        <motion.div 
-          className={styles.checking}
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-        >
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-          >
-            <LockIcon locked={false} className={styles.checking__icon} />
-          </motion.div>
-          <p className={styles.checking__text}>Checking account...</p>
-        </motion.div>
-      </div>
-    );
   }
 
-  const step = STEPS[currentStep];
+  const handleSkip = () => {
+    completeOnboarding()
+  }
+
+  const completeOnboarding = async () => {
+    setIsCompleting(true)
+    // Simulate API call
+    setTimeout(() => {
+      router.push("/")
+      setIsCompleting(false)
+    }, 1000)
+  }
+
+  const step = STEPS[currentStep]
 
   return (
-    <div className={styles.onboarding}>
-      <div className={styles.progress}>
-        {STEPS.map((_, i) => (
-          <div
-            key={i}
-            className={`${styles.progressDot} ${i <= currentStep ? styles.active : ''}`}
-          />
-        ))}
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-[#0a0e27] via-[#0f1229] to-[#0a0e27] flex items-center justify-center px-6 py-12">
+      {/* Background effects */}
+      <motion.div
+        className="absolute top-0 right-0 w-96 h-96 bg-[#7c3aed] rounded-full filter blur-3xl opacity-10"
+        animate={{ y: [0, 30, 0] }}
+        transition={{ duration: 6, repeat: Infinity }}
+      />
+      <motion.div
+        className="absolute bottom-0 left-0 w-96 h-96 bg-[#00ff88] rounded-full filter blur-3xl opacity-10"
+        animate={{ y: [0, -30, 0] }}
+        transition={{ duration: 8, repeat: Infinity }}
+      />
 
-      <motion.div className={styles.cardWrapper} layout>
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentStep}
-            className={styles.card}
-            initial={{ opacity: 0, rotateY: 60, scale: 0.95 }}
-            animate={{ opacity: 1, rotateY: 0, scale: 1 }}
-            exit={{ opacity: 0, rotateY: -60, scale: 0.95 }}
-            transition={{ duration: 0.6, type: 'spring', stiffness: 100, damping: 20 }}
-          >
-            <div className={styles.cardContent}>
-              <motion.div 
-                className={styles.iconWrapper}
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+      <div className="relative z-10 w-full max-w-2xl">
+        {/* Progress indicator */}
+        <motion.div
+          className="flex gap-2 justify-center mb-12"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          {STEPS.map((_, idx) => (
+            <motion.div
+              key={idx}
+              className={`h-2 rounded-full transition-all ${
+                idx <= currentStep ? "bg-gradient-to-r from-[#00ff88] to-[#00d9ff]" : "bg-[rgba(0,255,136,0.1)]"
+              }`}
+              animate={{ width: idx <= currentStep ? 32 : 8 }}
+            />
+          ))}
+        </motion.div>
+
+        {/* Card */}
+        <motion.div
+          key={currentStep}
+          initial={{ opacity: 0, y: 30, rotateX: 20 }}
+          animate={{ opacity: 1, y: 0, rotateX: 0 }}
+          exit={{ opacity: 0, y: -30, rotateX: -20 }}
+          transition={{ duration: 0.5 }}
+          className="bg-[#0f1229]/80 backdrop-blur-xl border border-[rgba(0,255,136,0.2)] rounded-3xl p-12 mb-8"
+        >
+          <div className="text-center">
+            {/* Icon */}
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+              className="text-7xl mb-6 inline-block"
+            >
+              {step.icon}
+            </motion.div>
+
+            {/* Title */}
+            <motion.h1
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="text-4xl font-bold mb-4"
+            >
+              {step.title}
+            </motion.h1>
+
+            {/* Description */}
+            <motion.p
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="text-xl text-gray-300 mb-8 leading-relaxed"
+            >
+              {step.description}
+            </motion.p>
+
+            {/* Input field */}
+            {step.type === "input" && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="mb-6"
               >
-                {currentStep === 1 && <LockIcon locked className={styles.lockIcon} />}
-                {currentStep === 0 && <span className={styles.stepIcon}>👤</span>}
-                {currentStep === 2 && <span className={styles.stepIcon}>👥</span>}
-                {currentStep === 3 && <span className={styles.stepIcon}>🏆</span>}
+                <input
+                  type="text"
+                  placeholder="your_handle"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value.replace(/\s/g, "").toLowerCase())}
+                  className="w-full px-6 py-4 text-center text-2xl font-bold bg-[#1a1f3a] border border-[rgba(0,255,136,0.2)] rounded-xl text-[#00ff88] placeholder-gray-500 focus:outline-none focus:border-[#00ff88] focus:shadow-[0_0_20px_rgba(0,255,136,0.3)] transition-all"
+                  autoFocus
+                />
+                <p className="text-sm text-gray-400 mt-3">{step.hint}</p>
               </motion.div>
+            )}
 
-              <motion.h1 
-                className={styles.title}
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.3 }}
+            {/* Bullets */}
+            {step.bullets && (
+              <motion.ul
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className="text-left space-y-3 mb-8"
               >
-                {step.title}
-              </motion.h1>
+                {step.bullets.map((bullet, idx) => (
+                  <motion.li
+                    key={idx}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.6 + idx * 0.1 }}
+                    className="flex gap-3 p-4 bg-[rgba(0,255,136,0.05)] border border-[rgba(0,255,136,0.1)] rounded-lg text-gray-300"
+                  >
+                    <span className="text-[#00ff88] font-bold">✓</span>
+                    {bullet}
+                  </motion.li>
+                ))}
+              </motion.ul>
+            )}
+          </div>
+        </motion.div>
 
-              <motion.p 
-                className={styles.description}
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.4 }}
-              >
-                {step.description}
-              </motion.p>
-
-              {currentStep === 0 && (
-                <motion.div 
-                  className={styles.inputWrapper}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 }}
-                >
-                  <input
-                    type="text"
-                    placeholder="your_handle"
-                    value={username}
-                    onChange={(e) => {
-                      setUsername(e.target.value.replace(/\s/g, '').toLowerCase());
-                      setError(null);
-                    }}
-                    className={styles.usernameInput}
-                    autoFocus
-                  />
-                  <p className={styles.hint}>{step.hint}</p>
-                  {error && (
-                    <motion.p 
-                      className={styles.error}
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                    >
-                      {error}
-                    </motion.p>
-                  )}
-                </motion.div>
-              )}
-
-              {step.bullets && (
-                <motion.ul 
-                  className={styles.bullets}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.5 }}
-                >
-                  {step.bullets.map((bullet, i) => (
-                    <motion.li 
-                      key={i}
-                      initial={{ opacity: 0, x: -30 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.6 + i * 0.1 }}
-                    >
-                      {bullet}
-                    </motion.li>
-                  ))}
-                </motion.ul>
-              )}
-
-              {step.footer && (
-                <motion.p 
-                  className={styles.footerText}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.8 }}
-                >
-                  {step.footer}
-                </motion.p>
-              )}
-            </div>
-          </motion.div>
-        </AnimatePresence>
-      </motion.div>
-
-      <div className={styles.actions}>
-        <Button variant="ghost" onClick={handleBack} disabled={currentStep === 0}>
-          Back
-        </Button>
-
-        <div className={styles.actionsRight}>
-          <Button variant="ghost" onClick={handleSkip}>
-            Skip
-          </Button>
-          <Button
-            variant="primary"
-            onClick={handleNext}
-            isLoading={isCompleting}
-            disabled={currentStep === 0 && !username.trim()}
+        {/* Actions */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+          className="flex gap-4 justify-between"
+        >
+          <button
+            onClick={handleBack}
+            disabled={currentStep === 0}
+            className="px-6 py-3 border border-[rgba(0,255,136,0.2)] text-gray-300 rounded-full hover:border-[#00ff88] hover:text-[#00ff88] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
-            {currentStep === STEPS.length - 1 ? 'Complete' : 'Next'}
-          </Button>
-        </div>
+            Back
+          </button>
+
+          <div className="flex gap-4">
+            {currentStep < STEPS.length - 1 && (
+              <button onClick={handleSkip} className="px-6 py-3 text-gray-400 hover:text-[#00ff88] transition-all">
+                Skip
+              </button>
+            )}
+            <button
+              onClick={handleNext}
+              disabled={currentStep === 0 && !username.trim()}
+              className="px-8 py-3 bg-gradient-to-r from-[#00ff88] to-[#00d9ff] text-[#0a0e27] rounded-full font-bold hover:shadow-[0_0_20px_rgba(0,255,136,0.5)] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            >
+              {currentStep === STEPS.length - 1 ? "Complete" : "Next"}
+            </button>
+          </div>
+        </motion.div>
+
+        {/* Step indicator text */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.9 }}
+          className="text-center mt-8 text-gray-500 text-sm"
+        >
+          Step {currentStep + 1} of {STEPS.length}
+        </motion.div>
       </div>
     </div>
-  );
-}
-
-export default function OnboardingPage() {
-  return (
-    <Suspense fallback={
-      <div className={styles.loading}>
-        <p>Loading onboarding...</p>
-      </div>
-    }>
-      <OnboardingContent />
-    </Suspense>
-  );
+  )
 }
