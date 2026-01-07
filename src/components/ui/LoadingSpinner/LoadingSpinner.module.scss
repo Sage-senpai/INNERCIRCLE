@@ -1,5 +1,5 @@
 // File: src/components/ui/LoadingSpinner/LoadingSpinner.module.scss
-
+@use '../../../styles/abstracts' as *;
 .spinner {
   display: inline-flex;
   @include flex-center;

@@ -6,145 +6,157 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba($color-onyx, 0.8);
-  backdrop-filter: $blur-glass;
-  z-index: $z-overlay;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  z-index: 9998;
 }
 
 .modal {
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  @include glass-surface-strong(0.1);
-  border-radius: $radius-xl;
-  padding: $spacing-2xl;
+  transform: translate(-50%, -50%) !important;
+  background: rgba(20, 24, 32, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 2rem;
   max-width: 500px;
   width: 90%;
   max-height: 90vh;
   overflow-y: auto;
-  z-index: $z-modal;
-  box-shadow: $shadow-xl;
+  z-index: 9999;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  margin: 0 !important;
+
+  @media (max-width: 768px) {
+    padding: 1.5rem;
+    width: 95%;
+    max-height: 95vh;
+  }
 }
 
 .modal__header {
-  @include flex-between;
-  margin-bottom: $spacing-xl;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
 }
 
 .modal__title {
-  font-size: $font-size-2xl;
-  font-weight: $font-weight-bold;
-  color: $color-text-primary;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  
+  @media (max-width: 768px) {
+    font-size: 1.25rem;
+  }
 }
 
 .modal__close {
   width: 32px;
   height: 32px;
-  @include flex-center;
-  border-radius: $radius-full;
-  font-size: $font-size-2xl;
-  color: $color-text-secondary;
-  @include transition(background, color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  color: rgba(255, 255, 255, 0.6);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
   
   &:hover {
-    background: rgba($color-frozen-water, 0.1);
-    color: $color-text-primary;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
   }
-}
-
-.modal__label {
-  font-size: $font-size-sm;
-  font-weight: $font-weight-semibold;
-  color: $color-text-primary;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-
-.modal__textarea,
-.modal__select {
-  @include glass-surface(0.05);
-  padding: $spacing-md;
-  border-radius: $radius-md;
-  font-size: $font-size-base;
-  color: $color-text-primary;
-  @include transition(background, border-color);
-  
-  &::placeholder {
-    color: $color-text-secondary;
-  }
-  
-  &:focus {
-    outline: none;
-    background: rgba($color-frozen-water, 0.08);
-    border-color: $color-medium-jungle;
-  }
-}
-
-.modal__textarea {
-  resize: vertical;
-  font-family: $font-family-primary;
-}
-
-
-.modal__actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: $spacing-md;
-  margin-top: $spacing-lg;
 }
 
 .modal__form {
   display: flex;
   flex-direction: column;
-  gap: $spacing-lg;
+  gap: 1.25rem;
   
-  @include responsive(mobile) {
-    gap: $spacing-md;
+  @media (max-width: 768px) {
+    gap: 1rem;
   }
 }
 
 .modal__field {
   display: flex;
   flex-direction: column;
-  gap: $spacing-sm;
+  gap: 0.5rem;
 }
 
-.modal__input {
-  @include glass-surface(0.05);
-  padding: $spacing-md;
-  border-radius: $radius-md;
-  font-size: $font-size-base;
-  color: $color-text-primary;
-  @include transition(background, border-color);
+.modal__label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.modal__input,
+.modal__textarea,
+.modal__select {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.875rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #ffffff;
+  width: 100%;
+  transition: all 0.2s ease;
   
-  @include responsive(mobile) {
-    padding: $spacing-sm;
-    font-size: $font-size-sm;
+  @media (max-width: 768px) {
+    padding: 0.75rem;
+    font-size: 0.875rem;
   }
   
   &::placeholder {
-    color: $color-text-secondary;
+    color: rgba(255, 255, 255, 0.4);
   }
   
   &:focus {
     outline: none;
-    background: rgba($color-frozen-water, 0.08);
-    border-color: $color-medium-jungle;
+    background: rgba(255, 255, 255, 0.08);
+    border-color: #4ade80;
   }
 }
 
+.modal__textarea {
+  resize: vertical;
+  font-family: inherit;
+  min-height: 80px;
+}
+
+.modal__select {
+  cursor: pointer;
+}
+
 .modal__error {
-  padding: $spacing-md;
-  background: rgba($color-night-bordeaux, 0.1);
-  border: 1px solid rgba($color-night-bordeaux, 0.3);
-  border-radius: $radius-md;
-  color: $color-error;
-  font-size: $font-size-sm;
+  padding: 0.875rem;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  color: #ef4444;
+  font-size: 0.875rem;
   
-  @include responsive(mobile) {
-    padding: $spacing-sm;
-    font-size: $font-size-xs;
+  @media (max-width: 768px) {
+    padding: 0.75rem;
+    font-size: 0.8125rem;
+  }
+}
+
+.modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.875rem;
+  margin-top: 1.25rem;
+  
+  @media (max-width: 768px) {
+    gap: 0.75rem;
+    flex-direction: column-reverse;
   }
 }

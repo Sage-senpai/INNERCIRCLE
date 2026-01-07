@@ -1,5 +1,5 @@
 // File: src/app/(platform)/transmissions/page.module.scss
-
+@use '../../../styles/abstracts' as *;
 .transmissions {
   max-width: $max-content-width;
   margin: 0 auto;

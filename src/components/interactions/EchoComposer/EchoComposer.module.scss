@@ -1,5 +1,5 @@
 // File: src/components/interactions/EchoComposer/EchoComposer.module.scss
-
+@use '../../../styles/abstracts' as *;
 .composer {
   margin-top: $spacing-md;
   padding-top: $spacing-md;

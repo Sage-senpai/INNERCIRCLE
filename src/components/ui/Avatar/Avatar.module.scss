@@ -1,5 +1,5 @@
 // File: src/components/ui/Avatar/Avatar.module.scss
-
+@use '../../../styles/abstracts' as *;
 .avatar {
   border-radius: $radius-full;
   overflow: hidden;

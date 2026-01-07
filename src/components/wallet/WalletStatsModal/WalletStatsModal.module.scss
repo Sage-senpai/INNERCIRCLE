@@ -1,55 +1,132 @@
 // File: src/components/wallet/WalletStatsModal/WalletStatsModal.module.scss
+// ============================================================================
+
+@use '../../../styles/abstracts' as *;
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  z-index: 9998;
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) !important;
+  background: rgba(20, 24, 32, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  z-index: 9999;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  margin: 0 !important;
+
+  @media (max-width: 768px) {
+    padding: 1.5rem;
+    width: 95%;
+    max-height: 95vh;
+  }
+}
+
+.modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.modal__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  
+  @media (max-width: 768px) {
+    font-size: 1.25rem;
+  }
+}
+
+.modal__close {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  color: rgba(255, 255, 255, 0.6);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+  }
+}
 
 .modal__address {
-  @include glass-surface(0.05);
-  padding: $spacing-md;
-  border-radius: $radius-md;
-  margin-bottom: $spacing-xl;
-  @include flex-column;
-  gap: $spacing-xs;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.875rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
   
-  @include responsive(mobile) {
-    padding: $spacing-sm;
-    margin-bottom: $spacing-lg;
+  @media (max-width: 768px) {
+    padding: 0.75rem;
+    margin-bottom: 1.25rem;
   }
 }
 
 .modal__address_label {
-  font-size: $font-size-xs;
-  color: $color-text-secondary;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  font-weight: $font-weight-semibold;
+  font-weight: 600;
 }
 
 .modal__address_value {
-  font-size: $font-size-sm;
-  color: $color-text-primary;
-  font-family: $font-family-mono;
+  font-size: 0.875rem;
+  color: #ffffff;
+  font-family: 'Courier New', monospace;
   word-break: break-all;
   
-  @include responsive(mobile) {
-    font-size: $font-size-xs;
+  @media (max-width: 768px) {
+    font-size: 0.8125rem;
   }
 }
 
 .modal__loading {
-  @include flex-column;
-  @include flex-center;
-  padding: $spacing-3xl;
-  gap: $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  gap: 1.25rem;
   
-  @include responsive(mobile) {
-    padding: $spacing-2xl;
-    gap: $spacing-md;
+  @media (max-width: 768px) {
+    padding: 2rem;
+    gap: 1rem;
   }
   
   p {
-    color: $color-text-secondary;
-    font-size: $font-size-base;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 1rem;
     
-    @include responsive(mobile) {
-      font-size: $font-size-sm;
+    @media (max-width: 768px) {
+      font-size: 0.875rem;
     }
   }
 }
@@ -57,38 +134,39 @@
 .modal__stats {
   display: flex;
   flex-direction: column;
-  gap: $spacing-md;
+  gap: 0.875rem;
   
-  @include responsive(mobile) {
-    gap: $spacing-sm;
+  @media (max-width: 768px) {
+    gap: 0.75rem;
   }
 }
 
 .stat {
-  @include glass-surface(0.05);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
-  gap: $spacing-md;
-  padding: $spacing-lg;
-  border-radius: $radius-lg;
-  @include transition(background, transform);
+  gap: 0.875rem;
+  padding: 1.25rem;
+  border-radius: 12px;
+  transition: all 0.2s ease;
   
-  @include responsive(mobile) {
-    gap: $spacing-sm;
-    padding: $spacing-md;
+  @media (max-width: 768px) {
+    gap: 0.75rem;
+    padding: 1rem;
   }
   
   &:hover {
-    background: rgba($color-frozen-water, 0.08);
+    background: rgba(255, 255, 255, 0.08);
     transform: translateX(4px);
   }
   
   &--highlight {
-    background: rgba($color-medium-jungle, 0.1);
-    border: 1px solid rgba($color-medium-jungle, 0.2);
+    background: rgba(74, 222, 128, 0.1);
+    border: 1px solid rgba(74, 222, 128, 0.2);
     
     &:hover {
-      background: rgba($color-medium-jungle, 0.15);
+      background: rgba(74, 222, 128, 0.15);
     }
   }
 }
@@ -98,58 +176,61 @@
   flex-shrink: 0;
   line-height: 1;
   
-  @include responsive(mobile) {
+  @media (max-width: 768px) {
     font-size: 1.5rem;
   }
 }
 
 .stat__content {
-  @include flex-column;
+  display: flex;
+  flex-direction: column;
   gap: 4px;
   flex: 1;
 }
 
 .stat__label {
-  font-size: $font-size-sm;
-  color: $color-text-secondary;
-  font-weight: $font-weight-medium;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
   
-  @include responsive(mobile) {
-    font-size: $font-size-xs;
+  @media (max-width: 768px) {
+    font-size: 0.8125rem;
   }
 }
 
 .stat__value {
-  font-size: $font-size-xl;
-  color: $color-text-primary;
-  font-weight: $font-weight-bold;
-  font-family: $font-family-mono;
+  font-size: 1.25rem;
+  color: #ffffff;
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
   
-  @include responsive(mobile) {
-    font-size: $font-size-lg;
+  @media (max-width: 768px) {
+    font-size: 1.125rem;
   }
 }
 
 .stat__meta {
-  font-size: $font-size-xs;
-  color: $color-text-secondary;
-  font-family: $font-family-mono;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: 'Courier New', monospace;
 }
 
 .modal__error {
-  @include flex-center;
-  padding: $spacing-3xl;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
   
-  @include responsive(mobile) {
-    padding: $spacing-2xl;
+  @media (max-width: 768px) {
+    padding: 2rem;
   }
   
   p {
-    color: $color-error;
-    font-size: $font-size-base;
+    color: #ef4444;
+    font-size: 1rem;
     
-    @include responsive(mobile) {
-      font-size: $font-size-sm;
+    @media (max-width: 768px) {
+      font-size: 0.875rem;
     }
   }
 }

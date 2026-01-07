@@ -1,5 +1,5 @@
 // File: src/components/locke/GatedContent/GatedContent.module.scss
-
+@use '../../../styles/abstracts' as *;
 .gated {
   position: relative;
   min-height: 200px;

@@ -3,7 +3,8 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/Button/Button';
 import { useAuthStore } from '@/store/auth.store';
@@ -18,6 +19,7 @@ interface CreateCommunityModalProps {
 
 export function CreateCommunityModal({ isOpen, onClose, onSuccess }: CreateCommunityModalProps) {
   const { user } = useAuthStore();
+  const [mounted, setMounted] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
@@ -27,6 +29,11 @@ export function CreateCommunityModal({ isOpen, onClose, onSuccess }: CreateCommu
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,7 +70,9 @@ export function CreateCommunityModal({ isOpen, onClose, onSuccess }: CreateCommu
       .replace(/(^-|-$)/g, '');
   };
 
-  return (
+  if (!mounted) return null;
+
+  const modalContent = (
     <AnimatePresence>
       {isOpen && (
         <>
@@ -77,13 +86,15 @@ export function CreateCommunityModal({ isOpen, onClose, onSuccess }: CreateCommu
           
           <motion.div
             className={styles.modal}
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            onClick={(e) => e.stopPropagation()}
           >
             <div className={styles.modal__header}>
               <h2 className={styles.modal__title}>Create Community</h2>
-              <button className={styles.modal__close} onClick={onClose}>×</button>
+              <button className={styles.modal__close} onClick={onClose} type="button">×</button>
             </div>
 
             <form onSubmit={handleSubmit} className={styles.modal__form}>
@@ -172,4 +183,6 @@ export function CreateCommunityModal({ isOpen, onClose, onSuccess }: CreateCommu
       )}
     </AnimatePresence>
   );
+
+  return createPortal(modalContent, document.body);
 }

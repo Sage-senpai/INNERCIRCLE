@@ -1,3 +1,5 @@
+// File: src/app/(auth)/connect/page.tsx
+// FIXED: Properly check for existing users in Supabase
 'use client';
 
 import { useState } from 'react';
@@ -5,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { WalletManager } from '@/lib/wallets/adapter';
 import { useAuthStore } from '@/store/auth.store';
+import { supabase } from '@/lib/supabase/client';
 import { LockIcon } from '@/components/locke/LockIcon/LockIcon';
 import { PhantomIcon, SolflareIcon, PolkadotIcon } from '@/components/icons';
 import styles from './page.module.scss';
@@ -38,20 +41,44 @@ export default function LandingPage() {
     setConnecting(true);
 
     try {
+      // Connect wallet
       const connection = await walletManager.connect(adapter);
+      console.log('Wallet connected:', connection.address);
       
-      // Simulated user check
-      const existingUser = null;
+      // Check for existing user in Supabase
+      const { data: existingUser, error: userError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('wallet_address', connection.address)
+        .maybeSingle();
+
+      if (userError) {
+        console.error('Error checking user:', userError);
+        // Continue to onboarding on error
+      }
 
       if (existingUser) {
-        setUser(existingUser);
+        // User exists - log them in directly
+        console.log('Existing user found, logging in');
+        setUser({
+          id: existingUser.id,
+          walletAddress: existingUser.wallet_address,
+          username: existingUser.username,
+          displayName: existingUser.display_name,
+          avatarUrl: existingUser.avatar_url,
+          role: existingUser.role,
+          onboardingCompleted: existingUser.onboarding_completed,
+        });
         router.push('/feed');
       } else {
+        // New user - send to onboarding
+        console.log('New user, redirecting to onboarding');
         router.push(`/onboarding?wallet=${connection.address}&chain=${connection.chain}`);
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to connect wallet';
       setError(errorMessage);
+      console.error('Connection error:', err);
     } finally {
       setIsConnecting(false);
       setConnecting(false);
@@ -166,9 +193,20 @@ export default function LandingPage() {
                 )}
               </AnimatePresence>
 
+              {isConnecting && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className={styles.wallets__connecting}
+                >
+                  <p>Checking account...</p>
+                </motion.div>
+              )}
+
               <button 
                 className={styles.wallets__back}
                 onClick={() => setShowWallets(false)}
+                disabled={isConnecting}
               >
                 ← Back
               </button>

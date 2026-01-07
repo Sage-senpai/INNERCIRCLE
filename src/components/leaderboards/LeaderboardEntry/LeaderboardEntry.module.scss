@@ -1,5 +1,5 @@
 // File: src/components/leaderboards/LeaderboardEntry/LeaderboardEntry.module.scss
-
+@use '../../../styles/abstracts' as *;
 .entry {
   @include glass-surface(0.05);
   display: flex;
