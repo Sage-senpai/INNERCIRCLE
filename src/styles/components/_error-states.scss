@@ -1,0 +1,263 @@
+// File: src/styles/components/_error-states.scss
+
+.error-message {
+  @include flex-column;
+  @include flex-center;
+  gap: $spacing-lg;
+  padding: $spacing-2xl;
+  @include glass-surface(0.05);
+  border: 1px solid rgba($color-night-bordeaux, 0.3);
+  border-radius: $radius-lg;
+  background: rgba($color-night-bordeaux, 0.05);
+  text-align: center;
+  
+  @include responsive(mobile) {
+    gap: $spacing-md;
+    padding: $spacing-xl;
+  }
+}
+
+.error-message__icon {
+  font-size: 3rem;
+  color: $color-error;
+  
+  @include responsive(mobile) {
+    font-size: 2.5rem;
+  }
+}
+
+.error-message__title {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-error;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-lg;
+  }
+}
+
+.error-message__description {
+  font-size: $font-size-base;
+  color: $color-text-secondary;
+  line-height: $line-height-relaxed;
+  max-width: 500px;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-sm;
+  }
+}
+
+.error-message__actions {
+  display: flex;
+  gap: $spacing-md;
+  margin-top: $spacing-md;
+  
+  @include responsive(mobile) {
+    flex-direction: column;
+    width: 100%;
+    gap: $spacing-sm;
+  }
+}
+
+.error-inline {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+  background: rgba($color-night-bordeaux, 0.1);
+  border: 1px solid rgba($color-night-bordeaux, 0.3);
+  border-radius: $radius-md;
+  color: $color-error;
+  font-size: $font-size-sm;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-xs;
+    padding: $spacing-xs $spacing-sm;
+  }
+  
+  &::before {
+    content: '⚠';
+    font-size: $font-size-lg;
+    flex-shrink: 0;
+  }
+}
+
+.error-toast {
+  @include glass-surface-strong(0.1);
+  backdrop-filter: $blur-glass-strong;
+  position: fixed;
+  bottom: $spacing-xl;
+  right: $spacing-xl;
+  padding: $spacing-lg;
+  border-radius: $radius-lg;
+  border: 1px solid rgba($color-night-bordeaux, 0.3);
+  background: rgba($color-night-bordeaux, 0.1);
+  box-shadow: $shadow-xl;
+  max-width: 400px;
+  z-index: $z-notification;
+  animation: slideInRight 0.3s ease-out;
+  
+  @include responsive(mobile) {
+    bottom: calc(#{$mobile-nav-height} + #{$spacing-lg});
+    right: $spacing-lg;
+    left: $spacing-lg;
+    max-width: none;
+  }
+}
+
+.error-toast__content {
+  display: flex;
+  gap: $spacing-md;
+  align-items: flex-start;
+}
+
+.error-toast__icon {
+  font-size: $font-size-xl;
+  color: $color-error;
+  flex-shrink: 0;
+}
+
+.error-toast__message {
+  flex: 1;
+  @include flex-column;
+  gap: 4px;
+}
+
+.error-toast__title {
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: $color-error;
+}
+
+.error-toast__description {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: $line-height-normal;
+}
+
+.error-toast__close {
+  width: 24px;
+  height: 24px;
+  @include flex-center;
+  border-radius: $radius-sm;
+  color: $color-text-secondary;
+  @include transition(background, color);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  
+  &:hover {
+    background: rgba($color-frozen-water, 0.1);
+    color: $color-text-primary;
+  }
+}
+
+// ============================================================================
+// SUCCESS STATES
+// ============================================================================
+
+.success-message {
+  @include flex-column;
+  @include flex-center;
+  gap: $spacing-lg;
+  padding: $spacing-2xl;
+  @include glass-surface(0.05);
+  border: 1px solid rgba($color-medium-jungle, 0.3);
+  border-radius: $radius-lg;
+  background: rgba($color-medium-jungle, 0.05);
+  text-align: center;
+  
+  @include responsive(mobile) {
+    gap: $spacing-md;
+    padding: $spacing-xl;
+  }
+}
+
+.success-message__icon {
+  font-size: 3rem;
+  color: $color-medium-jungle;
+  animation: bounceIn 0.5s ease-out;
+  
+  @include responsive(mobile) {
+    font-size: 2.5rem;
+  }
+}
+
+.success-message__title {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-medium-jungle;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-lg;
+  }
+}
+
+.success-message__description {
+  font-size: $font-size-base;
+  color: $color-text-secondary;
+  line-height: $line-height-relaxed;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-sm;
+  }
+}
+
+.success-toast {
+  @include glass-surface-strong(0.1);
+  backdrop-filter: $blur-glass-strong;
+  position: fixed;
+  bottom: $spacing-xl;
+  right: $spacing-xl;
+  padding: $spacing-lg;
+  border-radius: $radius-lg;
+  border: 1px solid rgba($color-medium-jungle, 0.3);
+  background: rgba($color-medium-jungle, 0.1);
+  box-shadow: $shadow-xl, $shadow-glow-green;
+  max-width: 400px;
+  z-index: $z-notification;
+  animation: slideInRight 0.3s ease-out;
+  
+  @include responsive(mobile) {
+    bottom: calc(#{$mobile-nav-height} + #{$spacing-lg});
+    right: $spacing-lg;
+    left: $spacing-lg;
+    max-width: none;
+  }
+}
+
+// ============================================================================
+// WARNING STATES
+// ============================================================================
+
+.warning-message {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md $spacing-lg;
+  background: rgba($color-warning, 0.1);
+  border: 1px solid rgba($color-warning, 0.3);
+  border-radius: $radius-md;
+  color: $color-warning;
+  
+  @include responsive(mobile) {
+    gap: $spacing-sm;
+    padding: $spacing-sm $spacing-md;
+  }
+  
+  &::before {
+    content: '⚠';
+    font-size: $font-size-xl;
+    flex-shrink: 0;
+  }
+}
+
+.warning-message__text {
+  font-size: $font-size-sm;
+  line-height: $line-height-normal;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-xs;
+  }
+}

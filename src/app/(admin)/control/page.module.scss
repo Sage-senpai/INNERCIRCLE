@@ -13,6 +13,10 @@
   }
 }
 
+// ============================================================================
+// ACCESS DENIED STATE
+// ============================================================================
+
 .admin__denied {
   @include glass-surface(0.05);
   border: 1px solid rgba($color-night-bordeaux, 0.3);
@@ -22,29 +26,74 @@
   @include flex-column;
   @include flex-center;
   gap: $spacing-lg;
+  min-height: 400px;
+  
+  @include responsive(mobile) {
+    padding: $spacing-2xl $spacing-lg;
+    min-height: 300px;
+    gap: $spacing-md;
+  }
 }
 
 .admin__denied_icon {
-  font-size: 64px;
+  font-size: 4rem;
+  opacity: 0.8;
+  
+  @include responsive(mobile) {
+    font-size: 3rem;
+  }
 }
 
 .admin__denied_text {
   color: $color-text-secondary;
   font-size: $font-size-lg;
+  line-height: $line-height-relaxed;
+  max-width: 400px;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-base;
+  }
 }
+
+// ============================================================================
+// ADMIN TABS
+// ============================================================================
 
 .admin__tabs {
   display: flex;
   gap: $spacing-sm;
   margin-bottom: $spacing-xl;
   flex-wrap: wrap;
+  
+  @include responsive(mobile) {
+    gap: $spacing-xs;
+    margin-bottom: $spacing-lg;
+  }
 }
+
+// ============================================================================
+// ADMIN CONTENT AREA
+// ============================================================================
 
 .admin__content {
   @include glass-surface(0.05);
   border-radius: $radius-lg;
   padding: $spacing-xl;
   min-height: 500px;
+  
+  @include responsive(mobile) {
+    padding: $spacing-lg;
+    min-height: 400px;
+  }
+}
+
+// ============================================================================
+// ADMIN PANELS
+// ============================================================================
+
+.admin__panel {
+  @include flex-column;
+  gap: $spacing-lg;
 }
 
 .admin__panel_title {
@@ -52,12 +101,22 @@
   font-weight: $font-weight-bold;
   color: $color-text-primary;
   margin-bottom: $spacing-sm;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-xl;
+  }
 }
 
 .admin__panel_description {
   color: $color-text-secondary;
   margin-bottom: $spacing-2xl;
   line-height: $line-height-relaxed;
+  font-size: $font-size-base;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-sm;
+    margin-bottom: $spacing-xl;
+  }
 }
 
 .admin__panel_placeholder {
@@ -68,13 +127,271 @@
   @include flex-column;
   @include flex-center;
   gap: $spacing-md;
+  min-height: 300px;
+  
+  @include responsive(mobile) {
+    padding: $spacing-2xl;
+    min-height: 200px;
+    gap: $spacing-sm;
+  }
   
   span {
-    font-size: 64px;
+    font-size: 4rem;
+    opacity: 0.6;
+    
+    @include responsive(mobile) {
+      font-size: 3rem;
+    }
   }
   
   p {
     color: $color-text-secondary;
     font-size: $font-size-base;
+    
+    @include responsive(mobile) {
+      font-size: $font-size-sm;
+    }
+  }
+}
+
+// ============================================================================
+// ADMIN TABLES
+// ============================================================================
+
+.admin__table {
+  width: 100%;
+  border-collapse: collapse;
+  @include glass-surface(0.03);
+  border-radius: $radius-md;
+  overflow: hidden;
+}
+
+.admin__table_header {
+  background: rgba($color-frozen-water, 0.05);
+  border-bottom: 1px solid $color-border;
+}
+
+.admin__table_row {
+  border-bottom: 1px solid $color-border;
+  @include transition(background);
+  
+  &:hover {
+    background: rgba($color-frozen-water, 0.03);
+  }
+  
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.admin__table_cell {
+  padding: $spacing-md $spacing-lg;
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  
+  @include responsive(mobile) {
+    padding: $spacing-sm $spacing-md;
+    font-size: $font-size-xs;
+  }
+}
+
+.admin__table_header_cell {
+  padding: $spacing-md $spacing-lg;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: $color-text-secondary;
+  text-align: left;
+  
+  @include responsive(mobile) {
+    padding: $spacing-sm $spacing-md;
+  }
+}
+
+// ============================================================================
+// ADMIN ACTIONS
+// ============================================================================
+
+.admin__actions {
+  display: flex;
+  gap: $spacing-sm;
+  align-items: center;
+  
+  @include responsive(mobile) {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+}
+
+.admin__action_button {
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $radius-sm;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  @include transition(background, transform);
+  background: rgba($color-frozen-water, 0.05);
+  color: $color-text-primary;
+  border: 1px solid $color-border;
+  cursor: pointer;
+  
+  &:hover {
+    background: rgba($color-frozen-water, 0.1);
+    transform: translateY(-1px);
+  }
+  
+  &--danger {
+    background: rgba($color-night-bordeaux, 0.1);
+    border-color: rgba($color-night-bordeaux, 0.3);
+    color: $color-error;
+    
+    &:hover {
+      background: rgba($color-night-bordeaux, 0.2);
+    }
+  }
+  
+  &--primary {
+    background: rgba($color-medium-jungle, 0.2);
+    border-color: rgba($color-medium-jungle, 0.3);
+    color: $color-medium-jungle;
+    
+    &:hover {
+      background: rgba($color-medium-jungle, 0.3);
+    }
+  }
+}
+
+// ============================================================================
+// ADMIN STATS
+// ============================================================================
+
+.admin__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $spacing-lg;
+  margin-bottom: $spacing-2xl;
+  
+  @include responsive(mobile) {
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+    margin-bottom: $spacing-xl;
+  }
+}
+
+.admin__stat_card {
+  @include glass-surface(0.05);
+  padding: $spacing-lg;
+  border-radius: $radius-lg;
+  @include flex-column;
+  gap: $spacing-sm;
+  
+  @include responsive(mobile) {
+    padding: $spacing-md;
+  }
+}
+
+.admin__stat_label {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  color: $color-text-secondary;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin__stat_value {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-extrabold;
+  color: $color-text-primary;
+  font-family: $font-family-mono;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-2xl;
+  }
+}
+
+.admin__stat_change {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-xs;
+  }
+  
+  &--positive {
+    color: $color-medium-jungle;
+  }
+  
+  &--negative {
+    color: $color-error;
+  }
+}
+
+// ============================================================================
+// ADMIN FILTERS
+// ============================================================================
+
+.admin__filters {
+  @include flex-between;
+  gap: $spacing-md;
+  margin-bottom: $spacing-xl;
+  flex-wrap: wrap;
+  
+  @include responsive(mobile) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-lg;
+  }
+}
+
+.admin__search {
+  flex: 1;
+  min-width: 240px;
+  position: relative;
+  
+  @include responsive(mobile) {
+    min-width: 100%;
+  }
+}
+
+.admin__search_input {
+  @include glass-surface(0.05);
+  width: 100%;
+  padding: $spacing-sm $spacing-md $spacing-sm 40px;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  @include transition(background, border-color);
+  
+  &::placeholder {
+    color: $color-text-secondary;
+  }
+  
+  &:focus {
+    outline: none;
+    background: rgba($color-frozen-water, 0.08);
+    border-color: $color-border-focus;
+  }
+}
+
+.admin__search_icon {
+  position: absolute;
+  left: $spacing-md;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  color: $color-text-secondary;
+  pointer-events: none;
+}
+
+.admin__filter_group {
+  display: flex;
+  gap: $spacing-sm;
+  
+  @include responsive(mobile) {
+    width: 100%;
+    justify-content: space-between;
   }
 }

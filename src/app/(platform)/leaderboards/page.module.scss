@@ -1,5 +1,6 @@
 // File: src/app/(platform)/leaderboards/page.module.scss
 // ============================================================================
+
 @use '../../../styles/abstracts' as *;
 
 .leaderboards {
@@ -12,13 +13,26 @@
   }
 }
 
+// ============================================================================
+// FILTERS
+// ============================================================================
+
 .leaderboards__filters {
   display: flex;
   flex-direction: column;
   gap: $spacing-lg;
   margin-bottom: $spacing-2xl;
   align-items: flex-start;
+  
+  @include responsive(mobile) {
+    gap: $spacing-md;
+    margin-bottom: $spacing-xl;
+  }
 }
+
+// ============================================================================
+// SEGMENTED CONTROL (METRIC SELECTOR)
+// ============================================================================
 
 .segmented {
   display: flex;
@@ -26,14 +40,30 @@
   border-radius: $radius-full;
   padding: 4px;
   gap: 4px;
+  width: 100%;
+  max-width: 400px;
+  
+  @include responsive(mobile) {
+    max-width: none;
+  }
 
   button {
     flex: 1;
     padding: $spacing-sm $spacing-lg;
     border-radius: $radius-full;
     font-weight: $font-weight-semibold;
+    font-size: $font-size-base;
     color: $color-text-secondary;
     @include transition-all;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+    
+    @include responsive(mobile) {
+      padding: $spacing-xs $spacing-md;
+      font-size: $font-size-sm;
+    }
 
     &.active {
       background: $color-medium-jungle;
@@ -48,10 +78,18 @@
   }
 }
 
+// ============================================================================
+// PILL BUTTONS (PERIOD SELECTOR)
+// ============================================================================
+
 .pills {
   display: flex;
   gap: $spacing-sm;
   flex-wrap: wrap;
+  
+  @include responsive(mobile) {
+    gap: $spacing-xs;
+  }
 
   button {
     padding: $spacing-xs $spacing-md;
@@ -59,32 +97,65 @@
     background: rgba($color-frozen-water, 0.05);
     color: $color-text-secondary;
     font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
     @include transition-all;
+    border: 1px solid transparent;
+    cursor: pointer;
+    
+    @include responsive(mobile) {
+      padding: $spacing-xs $spacing-sm;
+      font-size: $font-size-xs;
+    }
 
     &.active {
       background: rgba($color-medium-jungle, 0.2);
       color: $color-medium-jungle;
-      border: 1px solid rgba($color-medium-jungle, 0.3);
+      border-color: rgba($color-medium-jungle, 0.3);
     }
 
     &:hover:not(.active) {
       background: rgba($color-frozen-water, 0.1);
+      color: $color-text-primary;
     }
   }
 }
+
+// ============================================================================
+// LOADING STATE
+// ============================================================================
 
 .loading {
   display: flex;
   flex-direction: column;
   gap: $spacing-md;
+  
+  @include responsive(mobile) {
+    gap: $spacing-sm;
+  }
 }
 
 .skeleton {
+  @include glass-surface(0.03);
+  height: 80px;
+  border-radius: $radius-lg;
+  @include skeleton-pulse;
   margin-bottom: $spacing-sm;
+  
+  @include responsive(mobile) {
+    height: 70px;
+  }
 }
+
+// ============================================================================
+// LEADERBOARD LIST
+// ============================================================================
 
 .list {
   display: flex;
   flex-direction: column;
   gap: $spacing-md;
+  
+  @include responsive(mobile) {
+    gap: $spacing-sm;
+  }
 }

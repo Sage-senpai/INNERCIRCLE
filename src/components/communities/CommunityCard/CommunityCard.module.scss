@@ -9,23 +9,45 @@
   border-radius: $radius-lg;
   padding: $spacing-lg;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  min-height: 280px;
+  
+  @include responsive(mobile) {
+    padding: $spacing-md;
+    min-height: 240px;
+  }
   
   &:hover {
     background: rgba($color-frozen-water, 0.08);
     border-color: $color-border-hover;
     box-shadow: $shadow-lg;
+    transform: translateY(-4px);
   }
 }
+
+// ============================================================================
+// CARD HEADER
+// ============================================================================
 
 .card__header {
   @include flex-between;
   align-items: flex-start;
   margin-bottom: $spacing-lg;
+  
+  @include responsive(mobile) {
+    margin-bottom: $spacing-md;
+  }
 }
 
 .card__badge {
   @include badge($color-medium-jungle);
   font-size: $font-size-xs;
+  
+  @include responsive(mobile) {
+    font-size: 0.625rem;
+    padding: 2px $spacing-xs;
+  }
   
   &--whale {
     background: rgba(#3b82f6, 0.2);
@@ -38,8 +60,17 @@
   }
 }
 
+// ============================================================================
+// CARD BODY
+// ============================================================================
+
 .card__body {
+  flex: 1;
   margin-bottom: $spacing-lg;
+  
+  @include responsive(mobile) {
+    margin-bottom: $spacing-md;
+  }
 }
 
 .card__title {
@@ -48,6 +79,10 @@
   color: $color-text-primary;
   margin-bottom: $spacing-sm;
   @include line-clamp(1);
+  
+  @include responsive(mobile) {
+    font-size: $font-size-lg;
+  }
 }
 
 .card__description {
@@ -57,11 +92,20 @@
   line-height: $line-height-relaxed;
   margin-bottom: $spacing-lg;
   min-height: 2.8em;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-xs;
+    margin-bottom: $spacing-md;
+  }
 }
 
 .card__stats {
   display: flex;
   gap: $spacing-xl;
+  
+  @include responsive(mobile) {
+    gap: $spacing-lg;
+  }
 }
 
 .card__stat {
@@ -73,6 +117,11 @@
   font-size: $font-size-lg;
   font-weight: $font-weight-bold;
   color: $color-text-primary;
+  font-family: $font-family-mono;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-base;
+  }
 }
 
 .card__stat_label {
@@ -82,11 +131,16 @@
   letter-spacing: 0.5px;
 }
 
+// ============================================================================
+// CARD FOOTER
+// ============================================================================
+
 .card__footer {
   @include flex-between;
   padding-top: $spacing-md;
   border-top: 1px solid $color-border;
   gap: $spacing-md;
+  margin-top: auto;
 }
 
 .card__token {
@@ -108,4 +162,8 @@
   color: $color-text-primary;
   font-family: $font-family-mono;
   @include truncate;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-xs;
+  }
 }

@@ -7,4 +7,47 @@
   display: inline-block;
   width: 24px;
   height: 24px;
+  color: currentColor;
+  flex-shrink: 0;
+  
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+  
+  // Size variants
+  &--sm {
+    width: 16px;
+    height: 16px;
+  }
+  
+  &--md {
+    width: 24px;
+    height: 24px;
+  }
+  
+  &--lg {
+    width: 32px;
+    height: 32px;
+  }
+  
+  &--xl {
+    width: 48px;
+    height: 48px;
+  }
+  
+  // Color variants
+  &--locked {
+    color: $color-night-bordeaux;
+    filter: drop-shadow($shadow-glow-bordeaux);
+  }
+  
+  &--unlocked {
+    color: $color-medium-jungle;
+    filter: drop-shadow($shadow-glow-green);
+  }
+  
+  &--neutral {
+    color: $color-text-secondary;
+  }
 }

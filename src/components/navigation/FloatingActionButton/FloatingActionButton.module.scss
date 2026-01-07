@@ -1,12 +1,7 @@
-@use '../../../styles/abstracts' as *;
+// File: src/components/navigation/FloatingActionButton/FloatingActionButton.module.scss
+// ============================================================================
 
-.composerObserver {
-  position: absolute;
-  top: 0;
-  height: 1px;
-  width: 100%;
-  pointer-events: none;
-}
+@use '../../../styles/abstracts' as *;
 
 .fab {
   position: fixed;
@@ -22,18 +17,32 @@
   cursor: pointer;
   @include flex-center;
   z-index: $z-sticky;
-
+  @include transition(background, transform, box-shadow);
+  
+  @include responsive(mobile) {
+    right: $spacing-lg;
+    bottom: calc(#{$mobile-nav-height} + #{$spacing-lg});
+    width: 56px;
+    height: 56px;
+  }
+  
   svg {
     width: 28px;
     height: 28px;
+    
+    @include responsive(mobile) {
+      width: 24px;
+      height: 24px;
+    }
   }
 
   &:hover {
     background: $color-medium-jungle-hover;
+    transform: scale(1.05) rotate(90deg);
+    box-shadow: $shadow-xl, 0 0 30px rgba($color-medium-jungle, 0.5);
   }
-
-  @include responsive(mobile) {
-    right: $spacing-lg;
-    bottom: calc(#{$mobile-nav-height} + #{$spacing-lg});
+  
+  &:active {
+    transform: scale(0.95) rotate(90deg);
   }
 }

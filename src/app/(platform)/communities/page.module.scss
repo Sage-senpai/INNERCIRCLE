@@ -13,27 +13,57 @@
   }
 }
 
+// ============================================================================
+// FILTERS
+// ============================================================================
+
 .communities__filters {
   display: flex;
   gap: $spacing-sm;
   margin-bottom: $spacing-xl;
   flex-wrap: wrap;
+  
+  @include responsive(mobile) {
+    margin-bottom: $spacing-lg;
+    gap: $spacing-xs;
+  }
 }
+
+// ============================================================================
+// LOADING STATE
+// ============================================================================
 
 .communities__loading {
   @include flex-center;
   min-height: 400px;
+  
+  @include responsive(mobile) {
+    min-height: 300px;
+  }
 }
+
+// ============================================================================
+// GRID LAYOUT
+// ============================================================================
 
 .communities__grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   gap: $spacing-lg;
   
+  @include responsive(tablet) {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+  
   @include responsive(mobile) {
     grid-template-columns: 1fr;
+    gap: $spacing-md;
   }
 }
+
+// ============================================================================
+// EMPTY STATE
+// ============================================================================
 
 .communities__empty {
   @include glass-surface(0.05);
@@ -41,4 +71,11 @@
   padding: $spacing-3xl;
   text-align: center;
   color: $color-text-secondary;
+  @include flex-column;
+  @include flex-center;
+  gap: $spacing-md;
+  
+  @include responsive(mobile) {
+    padding: $spacing-2xl $spacing-lg;
+  }
 }

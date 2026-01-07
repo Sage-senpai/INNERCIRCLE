@@ -6,8 +6,13 @@
 .feed_container {
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - $header-height);
+  min-height: calc(100vh - #{$header-height});
+  background: $color-bg-primary;
 }
+
+// ============================================================================
+// TABS NAVIGATION
+// ============================================================================
 
 .tabs {
   @include glass-surface(0.05);
@@ -28,6 +33,10 @@
   gap: $spacing-xs;
   padding: $spacing-sm $spacing-lg;
   min-width: max-content;
+  
+  @include responsive(mobile) {
+    padding: $spacing-xs $spacing-md;
+  }
 }
 
 .tab {
@@ -42,6 +51,14 @@
   font-size: $font-size-base;
   white-space: nowrap;
   @include transition(background, color);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  
+  @include responsive(mobile) {
+    padding: $spacing-xs $spacing-md;
+    font-size: $font-size-sm;
+  }
   
   &:hover {
     background: rgba($color-frozen-water, 0.05);
@@ -57,11 +74,19 @@
 .tab__icon {
   font-size: $font-size-lg;
   line-height: 1;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-base;
+  }
 }
 
 .tab__label {
   font-size: $font-size-sm;
   font-weight: $font-weight-semibold;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-xs;
+  }
 }
 
 .tab__indicator {
@@ -75,6 +100,10 @@
   border-radius: $radius-full;
   box-shadow: $shadow-glow-green;
 }
+
+// ============================================================================
+// FEED CONTENT
+// ============================================================================
 
 .feed_content {
   flex: 1;

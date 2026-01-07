@@ -9,6 +9,11 @@
   padding: $spacing-lg;
   @include transition(background, border-color, box-shadow);
   
+  @include responsive(mobile) {
+    padding: $spacing-md;
+    border-radius: $radius-md;
+  }
+  
   &--focused {
     background: rgba($color-frozen-water, 0.08);
     border-color: $color-border-hover;
@@ -16,29 +21,57 @@
   }
 }
 
+// ============================================================================
+// PROMPT STATE
+// ============================================================================
+
 .composer__prompt {
   text-align: center;
   color: $color-text-secondary;
   padding: $spacing-xl;
   font-size: $font-size-base;
+  
+  @include responsive(mobile) {
+    padding: $spacing-lg;
+    font-size: $font-size-sm;
+  }
 }
+
+// ============================================================================
+// COMPOSER HEADER
+// ============================================================================
 
 .composer__header {
   display: flex;
   align-items: center;
   gap: $spacing-md;
   margin-bottom: $spacing-md;
+  
+  @include responsive(mobile) {
+    gap: $spacing-sm;
+    margin-bottom: $spacing-sm;
+  }
 }
 
 .composer__user {
   flex: 1;
+  min-width: 0;
 }
 
 .composer__username {
   font-size: $font-size-sm;
   font-weight: $font-weight-semibold;
   color: $color-text-primary;
+  @include truncate;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-xs;
+  }
 }
+
+// ============================================================================
+// COMPOSER INPUT
+// ============================================================================
 
 .composer__input {
   @include transition(background, border-color, height);
@@ -53,6 +86,11 @@
   resize: none;
   font-family: $font-family-primary;
   
+  @include responsive(mobile) {
+    padding: $spacing-sm;
+    font-size: $font-size-sm;
+  }
+  
   &::placeholder {
     color: $color-text-secondary;
   }
@@ -61,8 +99,13 @@
     outline: none;
     background: rgba($color-frozen-water, 0.05);
     border-color: $color-border-focus;
+    box-shadow: 0 0 0 3px rgba($color-medium-jungle, 0.1);
   }
 }
+
+// ============================================================================
+// COMPOSER FOOTER
+// ============================================================================
 
 .composer__footer {
   @include flex-between;
@@ -70,20 +113,138 @@
   margin-top: $spacing-md;
   padding-top: $spacing-md;
   border-top: 1px solid $color-border;
+  
+  @include responsive(mobile) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $spacing-sm;
+  }
+}
+
+.composer__options {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+  
+  @include responsive(mobile) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-sm;
+    width: 100%;
+  }
+}
+
+.composer__option {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  cursor: pointer;
+  @include transition(color);
+  
+  @include responsive(mobile) {
+    font-size: $font-size-xs;
+  }
+  
+  &:hover {
+    color: $color-medium-jungle;
+  }
+  
+  input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: $color-medium-jungle;
+    
+    @include responsive(mobile) {
+      width: 16px;
+      height: 16px;
+    }
+  }
+  
+  span {
+    user-select: none;
+  }
 }
 
 .composer__info {
   display: flex;
   gap: $spacing-md;
+  align-items: center;
+  
+  @include responsive(mobile) {
+    width: 100%;
+    justify-content: space-between;
+  }
 }
 
 .composer__char_count {
   font-size: $font-size-xs;
   color: $color-text-secondary;
   font-family: $font-family-mono;
+  font-weight: $font-weight-medium;
+  
+  &--warning {
+    color: $color-warning;
+  }
+  
+  &--error {
+    color: $color-error;
+    font-weight: $font-weight-bold;
+  }
 }
-.composer__char_count {
-  // existing
-  &--warning { color: #f59e0b; } // $color-warning
-  &--error { color: $color-error; }
+
+// ============================================================================
+// MEDIA PREVIEW
+// ============================================================================
+
+.composer__media {
+  margin-top: $spacing-md;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: $spacing-sm;
+  
+  @include responsive(mobile) {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+}
+
+.composer__media_item {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: $radius-md;
+  overflow: hidden;
+  @include glass-surface(0.05);
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.composer__media_remove {
+  position: absolute;
+  top: $spacing-xs;
+  right: $spacing-xs;
+  width: 24px;
+  height: 24px;
+  @include flex-center;
+  background: rgba($color-night-bordeaux, 0.9);
+  border-radius: $radius-full;
+  color: $color-text-primary;
+  font-size: $font-size-sm;
+  cursor: pointer;
+  @include transition(transform, background);
+  border: none;
+  
+  &:hover {
+    background: $color-night-bordeaux;
+    transform: scale(1.1);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
 }

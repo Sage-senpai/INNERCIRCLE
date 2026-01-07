@@ -1,0 +1,201 @@
+// File: src/styles/utilities/_utilities.scss
+
+// Text Utilities
+.u-text-center {
+  text-align: center !important;
+}
+
+.u-text-left {
+  text-align: left !important;
+}
+
+.u-text-right {
+  text-align: right !important;
+}
+
+.u-truncate {
+  @include truncate;
+}
+
+.u-line-clamp-2 {
+  @include line-clamp(2);
+}
+
+.u-line-clamp-3 {
+  @include line-clamp(3);
+}
+
+// Display Utilities
+.u-hidden {
+  display: none !important;
+}
+
+.u-block {
+  display: block !important;
+}
+
+.u-inline-block {
+  display: inline-block !important;
+}
+
+.u-flex {
+  display: flex !important;
+}
+
+.u-flex-center {
+  @include flex-center;
+}
+
+.u-flex-between {
+  @include flex-between;
+}
+
+.u-flex-column {
+  @include flex-column;
+}
+
+// Spacing Utilities (use sparingly)
+.u-mb-0 {
+  margin-bottom: 0 !important;
+}
+
+.u-mb-sm {
+  margin-bottom: $spacing-sm !important;
+}
+
+.u-mb-md {
+  margin-bottom: $spacing-md !important;
+}
+
+.u-mb-lg {
+  margin-bottom: $spacing-lg !important;
+}
+
+.u-mt-0 {
+  margin-top: 0 !important;
+}
+
+.u-mt-sm {
+  margin-top: $spacing-sm !important;
+}
+
+.u-mt-md {
+  margin-top: $spacing-md !important;
+}
+
+.u-mt-lg {
+  margin-top: $spacing-lg !important;
+}
+
+// Responsive Utilities
+.u-hide-mobile {
+  @include responsive(mobile) {
+    display: none !important;
+  }
+}
+
+.u-hide-tablet {
+  @include responsive(tablet) {
+    display: none !important;
+  }
+}
+
+.u-show-mobile {
+  display: none !important;
+  
+  @include responsive(mobile) {
+    display: block !important;
+  }
+}
+
+// Width Utilities
+.u-w-full {
+  width: 100% !important;
+}
+
+.u-w-auto {
+  width: auto !important;
+}
+
+// Height Utilities
+.u-h-full {
+  height: 100% !important;
+}
+
+.u-h-screen {
+  height: 100vh !important;
+}
+
+// Pointer Events
+.u-pointer-events-none {
+  pointer-events: none !important;
+}
+
+.u-pointer-events-auto {
+  pointer-events: auto !important;
+}
+
+// Cursor
+.u-cursor-pointer {
+  cursor: pointer !important;
+}
+
+.u-cursor-not-allowed {
+  cursor: not-allowed !important;
+}
+
+// Overflow
+.u-overflow-hidden {
+  overflow: hidden !important;
+}
+
+.u-overflow-auto {
+  overflow: auto !important;
+}
+
+.u-overflow-scroll {
+  overflow: scroll !important;
+}
+
+// Position
+.u-relative {
+  position: relative !important;
+}
+
+.u-absolute {
+  position: absolute !important;
+}
+
+.u-fixed {
+  position: fixed !important;
+}
+
+.u-sticky {
+  position: sticky !important;
+}
+
+// Z-Index
+.u-z-base {
+  z-index: $z-base !important;
+}
+
+.u-z-sticky {
+  z-index: $z-sticky !important;
+}
+
+.u-z-modal {
+  z-index: $z-modal !important;
+}
+
+// Opacity
+.u-opacity-0 {
+  opacity: 0 !important;
+}
+
+.u-opacity-50 {
+  opacity: 0.5 !important;
+}
+
+.u-opacity-100 {
+  opacity: 1 !important;
+}

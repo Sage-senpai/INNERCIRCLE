@@ -12,17 +12,27 @@
   padding: $spacing-xl $spacing-lg;
   overflow-y: auto;
   @include custom-scrollbar;
+  @include glass-surface(0.03);
+  border-left: 1px solid $color-border;
   
   @include responsive(tablet) {
     display: none;
   }
 }
 
+// ============================================================================
+// CONTEXT SECTIONS
+// ============================================================================
+
 .context__section {
   @include glass-surface(0.05);
   border-radius: $radius-lg;
   padding: $spacing-lg;
   margin-bottom: $spacing-lg;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .context__title {
@@ -35,6 +45,10 @@
   font-size: $font-size-sm;
 }
 
+// ============================================================================
+// CONTEXT LIST
+// ============================================================================
+
 .context__list {
   display: flex;
   flex-direction: column;
@@ -43,13 +57,15 @@
 
 .context__item {
   @include flex-between;
-  @include transition(background);
+  @include transition(background, transform);
   padding: $spacing-sm;
   border-radius: $radius-md;
   cursor: pointer;
+  gap: $spacing-sm;
   
   &:hover {
     background: rgba($color-frozen-water, 0.05);
+    transform: translateX(-2px);
   }
 }
 
@@ -70,6 +86,7 @@
 .context__item_meta {
   font-size: $font-size-xs;
   color: $color-text-secondary;
+  @include truncate;
 }
 
 .context__item_change {
@@ -79,6 +96,7 @@
   font-size: $font-size-xs;
   font-weight: $font-weight-semibold;
   color: $color-text-secondary;
+  flex-shrink: 0;
   
   svg {
     width: 12px;
@@ -94,16 +112,28 @@
   }
 }
 
+// ============================================================================
+// CONTEXT TOKEN
+// ============================================================================
+
 .context__token {
   @include flex-between;
   padding: $spacing-sm;
   @include glass-surface(0.03);
   border-radius: $radius-md;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-xs;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .context__token_info {
   @include flex-column;
   gap: 2px;
+  flex: 1;
+  min-width: 0;
 }
 
 .context__token_symbol {
@@ -122,6 +152,7 @@
   font-size: $font-size-sm;
   font-weight: $font-weight-bold;
   font-family: $font-family-mono;
+  flex-shrink: 0;
   
   &--up {
     color: $color-medium-jungle;
@@ -132,6 +163,10 @@
   }
 }
 
+// ============================================================================
+// CONTEXT LEADER
+// ============================================================================
+
 .context__leader {
   display: flex;
   align-items: center;
@@ -139,6 +174,16 @@
   padding: $spacing-sm;
   @include glass-surface(0.03);
   border-radius: $radius-md;
+  margin-bottom: $spacing-xs;
+  @include transition(background);
+  
+  &:hover {
+    background: rgba($color-frozen-water, 0.05);
+  }
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .context__leader_rank {
@@ -146,6 +191,8 @@
   font-weight: $font-weight-bold;
   color: $color-text-secondary;
   min-width: 24px;
+  text-align: center;
+  font-family: $font-family-mono;
 }
 
 .context__leader_info {
@@ -168,6 +215,10 @@
   font-family: $font-family-mono;
 }
 
+// ============================================================================
+// CONTEXT INFO
+// ============================================================================
+
 .context__info {
   p {
     font-size: $font-size-sm;
@@ -175,6 +226,10 @@
     line-height: $line-height-relaxed;
   }
 }
+
+// ============================================================================
+// CONTEXT STATS
+// ============================================================================
 
 .context__stats {
   display: grid;

@@ -1,11 +1,7 @@
 // File: src/components/leaderboards/LeaderboardEntry/LeaderboardEntry.module.scss
-// ============================================================================
 
-@use '../../../styles/abstracts' as *;
-
-// LeaderboardEntry.module.scss - Modernized
 .entry {
-  @include glass-surface(0.06);
+  @include glass-surface(0.05);
   display: flex;
   align-items: center;
   gap: $spacing-lg;
@@ -14,24 +10,59 @@
   @include transition-all;
   cursor: pointer;
   position: relative;
+  
+  @include responsive(mobile) {
+    gap: $spacing-md;
+    padding: $spacing-md;
+    border-radius: $radius-lg;
+  }
 
   &:hover {
-    background: $color-surface-hover;
-    transform: translateY(-4px);
-    box-shadow: $shadow-xl;
+    background: rgba($color-frozen-water, 0.08);
+    transform: translateY(-2px);
+    box-shadow: $shadow-lg;
   }
 
-  // Top 3 - Larger, highlighted
-  &:nth-child(1), &:nth-child(2), &:nth-child(3) {
+  // Top 3 - Highlighted
+  &:nth-child(1),
+  &:nth-child(2),
+  &:nth-child(3) {
     padding: $spacing-xl;
-    .entry__avatar { width: 64px; height: 64px; }
-    .entry__rank { font-size: $font-size-4xl; }
-    .entry__score_value { font-size: $font-size-2xl; }
+    
+    @include responsive(mobile) {
+      padding: $spacing-lg;
+    }
+    
+    .entry__avatar {
+      width: 64px;
+      height: 64px;
+      
+      @include responsive(mobile) {
+        width: 56px;
+        height: 56px;
+      }
+    }
+    
+    .entry__rank {
+      font-size: $font-size-4xl;
+      
+      @include responsive(mobile) {
+        font-size: $font-size-3xl;
+      }
+    }
+    
+    .entry__score_value {
+      font-size: $font-size-2xl;
+      
+      @include responsive(mobile) {
+        font-size: $font-size-xl;
+      }
+    }
   }
 
-  // Subtle stripe for readability in lower ranks
+  // Subtle stripe for lower ranks
   &:nth-child(n+4) {
-    background: rgba($color-frozen-water, 0.03);
+    background: rgba($color-frozen-water, 0.02);
 
     &:hover {
       background: rgba($color-frozen-water, 0.08);
@@ -45,6 +76,12 @@
   min-width: 60px;
   text-align: center;
   color: $color-text-secondary;
+  font-family: $font-family-mono;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-xl;
+    min-width: 48px;
+  }
 }
 
 .entry__avatar {
@@ -52,6 +89,13 @@
   height: 48px;
   border-radius: $radius-full;
   border: 2px solid rgba($color-frozen-water, 0.1);
+  overflow: hidden;
+  flex-shrink: 0;
+  
+  @include responsive(mobile) {
+    width: 40px;
+    height: 40px;
+  }
 }
 
 .entry__user {
@@ -64,15 +108,30 @@
   font-weight: $font-weight-bold;
   color: $color-text-primary;
   @include truncate;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-base;
+  }
 }
 
 .entry__username {
   font-size: $font-size-sm;
   color: $color-text-secondary;
+  margin-top: 2px;
+  @include truncate;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-xs;
+  }
 }
 
 .entry__score {
   text-align: right;
+  min-width: 100px;
+  
+  @include responsive(mobile) {
+    min-width: 80px;
+  }
 }
 
 .entry__score_value {
@@ -80,17 +139,37 @@
   font-weight: $font-weight-extrabold;
   font-family: $font-family-mono;
   color: $color-text-primary;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-lg;
+  }
 }
 
 .entry__change {
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: flex-end;
+  gap: 4px;
   font-size: $font-size-sm;
   font-weight: $font-weight-bold;
-  padding: 4px 8px;
+  padding: 4px $spacing-xs;
   border-radius: $radius-md;
   margin-top: 4px;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-xs;
+    padding: 2px 6px;
+  }
+  
+  svg {
+    width: 14px;
+    height: 14px;
+    
+    @include responsive(mobile) {
+      width: 12px;
+      height: 12px;
+    }
+  }
 
   &--up {
     background: rgba($color-medium-jungle, 0.15);

@@ -1,7 +1,4 @@
 // File: src/components/ui/LoadingSpinner/LoadingSpinner.module.scss
-// ============================================================================
-
-@use '../../../styles/abstracts' as *;
 
 .spinner {
   display: inline-flex;
@@ -36,4 +33,19 @@
   border-top-color: $color-medium-jungle;
   border-radius: $radius-full;
   box-shadow: $shadow-glow-green;
+  animation: spin 0.8s linear infinite;
+  
+  .spinner--sm & {
+    border-width: 2px;
+  }
+  
+  .spinner--lg & {
+    border-width: 4px;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }

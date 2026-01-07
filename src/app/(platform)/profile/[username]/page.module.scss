@@ -13,11 +13,23 @@
   }
 }
 
+// ============================================================================
+// LOADING STATE
+// ============================================================================
+
 .profile__loading {
   @include flex-center;
   min-height: 400px;
   color: $color-text-secondary;
+  
+  @include responsive(mobile) {
+    min-height: 300px;
+  }
 }
+
+// ============================================================================
+// PROFILE HEADER
+// ============================================================================
 
 .profile__header {
   @include glass-surface(0.05);
@@ -27,10 +39,19 @@
   @include flex-column;
   @include flex-center;
   text-align: center;
+  
+  @include responsive(mobile) {
+    padding: $spacing-lg;
+    margin-bottom: $spacing-lg;
+  }
 }
 
 .profile__info {
   margin-top: $spacing-lg;
+  
+  @include responsive(mobile) {
+    margin-top: $spacing-md;
+  }
 }
 
 .profile__name {
@@ -38,12 +59,20 @@
   font-weight: $font-weight-extrabold;
   color: $color-text-primary;
   margin-bottom: $spacing-xs;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-2xl;
+  }
 }
 
 .profile__username {
   font-size: $font-size-lg;
   color: $color-text-secondary;
   margin-bottom: $spacing-md;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-base;
+  }
 }
 
 .profile__bio {
@@ -52,11 +81,23 @@
   line-height: $line-height-relaxed;
   max-width: 500px;
   margin: 0 auto;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-sm;
+  }
 }
 
 .profile__actions {
   margin-top: $spacing-lg;
+  
+  @include responsive(mobile) {
+    margin-top: $spacing-md;
+  }
 }
+
+// ============================================================================
+// STATS SECTION
+// ============================================================================
 
 .profile__stats {
   @include glass-surface(0.05);
@@ -69,6 +110,8 @@
   
   @include responsive(mobile) {
     gap: $spacing-xl;
+    padding: $spacing-lg;
+    margin-bottom: $spacing-lg;
   }
 }
 
@@ -83,6 +126,10 @@
   font-weight: $font-weight-extrabold;
   color: $color-text-primary;
   font-family: $font-family-mono;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-xl;
+  }
 }
 
 .profile__stat_label {
@@ -90,6 +137,24 @@
   color: $color-text-secondary;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-xs;
+  }
+}
+
+// ============================================================================
+// CONTENT SECTION
+// ============================================================================
+
+.profile__content {
+  @include glass-surface(0.05);
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  
+  @include responsive(mobile) {
+    padding: $spacing-lg;
+  }
 }
 
 .profile__content_title {
@@ -97,6 +162,11 @@
   font-weight: $font-weight-bold;
   color: $color-text-primary;
   margin-bottom: $spacing-lg;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-lg;
+    margin-bottom: $spacing-md;
+  }
 }
 
 .profile__empty {
@@ -105,4 +175,11 @@
   padding: $spacing-3xl;
   text-align: center;
   color: $color-text-secondary;
+  @include flex-column;
+  @include flex-center;
+  gap: $spacing-md;
+  
+  @include responsive(mobile) {
+    padding: $spacing-2xl $spacing-lg;
+  }
 }

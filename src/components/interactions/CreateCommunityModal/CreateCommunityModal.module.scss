@@ -53,18 +53,6 @@
   }
 }
 
-.modal__form {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-lg;
-}
-
-.modal__field {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-sm;
-}
-
 .modal__label {
   font-size: $font-size-sm;
   font-weight: $font-weight-semibold;
@@ -73,7 +61,7 @@
   letter-spacing: 0.5px;
 }
 
-.modal__input,
+
 .modal__textarea,
 .modal__select {
   @include glass-surface(0.05);
@@ -99,6 +87,54 @@
   font-family: $font-family-primary;
 }
 
+
+.modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-md;
+  margin-top: $spacing-lg;
+}
+
+.modal__form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+  
+  @include responsive(mobile) {
+    gap: $spacing-md;
+  }
+}
+
+.modal__field {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.modal__input {
+  @include glass-surface(0.05);
+  padding: $spacing-md;
+  border-radius: $radius-md;
+  font-size: $font-size-base;
+  color: $color-text-primary;
+  @include transition(background, border-color);
+  
+  @include responsive(mobile) {
+    padding: $spacing-sm;
+    font-size: $font-size-sm;
+  }
+  
+  &::placeholder {
+    color: $color-text-secondary;
+  }
+  
+  &:focus {
+    outline: none;
+    background: rgba($color-frozen-water, 0.08);
+    border-color: $color-medium-jungle;
+  }
+}
+
 .modal__error {
   padding: $spacing-md;
   background: rgba($color-night-bordeaux, 0.1);
@@ -106,11 +142,9 @@
   border-radius: $radius-md;
   color: $color-error;
   font-size: $font-size-sm;
-}
-
-.modal__actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: $spacing-md;
-  margin-top: $spacing-lg;
+  
+  @include responsive(mobile) {
+    padding: $spacing-sm;
+    font-size: $font-size-xs;
+  }
 }

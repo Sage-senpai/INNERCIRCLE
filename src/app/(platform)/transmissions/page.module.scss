@@ -1,7 +1,4 @@
 // File: src/app/(platform)/transmissions/page.module.scss
-// ============================================================================
-
-@use '../../../styles/abstracts' as *;
 
 .transmissions {
   max-width: $max-content-width;
@@ -18,11 +15,20 @@
   border-radius: $radius-xl;
   padding: $spacing-3xl;
   text-align: center;
+  
+  @include responsive(mobile) {
+    padding: $spacing-2xl $spacing-lg;
+  }
 }
 
 .transmissions__empty_icon {
-  font-size: 80px;
+  font-size: 5rem;
   margin-bottom: $spacing-xl;
+  
+  @include responsive(mobile) {
+    font-size: 4rem;
+    margin-bottom: $spacing-lg;
+  }
 }
 
 .transmissions__empty_title {
@@ -30,6 +36,10 @@
   font-weight: $font-weight-extrabold;
   color: $color-text-primary;
   margin-bottom: $spacing-md;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-2xl;
+  }
 }
 
 .transmissions__empty_description {
@@ -38,6 +48,11 @@
   line-height: $line-height-relaxed;
   max-width: 600px;
   margin: 0 auto $spacing-3xl;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-sm;
+    margin-bottom: $spacing-2xl;
+  }
 }
 
 .transmissions__features {
@@ -46,6 +61,10 @@
   gap: $spacing-lg;
   max-width: 600px;
   margin: 0 auto;
+  
+  @include responsive(mobile) {
+    gap: $spacing-md;
+  }
 }
 
 .transmissions__feature {
@@ -58,6 +77,11 @@
   text-align: left;
   @include transition(background, border-color);
   
+  @include responsive(mobile) {
+    padding: $spacing-md;
+    gap: $spacing-sm;
+  }
+  
   &:hover {
     background: rgba($color-frozen-water, 0.08);
     border-color: $color-border-hover;
@@ -65,13 +89,22 @@
 }
 
 .transmissions__feature_icon {
-  font-size: 32px;
+  font-size: 2rem;
   flex-shrink: 0;
+  
+  @include responsive(mobile) {
+    font-size: 1.5rem;
+  }
   
   svg {
     width: 32px;
     height: 32px;
     color: $color-medium-jungle;
+    
+    @include responsive(mobile) {
+      width: 24px;
+      height: 24px;
+    }
   }
 }
 
@@ -84,10 +117,18 @@
   font-weight: $font-weight-semibold;
   color: $color-text-primary;
   margin-bottom: $spacing-xs;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-base;
+  }
 }
 
 .transmissions__feature_description {
   font-size: $font-size-sm;
   color: $color-text-secondary;
   line-height: $line-height-normal;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-xs;
+  }
 }

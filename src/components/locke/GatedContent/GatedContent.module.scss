@@ -1,5 +1,4 @@
 // File: src/components/locke/GatedContent/GatedContent.module.scss
-@use '../../../styles/abstracts' as *;
 
 .gated {
   position: relative;
@@ -11,6 +10,10 @@
   border-radius: $radius-lg;
   height: 200px;
   @include skeleton-pulse;
+  
+  @include responsive(mobile) {
+    height: 160px;
+  }
 }
 
 .gated__locked {
@@ -22,6 +25,10 @@
   text-align: center;
   position: relative;
   overflow: hidden;
+  
+  @include responsive(mobile) {
+    padding: $spacing-xl;
+  }
   
   &::before {
     content: '';
@@ -42,6 +49,10 @@
   opacity: 0.4;
   pointer-events: none;
   user-select: none;
+  
+  @include responsive(mobile) {
+    margin-bottom: $spacing-lg;
+  }
 }
 
 .gated__barrier {
@@ -55,14 +66,24 @@
   margin: 0 auto $spacing-lg;
   color: $color-locked;
   filter: drop-shadow($shadow-glow-bordeaux);
+  
+  @include responsive(mobile) {
+    width: 48px;
+    height: 48px;
+    margin-bottom: $spacing-md;
+  }
 }
 
 .gated__title {
   font-size: $font-size-2xl;
   font-weight: $font-weight-bold;
-  color: $color-error; // Using pre-calculated color instead of lighten
+  color: $color-error;
   margin-bottom: $spacing-sm;
   letter-spacing: -0.5px;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-xl;
+  }
 }
 
 .gated__reason {
@@ -70,6 +91,11 @@
   font-size: $font-size-base;
   margin-bottom: $spacing-lg;
   line-height: $line-height-normal;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-sm;
+    margin-bottom: $spacing-md;
+  }
 }
 
 .gated__requirements {
@@ -82,6 +108,11 @@
   max-width: 500px;
   margin-left: auto;
   margin-right: auto;
+  
+  @include responsive(mobile) {
+    padding: $spacing-md;
+    margin-bottom: $spacing-lg;
+  }
 }
 
 .gated__requirements_title {
@@ -91,6 +122,10 @@
   font-size: $font-size-sm;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-xs;
+  }
 }
 
 .gated__requirements_list {
@@ -103,6 +138,11 @@
     padding-left: $spacing-lg;
     position: relative;
     line-height: $line-height-relaxed;
+    
+    @include responsive(mobile) {
+      font-size: $font-size-xs;
+      padding-left: $spacing-md;
+    }
     
     &::before {
       content: '→';

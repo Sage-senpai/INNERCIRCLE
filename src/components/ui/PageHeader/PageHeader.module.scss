@@ -7,21 +7,34 @@
   position: sticky;
   top: 0;
   z-index: $z-sticky;
-  background: $color-onyx;
-  color: white;
+  @include glass-surface-strong(0.1);
   padding: $spacing-lg;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border-bottom: 1px solid $color-border;
+  backdrop-filter: $blur-glass-strong;
   
   @include responsive(mobile) {
     padding: $spacing-md;
+    position: relative;
+    top: auto;
   }
 }
 
+// ============================================================================
+// HEADER CONTENT
+// ============================================================================
+
 .header__content {
-  max-width: $max-content-width;
+  max-width: $max-content-width-wide;
   margin: 0 auto;
   @include flex-between;
   gap: $spacing-lg;
+  align-items: center;
+  
+  @include responsive(mobile) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-md;
+  }
 }
 
 .header__text {
@@ -32,8 +45,9 @@
 .header__title {
   font-size: $font-size-2xl;
   font-weight: $font-weight-extrabold;
-  color: white;
+  color: $color-text-primary;
   line-height: $line-height-tight;
+  @include truncate;
   
   @include responsive(mobile) {
     font-size: $font-size-xl;
@@ -42,19 +56,32 @@
 
 .header__subtitle {
   font-size: $font-size-base;
-  color: rgba(white, 0.8);
+  color: $color-text-secondary;
   margin-top: $spacing-xs;
   line-height: $line-height-normal;
+  @include line-clamp(2);
   
   @include responsive(mobile) {
     font-size: $font-size-sm;
+    margin-top: 4px;
   }
 }
+
+// ============================================================================
+// HEADER RIGHT SECTION
+// ============================================================================
 
 .header__right {
   display: flex;
   align-items: center;
   gap: $spacing-lg;
+  flex-shrink: 0;
+  
+  @include responsive(mobile) {
+    width: 100%;
+    justify-content: space-between;
+    gap: $spacing-md;
+  }
 }
 
 .header__actions {
@@ -62,26 +89,26 @@
   gap: $spacing-md;
   align-items: center;
   
-  button, .btn {
-    background: rgba(white, 0.2);
-    color: white;
-    border: none;
-    
-    &:hover {
-      background: rgba(white, 0.3);
-    }
+  @include responsive(mobile) {
+    gap: $spacing-sm;
+    flex: 1;
   }
 }
+
+// ============================================================================
+// HEADER NAVIGATION
+// ============================================================================
 
 .header__nav {
   display: flex;
   align-items: center;
   gap: $spacing-sm;
   padding-left: $spacing-md;
-  border-left: 1px solid rgba(white, 0.2);
+  border-left: 1px solid $color-border;
   
   @include responsive(mobile) {
-    display: none;
+    padding-left: 0;
+    border-left: none;
   }
 }
 
@@ -90,17 +117,31 @@
   width: 40px;
   height: 40px;
   border-radius: $radius-full;
-  color: rgba(white, 0.8);
-  @include transition(background, color);
+  color: $color-text-secondary;
+  @include transition(background, color, transform);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  
+  @include responsive(mobile) {
+    width: 36px;
+    height: 36px;
+  }
   
   svg {
     width: 20px;
     height: 20px;
+    
+    @include responsive(mobile) {
+      width: 18px;
+      height: 18px;
+    }
   }
   
   &:hover {
-    background: rgba(white, 0.1);
-    color: white;
+    background: rgba($color-frozen-water, 0.1);
+    color: $color-text-primary;
+    transform: scale(1.05);
   }
   
   &:active {

@@ -21,6 +21,8 @@
   
   @include responsive(mobile) {
     grid-template-columns: 1fr;
+    gap: $spacing-md;
+    margin-bottom: $spacing-2xl;
   }
 }
 
@@ -29,6 +31,10 @@
   border-radius: $radius-lg;
   padding: $spacing-xl;
   @include transition(transform, box-shadow);
+  
+  @include responsive(mobile) {
+    padding: $spacing-lg;
+  }
   
   &:hover {
     transform: translateY(-2px);
@@ -46,12 +52,21 @@
   font-size: $font-size-xl;
   font-weight: $font-weight-bold;
   color: $color-text-primary;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-lg;
+  }
 }
 
 .intelligence__card_icon {
   width: 24px;
   height: 24px;
   color: $color-medium-jungle;
+  
+  @include responsive(mobile) {
+    width: 20px;
+    height: 20px;
+  }
 }
 
 .intelligence__card_badge {
@@ -63,6 +78,11 @@
   font-size: $font-size-sm;
   line-height: $line-height-relaxed;
   margin-bottom: $spacing-lg;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-xs;
+    margin-bottom: $spacing-md;
+  }
 }
 
 .intelligence__placeholder {
@@ -74,10 +94,19 @@
   @include flex-column;
   @include flex-center;
   gap: $spacing-md;
+  
+  @include responsive(mobile) {
+    padding: $spacing-xl;
+    gap: $spacing-sm;
+  }
 }
 
 .intelligence__placeholder_icon {
-  font-size: 48px;
+  font-size: 3rem;
+  
+  @include responsive(mobile) {
+    font-size: 2.5rem;
+  }
 }
 
 .intelligence__premium {
@@ -86,6 +115,10 @@
   border-radius: $radius-xl;
   padding: $spacing-3xl;
   text-align: center;
+  
+  @include responsive(mobile) {
+    padding: $spacing-2xl $spacing-lg;
+  }
 }
 
 .intelligence__premium_title {
@@ -93,6 +126,10 @@
   font-weight: $font-weight-extrabold;
   @include text-gradient($color-frozen-water, $color-medium-jungle);
   margin-bottom: $spacing-md;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-2xl;
+  }
 }
 
 .intelligence__premium_description {
@@ -103,6 +140,11 @@
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-base;
+    margin-bottom: $spacing-lg;
+  }
 }
 
 .intelligence__premium_features {
@@ -113,6 +155,12 @@
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
+  
+  @include responsive(mobile) {
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-lg;
+  }
 }
 
 .intelligence__premium_feature {
@@ -121,6 +169,11 @@
   border-radius: $radius-md;
   font-size: $font-size-base;
   color: $color-text-primary;
+  
+  @include responsive(mobile) {
+    padding: $spacing-sm;
+    font-size: $font-size-sm;
+  }
   
   span {
     color: $color-medium-jungle;
@@ -140,4 +193,9 @@
   cursor: not-allowed;
   opacity: 0.7;
   border: 1px solid rgba($color-medium-jungle, 0.3);
+  
+  @include responsive(mobile) {
+    font-size: $font-size-base;
+    padding: $spacing-sm $spacing-lg;
+  }
 }

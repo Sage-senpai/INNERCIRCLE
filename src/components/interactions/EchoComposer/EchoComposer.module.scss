@@ -1,12 +1,14 @@
 // File: src/components/interactions/EchoComposer/EchoComposer.module.scss
-// ============================================================================
-
-@use '../../../styles/abstracts' as *;
 
 .composer {
   margin-top: $spacing-md;
   padding-top: $spacing-md;
   border-top: 1px solid $color-border;
+  
+  @include responsive(mobile) {
+    margin-top: $spacing-sm;
+    padding-top: $spacing-sm;
+  }
 }
 
 .composer__input {
@@ -16,9 +18,16 @@
   border-radius: $radius-md;
   font-size: $font-size-sm;
   color: $color-text-primary;
-  resize: none;
+  resize: vertical;
   font-family: $font-family-primary;
   margin-bottom: $spacing-sm;
+  min-height: 60px;
+  
+  @include responsive(mobile) {
+    padding: $spacing-xs;
+    font-size: $font-size-xs;
+    min-height: 50px;
+  }
   
   &::placeholder {
     color: $color-text-secondary;
@@ -28,6 +37,7 @@
     outline: none;
     background: rgba($color-frozen-water, 0.08);
     border-color: $color-medium-jungle;
+    box-shadow: 0 0 0 2px rgba($color-medium-jungle, 0.1);
   }
 }
 
@@ -35,4 +45,8 @@
   display: flex;
   justify-content: flex-end;
   gap: $spacing-sm;
+  
+  @include responsive(mobile) {
+    gap: $spacing-xs;
+  }
 }

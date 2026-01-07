@@ -1,7 +1,4 @@
 // File: src/components/ui/Avatar/Avatar.module.scss
-// ============================================================================
-
-@use '../../../styles/abstracts' as *;
 
 .avatar {
   border-radius: $radius-full;
@@ -10,11 +7,19 @@
   @include glass-surface(0.1);
   @include flex-center;
   position: relative;
-  @include transition(transform);
+  @include transition(transform, box-shadow);
+  border: 2px solid rgba($color-frozen-water, 0.1);
+  
+  &:hover {
+    transform: scale(1.05);
+    border-color: rgba($color-frozen-water, 0.2);
+    box-shadow: $shadow-md;
+  }
   
   &--sm {
     width: 32px;
     height: 32px;
+    border-width: 1px;
   }
   
   &--md {
@@ -30,6 +35,7 @@
   &--xl {
     width: 96px;
     height: 96px;
+    border-width: 3px;
   }
 }
 
@@ -71,4 +77,8 @@
   border-radius: $radius-full;
   border: 2px solid $color-bg-primary;
   box-shadow: $shadow-glow-green;
+  
+  .avatar--sm & {
+    border-width: 1px;
+  }
 }
