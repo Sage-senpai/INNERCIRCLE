@@ -1,5 +1,8 @@
 // File: src/app/(auth)/connect/page.tsx
-// FIXED: Properly check for existing users in Supabase
+// ============================================================================
+// Connect Page - Fixed with Better Error Handling
+// ============================================================================
+
 'use client';
 
 import { useState } from 'react';
@@ -18,6 +21,7 @@ export default function LandingPage() {
   const [error, setError] = useState<string | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
   const [showWallets, setShowWallets] = useState(false);
+  const [connectingWallet, setConnectingWallet] = useState<string | null>(null);
   const walletManager = new WalletManager();
 
   // Redirect if already authenticated
@@ -39,8 +43,22 @@ export default function LandingPage() {
     setError(null);
     setIsConnecting(true);
     setConnecting(true);
+    setConnectingWallet(adapter);
 
     try {
+      // Check if wallet is installed
+      if (!walletManager.isWalletInstalled(adapter)) {
+        const walletName = adapter === 'phantom' ? 'Phantom' : 'Solflare';
+        const installUrl = adapter === 'phantom' 
+          ? 'https://phantom.app' 
+          : 'https://solflare.com';
+        throw new Error(
+          `${walletName} wallet is not installed. Please install it from ${installUrl}`
+        );
+      }
+
+      console.log(`Connecting to ${adapter}...`);
+
       // Connect wallet
       const connection = await walletManager.connect(adapter);
       console.log('Wallet connected:', connection.address);
@@ -79,9 +97,17 @@ export default function LandingPage() {
       const errorMessage = err instanceof Error ? err.message : 'Failed to connect wallet';
       setError(errorMessage);
       console.error('Connection error:', err);
+      
+      // Disconnect on error
+      try {
+        await walletManager.disconnect(adapter);
+      } catch (disconnectErr) {
+        console.error('Disconnect error:', disconnectErr);
+      }
     } finally {
       setIsConnecting(false);
       setConnecting(false);
+      setConnectingWallet(null);
     }
   };
 
@@ -91,6 +117,8 @@ export default function LandingPage() {
       <section className={styles.hero}>
         <div className={styles.hero__background}>
           <div className={styles.hero__grid} />
+          <div className={styles.hero__background_blob_1} />
+          <div className={styles.hero__background_blob_2} />
         </div>
         
         <motion.div 
@@ -151,6 +179,9 @@ export default function LandingPage() {
                 >
                   <PhantomIcon />
                   <span>Phantom</span>
+                  {connectingWallet === 'phantom' && (
+                    <span className={styles.wallet__badge}>Connecting...</span>
+                  )}
                 </motion.button>
 
                 <motion.button
@@ -165,6 +196,9 @@ export default function LandingPage() {
                 >
                   <SolflareIcon />
                   <span>Solflare</span>
+                  {connectingWallet === 'solflare' && (
+                    <span className={styles.wallet__badge}>Connecting...</span>
+                  )}
                 </motion.button>
 
                 <motion.button
@@ -199,13 +233,16 @@ export default function LandingPage() {
                   animate={{ opacity: 1 }}
                   className={styles.wallets__connecting}
                 >
-                  <p>Checking account...</p>
+                  <p>Connecting to wallet...</p>
                 </motion.div>
               )}
 
               <button 
                 className={styles.wallets__back}
-                onClick={() => setShowWallets(false)}
+                onClick={() => {
+                  setShowWallets(false);
+                  setError(null);
+                }}
                 disabled={isConnecting}
               >
                 ← Back

@@ -9,8 +9,8 @@
   top: 0;
   bottom: 0;
   width: $sidebar-width;
-  background: $color-bg-primary;
-  @include glass-surface-strong(0.08);
+  background: black;
+  //@include glass-surface-strong(0.08);
   backdrop-filter: $blur-glass-strong;
   border-right: 1px solid $color-border;
   display: flex;

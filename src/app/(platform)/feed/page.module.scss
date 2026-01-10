@@ -16,6 +16,7 @@
 
 .tabs {
   @include glass-surface(0.05);
+  background: black;
   position: sticky;
   top: $header-height;
   z-index: $z-sticky - 1;
