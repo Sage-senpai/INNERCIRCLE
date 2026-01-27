@@ -46,3 +46,19 @@
     transform: scale(0.95) rotate(90deg);
   }
 }
+
+// ============================================================================
+// LIGHT MODE OVERRIDES
+// ============================================================================
+
+[data-theme='light'] {
+  .fab {
+    // FAB keeps its green color in both themes for visibility
+    // but we reduce the glow effect for light mode
+    box-shadow: $shadow-xl;
+
+    &:hover {
+      box-shadow: $shadow-xl, 0 0 20px rgba($color-medium-jungle, 0.3);
+    }
+  }
+}

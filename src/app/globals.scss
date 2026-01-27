@@ -16,23 +16,41 @@ body {
   background: $color-bg-primary;
   color: $color-text-primary;
   overflow-x: hidden;
-  
+
+  [data-theme='light'] & {
+    background: #fafafa;
+    color: #0a0a0f;
+  }
+
   // Custom scrollbar
   &::-webkit-scrollbar {
     width: 12px;
   }
-  
+
   &::-webkit-scrollbar-track {
     background: rgba($color-frozen-water, 0.03);
+
+    [data-theme='light'] & {
+      background: rgba(10, 10, 15, 0.03);
+    }
   }
-  
+
   &::-webkit-scrollbar-thumb {
     background: rgba($color-frozen-water, 0.2);
     border-radius: $radius-full;
     border: 3px solid $color-bg-primary;
-    
+
+    [data-theme='light'] & {
+      background: rgba(10, 10, 15, 0.2);
+      border-color: #fafafa;
+    }
+
     &:hover {
       background: rgba($color-frozen-water, 0.3);
+
+      [data-theme='light'] & {
+        background: rgba(10, 10, 15, 0.3);
+      }
     }
   }
 }
@@ -41,6 +59,10 @@ body {
 ::selection {
   background: rgba($color-medium-jungle, 0.3);
   color: $color-text-primary;
+
+  [data-theme='light'] & {
+    color: #0a0a0f;
+  }
 }
 
 // Focus visible styles

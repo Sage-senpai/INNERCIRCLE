@@ -1,7 +1,7 @@
 // 1. UPDATED TYPES (src/lib/locke/types.ts)
 // ============================================================================
 
-export type Chain = 'solana' | 'polkadot';
+export type Chain = 'solana';
 export type RuleType = 'token_ownership' | 'minimum_balance' | 'holder_tier' | 'combined';
 export type HolderTier = 'holder' | 'whale' | 'elite';
 
@@ -30,7 +30,7 @@ export interface GateRule {
   chain?: Chain;
   minimumBalance?: number;
   requiredTier?: HolderTier;
-  customLogic?: Record<string, any>;
+  customLogic?: Record<string, unknown>;
 }
 
 export interface GateEvaluation {

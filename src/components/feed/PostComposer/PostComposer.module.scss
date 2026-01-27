@@ -238,13 +238,73 @@
   cursor: pointer;
   @include transition(transform, background);
   border: none;
-  
+
   &:hover {
     background: $color-night-bordeaux;
     transform: scale(1.1);
   }
-  
+
   &:active {
     transform: scale(0.95);
+  }
+}
+
+// ============================================================================
+// LIGHT MODE OVERRIDES
+// ============================================================================
+
+[data-theme='light'] {
+  .composer {
+    background: rgba(10, 10, 15, 0.03);
+    border-color: rgba(10, 10, 15, 0.1);
+
+    &--focused {
+      background: rgba(10, 10, 15, 0.05);
+      border-color: rgba(10, 10, 15, 0.2);
+    }
+  }
+
+  .composer__prompt {
+    color: #5a5350;
+  }
+
+  .composer__username {
+    color: #0a0a0f;
+  }
+
+  .composer__input {
+    background: rgba(10, 10, 15, 0.03);
+    border-color: rgba(10, 10, 15, 0.1);
+    color: #0a0a0f;
+
+    &::placeholder {
+      color: #5a5350;
+    }
+
+    &:focus {
+      background: rgba(10, 10, 15, 0.05);
+      border-color: rgba(10, 10, 15, 0.2);
+    }
+  }
+
+  .composer__footer {
+    border-top-color: rgba(10, 10, 15, 0.1);
+  }
+
+  .composer__option {
+    color: #0a0a0f;
+  }
+
+  .composer__char_count {
+    color: #5a5350;
+  }
+
+  .composer__media_item {
+    background: rgba(10, 10, 15, 0.03);
+    border-color: rgba(10, 10, 15, 0.1);
+  }
+
+  .composer__media_remove {
+    color: #0a0a0f;
   }
 }

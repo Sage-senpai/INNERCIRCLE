@@ -8,13 +8,24 @@ interface LockIconProps {
   locked?: boolean;
   className?: string;
   animated?: boolean;
+  size?: 'sm' | 'md' | 'lg';
 }
 
-export function LockIcon({ locked = true, className = '', animated = true }: LockIconProps) {
+const sizeMap = {
+  sm: 20,
+  md: 24,
+  lg: 32,
+};
+
+export function LockIcon({ locked = true, className = '', animated = true, size = 'md' }: LockIconProps) {
+  const dimension = sizeMap[size];
+
   return (
     <motion.svg
       className={`${styles.lock} ${className}`}
       viewBox="0 0 24 24"
+      width={dimension}
+      height={dimension}
       fill="none"
       stroke="currentColor"
       animate={animated && locked ? { 

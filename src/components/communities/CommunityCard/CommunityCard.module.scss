@@ -162,8 +162,52 @@
   color: $color-text-primary;
   font-family: $font-family-mono;
   @include truncate;
-  
+
   @include responsive(mobile) {
     font-size: $font-size-xs;
+  }
+}
+
+// ============================================================================
+// LIGHT MODE OVERRIDES
+// ============================================================================
+
+[data-theme='light'] {
+  .card {
+    background: rgba(10, 10, 15, 0.03);
+    border-color: rgba(10, 10, 15, 0.1);
+
+    &:hover {
+      background: rgba(10, 10, 15, 0.05);
+      border-color: rgba(10, 10, 15, 0.15);
+    }
+  }
+
+  .card__title {
+    color: #0a0a0f;
+  }
+
+  .card__description {
+    color: #5a5350;
+  }
+
+  .card__stat_value {
+    color: #0a0a0f;
+  }
+
+  .card__stat_label {
+    color: #5a5350;
+  }
+
+  .card__footer {
+    border-top-color: rgba(10, 10, 15, 0.1);
+  }
+
+  .card__token_label {
+    color: #5a5350;
+  }
+
+  .card__token_address {
+    color: #0a0a0f;
   }
 }

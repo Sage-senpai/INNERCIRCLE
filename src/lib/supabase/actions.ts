@@ -8,6 +8,106 @@ import { bagsAPI } from '../bags-api/client';
 import { Chain } from '../locke/types';
 
 // ============================================================================
+// MULTI-WALLET ACCOUNT ACTIONS
+// ============================================================================
+
+export async function getOrCreateUserByWallet(walletAddress: string, username?: string) {
+  const { data, error } = await supabase.rpc('get_or_create_user_by_wallet', {
+    p_wallet_address: walletAddress,
+    p_username: username || null,
+  });
+
+  if (error) throw error;
+  return data[0]; // Returns { user_id, username, is_new_user }
+}
+
+export async function getUserWithLinkedWallets(userId: string) {
+  const { data: user, error: userError } = await supabase
+    .from('users')
+    .select('*')
+    .eq('id', userId)
+    .single();
+
+  if (userError) throw userError;
+
+  const { data: wallets, error: walletsError } = await supabase
+    .from('wallet_verifications')
+    .select('*')
+    .eq('user_id', userId)
+    .order('is_primary', { ascending: false });
+
+  if (walletsError) throw walletsError;
+
+  return {
+    ...user,
+    linkedWallets: wallets.map((w) => ({
+      walletAddress: w.wallet_address,
+      chain: w.chain,
+      isPrimary: w.is_primary,
+      verifiedAt: w.verified_at,
+    })),
+  };
+}
+
+export async function linkWalletToAccount(userId: string, walletAddress: string) {
+  const { data, error } = await supabase.rpc('link_wallet_to_account', {
+    p_user_id: userId,
+    p_wallet_address: walletAddress,
+  });
+
+  if (error) throw error;
+  return data[0]; // Returns { success, message, wallet_count }
+}
+
+export async function unlinkWalletFromAccount(userId: string, walletAddress: string) {
+  const { data, error } = await supabase.rpc('unlink_wallet_from_account', {
+    p_user_id: userId,
+    p_wallet_address: walletAddress,
+  });
+
+  if (error) throw error;
+  return data[0]; // Returns { success, message }
+}
+
+interface UserRecord {
+  id: string;
+  wallet_address: string;
+  primary_wallet_address: string;
+  username: string;
+  display_name: string | null;
+  avatar_url: string | null;
+  bio: string | null;
+  role: string;
+  onboarding_completed: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export async function getUserByWallet(
+  walletAddress: string
+): Promise<UserRecord | null> {
+  const { data, error } = await supabase
+    .from('wallet_verifications')
+    .select(`
+      user_id,
+      users (*)
+    `)
+    .eq('wallet_address', walletAddress)
+    .single();
+
+  if (error) {
+    if (error.code === 'PGRST116') return null; // Not found
+    throw error;
+  }
+
+  // Supabase returns joined relations as arrays
+  const user = Array.isArray(data?.users) ? data.users[0] : data?.users;
+
+  return user ? (user as UserRecord) : null;
+}
+
+
+// ============================================================================
 // USER ACTIONS
 // ============================================================================
 
@@ -93,16 +193,13 @@ export async function createPostWithGating(post: {
     requiredTier?: string;
   }>;
 }) {
-  // Create post
+  // Create post (schema only has: author_id, community_id, content, signal_count, echo_count, relay_count)
   const { data: newPost, error: postError } = await supabase
     .from('posts')
     .insert({
       author_id: post.authorId,
       content: post.content,
-      media_urls: post.mediaUrls || [],
-      is_gated: post.isGated || false,
-      visibility: post.visibility || 'public',
-      community_id: post.communityId,
+      community_id: post.communityId || null,
     })
     .select(`
       *,
@@ -110,24 +207,33 @@ export async function createPostWithGating(post: {
     `)
     .single();
 
-  if (postError) throw postError;
+  if (postError) {
+    console.error('Post creation error:', postError);
+    throw new Error(postError.message || 'Failed to create post');
+  }
 
   // Create gates if provided
-  if (post.gates && post.gates.length > 0) {
-    const gatesData = post.gates.map(gate => ({
-      post_id: newPost.id,
-      rule_type: gate.ruleType,
-      token_address: gate.tokenAddress,
-      chain: gate.chain,
-      minimum_balance: gate.minimumBalance,
-      required_tier: gate.requiredTier,
-    }));
+  if (post.gates && post.gates.length > 0 && newPost) {
+    const gatesData = post.gates
+      .filter(gate => gate.tokenAddress) // Only create gates with valid token addresses
+      .map(gate => ({
+        post_id: newPost.id,
+        token_address: gate.tokenAddress!,
+        min_amount: gate.minimumBalance || 0,
+        chain: gate.chain || 'solana',
+        gate_type: 'view', // Default gate type
+      }));
 
-    const { error: gatesError } = await supabase
-      .from('post_gates')
-      .insert(gatesData);
+    if (gatesData.length > 0) {
+      const { error: gatesError } = await supabase
+        .from('post_gates')
+        .insert(gatesData);
 
-    if (gatesError) console.error('Failed to create gates:', gatesError);
+      if (gatesError) {
+        console.error('Failed to create gates:', gatesError);
+        // Don't throw - post was created successfully
+      }
+    }
   }
 
   return newPost;
@@ -307,46 +413,72 @@ export async function createCommunity(community: {
   name: string;
   slug: string;
   description?: string;
-  tokenAddress: string;
-  chain: 'solana' | 'polkadot';
+  tokenAddress?: string; // Optional - for future token-gated communities
+  chain?: Chain; // Optional - for future token-gated communities
   creatorId: string;
   bannerUrl?: string;
   avatarUrl?: string;
 }) {
+  // Communities table schema: name, slug, description, avatar_url, banner_url, creator_id, member_count, post_count
   const { data, error } = await supabase
     .from('communities')
     .insert({
       name: community.name,
       slug: community.slug,
-      description: community.description,
-      token_address: community.tokenAddress,
-      chain: community.chain,
+      description: community.description || null,
       creator_id: community.creatorId,
-      banner_url: community.bannerUrl,
-      avatar_url: community.avatarUrl,
+      banner_url: community.bannerUrl || null,
+      avatar_url: community.avatarUrl || null,
     })
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {
+    console.error('Community creation error:', error);
+    throw new Error(error.message || 'Failed to create community');
+  }
+
+  // After creating community, add creator as admin member
+  if (data) {
+    const { error: memberError } = await supabase
+      .from('community_members')
+      .insert({
+        community_id: data.id,
+        user_id: community.creatorId,
+        role: 'admin',
+      });
+
+    if (memberError) {
+      console.error('Failed to add creator as member:', memberError);
+      // Don't throw - community was created successfully
+    }
+
+    // Increment member count
+    await supabase
+      .from('communities')
+      .update({ member_count: 1 })
+      .eq('id', data.id);
+  }
+
   return data;
 }
 
-export async function joinCommunity(userId: string, communityId: string, tokenBalance: number) {
-  const tier = calculateTier(tokenBalance);
-  
-  const { data, error } = await supabase
+export async function joinCommunity(userId: string, communityId: string) {
+  // Community_members table schema: community_id, user_id, role, joined_at
+  const { data, error} = await supabase
     .from('community_members')
     .insert({
       user_id: userId,
       community_id: communityId,
-      token_balance: tokenBalance,
-      tier,
+      role: 'member', // Default role
     })
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {
+    console.error('Join community error:', error);
+    throw new Error(error.message || 'Failed to join community');
+  }
   return data;
 }
 
@@ -408,12 +540,6 @@ export async function joinCommunityWithVerification(
     .eq('id', communityId);
 
   return data;
-}
-
-function calculateTier(balance: number): 'holder' | 'whale' | 'elite' {
-  if (balance >= 1000000) return 'elite';
-  if (balance >= 100000) return 'whale';
-  return 'holder';
 }
 
 export async function fetchCommunities(filter?: 'all' | 'joined') {

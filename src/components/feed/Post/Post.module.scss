@@ -8,13 +8,23 @@
   border-radius: $radius-xl;
   overflow: hidden;
   @include transition(background, border-color, transform, box-shadow);
-  
+
+  [data-theme='light'] & {
+    background: rgba(10, 10, 15, 0.03);
+    border-color: rgba(10, 10, 15, 0.1);
+  }
+
   &:hover {
     background: rgba($color-frozen-water, 0.08);
     border-color: $color-border-hover;
     box-shadow: $shadow-lg;
+
+    [data-theme='light'] & {
+      background: rgba(10, 10, 15, 0.06);
+      border-color: rgba(10, 10, 15, 0.15);
+    }
   }
-  
+
   @include responsive(mobile) {
     border-radius: $radius-lg;
   }
@@ -56,7 +66,11 @@
   font-size: $font-size-base;
   color: $color-text-primary;
   @include truncate;
-  
+
+  [data-theme='light'] & {
+    color: #0a0a0f;
+  }
+
   @include responsive(mobile) {
     font-size: $font-size-sm;
   }
@@ -67,7 +81,11 @@
   color: $color-text-secondary;
   margin-top: 2px;
   @include truncate;
-  
+
+  [data-theme='light'] & {
+    color: #5a5350;
+  }
+
   @include responsive(mobile) {
     font-size: $font-size-xs;
   }
@@ -77,7 +95,11 @@
   font-size: $font-size-sm;
   color: $color-text-secondary;
   white-space: nowrap;
-  
+
+  [data-theme='light'] & {
+    color: #5a5350;
+  }
+
   @include responsive(mobile) {
     font-size: $font-size-xs;
   }
@@ -101,7 +123,11 @@
   color: $color-text-primary;
   white-space: pre-wrap;
   word-break: break-word;
-  
+
+  [data-theme='light'] & {
+    color: #0a0a0f;
+  }
+
   @include responsive(mobile) {
     font-size: $font-size-sm;
     line-height: $line-height-normal;
@@ -143,7 +169,11 @@
   margin: 0 -#{$spacing-lg};
   padding-left: $spacing-lg;
   padding-right: $spacing-lg;
-  
+
+  [data-theme='light'] & {
+    border-top-color: rgba(10, 10, 15, 0.1);
+  }
+
   @include responsive(mobile) {
     margin: 0 -#{$spacing-md};
     padding-left: $spacing-md;
@@ -165,35 +195,39 @@
   border: none;
   padding: $spacing-xs $spacing-sm;
   border-radius: $radius-md;
-  
+
+  [data-theme='light'] & {
+    color: #5a5350;
+  }
+
   @include responsive(mobile) {
     font-size: $font-size-xs;
     gap: 4px;
     padding: $spacing-xs;
   }
-  
+
   &:hover {
     color: $color-medium-jungle;
     background: rgba($color-medium-jungle, 0.05);
   }
-  
+
   &:active {
     transform: scale(0.95);
   }
-  
+
   &--active {
     color: $color-medium-jungle;
-    
+
     svg {
       fill: $color-medium-jungle;
     }
   }
-  
+
   svg {
     width: 20px;
     height: 20px;
     @include transition(fill);
-    
+
     @include responsive(mobile) {
       width: 18px;
       height: 18px;

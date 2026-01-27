@@ -181,3 +181,46 @@
     color: $color-night-bordeaux;
   }
 }
+
+// ============================================================================
+// LIGHT MODE OVERRIDES
+// ============================================================================
+
+[data-theme='light'] {
+  .entry {
+    background: rgba(10, 10, 15, 0.03);
+    border-color: rgba(10, 10, 15, 0.1);
+
+    &:hover {
+      background: rgba(10, 10, 15, 0.05);
+    }
+
+    &:nth-child(n+4) {
+      background: rgba(10, 10, 15, 0.02);
+
+      &:hover {
+        background: rgba(10, 10, 15, 0.05);
+      }
+    }
+  }
+
+  .entry__rank {
+    color: #5a5350;
+  }
+
+  .entry__avatar {
+    border-color: rgba(10, 10, 15, 0.1);
+  }
+
+  .entry__name {
+    color: #0a0a0f;
+  }
+
+  .entry__username {
+    color: #5a5350;
+  }
+
+  .entry__score_value {
+    color: #0a0a0f;
+  }
+}

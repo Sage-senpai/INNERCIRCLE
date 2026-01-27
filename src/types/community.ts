@@ -1,5 +1,7 @@
 // File: src/types/community.ts
 
+import type { Chain } from '@/lib/locke/types';
+
 export interface Community {
   id: string;
   slug: string;
@@ -7,7 +9,7 @@ export interface Community {
   description?: string;
   creatorId: string;
   tokenAddress: string;
-  chain: 'solana' | 'polkadot';
+  chain: Chain;
   bannerUrl?: string;
   avatarUrl?: string;
   memberCount: number;

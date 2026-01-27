@@ -127,8 +127,44 @@
   font-size: $font-size-sm;
   color: $color-text-secondary;
   line-height: $line-height-normal;
-  
+
   @include responsive(mobile) {
     font-size: $font-size-xs;
+  }
+}
+
+// ============================================================================
+// LIGHT MODE OVERRIDES
+// ============================================================================
+
+.transmissions__empty_title {
+  [data-theme='light'] & {
+    color: #0a0a0f;
+  }
+}
+
+.transmissions__empty_description {
+  [data-theme='light'] & {
+    color: #5a5350;
+  }
+}
+
+.transmissions__feature {
+  [data-theme='light'] & {
+    &:hover {
+      background: rgba(10, 10, 15, 0.05);
+    }
+  }
+}
+
+.transmissions__feature_title {
+  [data-theme='light'] & {
+    color: #0a0a0f;
+  }
+}
+
+.transmissions__feature_description {
+  [data-theme='light'] & {
+    color: #5a5350;
   }
 }

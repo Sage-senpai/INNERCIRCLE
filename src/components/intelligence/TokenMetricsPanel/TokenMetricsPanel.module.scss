@@ -1,0 +1,311 @@
+// File: src/components/intelligence/TokenMetricsPanel/TokenMetricsPanel.module.scss
+
+
+@use '../../../styles/abstracts' as *;
+
+.panel {
+  @include glass-surface(0.05);
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  
+  @include responsive(mobile) {
+    padding: $spacing-lg;
+  }
+}
+
+.panel__loading,
+.panel__empty {
+  @include flex-column;
+  @include flex-center;
+  gap: $spacing-lg;
+  min-height: 400px;
+  
+  @include responsive(mobile) {
+    min-height: 300px;
+    gap: $spacing-md;
+  }
+  
+  p {
+    color: $color-text-secondary;
+    font-size: $font-size-base;
+    
+    @include responsive(mobile) {
+      font-size: $font-size-sm;
+    }
+  }
+}
+
+.panel__empty_icon {
+  font-size: 4rem;
+  opacity: 0.6;
+  
+  @include responsive(mobile) {
+    font-size: 3rem;
+  }
+}
+
+// Header
+.panel__header {
+  @include flex-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-2xl;
+  padding-bottom: $spacing-lg;
+  border-bottom: 1px solid $color-border;
+  
+  @include responsive(mobile) {
+    flex-direction: column;
+    gap: $spacing-md;
+    margin-bottom: $spacing-xl;
+    padding-bottom: $spacing-md;
+  }
+}
+
+.panel__token_symbol {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-extrabold;
+  color: $color-text-primary;
+  font-family: $font-family-mono;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-2xl;
+  }
+}
+
+.panel__token_name {
+  font-size: $font-size-base;
+  color: $color-text-secondary;
+  margin-top: $spacing-xs;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-sm;
+  }
+}
+
+.panel__price {
+  text-align: right;
+  
+  @include responsive(mobile) {
+    text-align: left;
+    width: 100%;
+  }
+}
+
+.panel__price_value {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  font-family: $font-family-mono;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-xl;
+  }
+}
+
+.panel__price_change {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  justify-content: flex-end;
+  margin-top: $spacing-xs;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  font-family: $font-family-mono;
+  
+  @include responsive(mobile) {
+    justify-content: flex-start;
+    font-size: $font-size-sm;
+  }
+  
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+  
+  &--up {
+    color: $color-medium-jungle;
+  }
+  
+  &--down {
+    color: $color-error;
+  }
+}
+
+// Metrics Grid
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $spacing-lg;
+  margin-bottom: $spacing-xl;
+  
+  @include responsive(tablet) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @include responsive(mobile) {
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+    margin-bottom: $spacing-lg;
+  }
+}
+
+.metric {
+  @include glass-surface(0.03);
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-lg;
+  border-radius: $radius-md;
+  @include transition(background, transform);
+  
+  @include responsive(mobile) {
+    padding: $spacing-md;
+    gap: $spacing-sm;
+  }
+  
+  &:hover {
+    background: rgba($color-frozen-water, 0.08);
+    transform: translateY(-2px);
+  }
+}
+
+.metric__icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+  
+  @include responsive(mobile) {
+    font-size: 1.5rem;
+  }
+}
+
+.metric__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.metric__label {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.metric__value {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  font-family: $font-family-mono;
+  @include truncate;
+  
+  @include responsive(mobile) {
+    font-size: $font-size-base;
+  }
+  
+  &--up {
+    color: $color-medium-jungle;
+  }
+  
+  &--down {
+    color: $color-error;
+  }
+}
+
+// Footer
+.panel__footer {
+  @include flex-between;
+  padding-top: $spacing-lg;
+  border-top: 1px solid $color-border;
+  gap: $spacing-md;
+  
+  @include responsive(mobile) {
+    flex-direction: column;
+    align-items: flex-start;
+    padding-top: $spacing-md;
+  }
+}
+
+.panel__chain {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.panel__chain_label {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  font-weight: $font-weight-medium;
+}
+
+.panel__chain_value {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  color: $color-medium-jungle;
+  font-family: $font-family-mono;
+}
+
+.panel__updated {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  font-family: $font-family-mono;
+}
+
+// ============================================================================
+// LIGHT MODE OVERRIDES
+// ============================================================================
+
+[data-theme='light'] {
+  .panel {
+    background: rgba(10, 10, 15, 0.03);
+    border-color: rgba(10, 10, 15, 0.1);
+  }
+
+  .panel__loading p,
+  .panel__empty p {
+    color: #5a5350;
+  }
+
+  .panel__header {
+    border-bottom-color: rgba(10, 10, 15, 0.1);
+  }
+
+  .panel__token_symbol {
+    color: #0a0a0f;
+  }
+
+  .panel__token_name {
+    color: #5a5350;
+  }
+
+  .panel__price_value {
+    color: #0a0a0f;
+  }
+
+  .metric {
+    background: rgba(10, 10, 15, 0.03);
+    border-color: rgba(10, 10, 15, 0.1);
+
+    &:hover {
+      background: rgba(10, 10, 15, 0.05);
+    }
+  }
+
+  .metric__label {
+    color: #5a5350;
+  }
+
+  .metric__value {
+    color: #0a0a0f;
+  }
+
+  .panel__footer {
+    border-top-color: rgba(10, 10, 15, 0.1);
+  }
+
+  .panel__chain_label {
+    color: #5a5350;
+  }
+
+  .panel__updated {
+    color: #5a5350;
+  }
+}

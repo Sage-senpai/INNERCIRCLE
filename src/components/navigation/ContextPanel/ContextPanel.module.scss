@@ -258,3 +258,92 @@
   color: $color-text-secondary;
   text-align: center;
 }
+
+// ============================================================================
+// LIGHT MODE OVERRIDES
+// ============================================================================
+
+[data-theme='light'] {
+  .context {
+    background: rgba(10, 10, 15, 0.02);
+    border-left-color: rgba(10, 10, 15, 0.1);
+  }
+
+  .context__section {
+    background: rgba(10, 10, 15, 0.03);
+    border-color: rgba(10, 10, 15, 0.1);
+  }
+
+  .context__title {
+    color: #0a0a0f;
+  }
+
+  .context__item {
+    &:hover {
+      background: rgba(10, 10, 15, 0.05);
+    }
+  }
+
+  .context__item_name {
+    color: #0a0a0f;
+  }
+
+  .context__item_meta {
+    color: #5a5350;
+  }
+
+  .context__item_change {
+    color: #5a5350;
+  }
+
+  .context__token {
+    background: rgba(10, 10, 15, 0.03);
+    border-color: rgba(10, 10, 15, 0.1);
+  }
+
+  .context__token_symbol {
+    color: #0a0a0f;
+  }
+
+  .context__token_volume {
+    color: #5a5350;
+  }
+
+  .context__leader {
+    background: rgba(10, 10, 15, 0.03);
+    border-color: rgba(10, 10, 15, 0.1);
+
+    &:hover {
+      background: rgba(10, 10, 15, 0.05);
+    }
+  }
+
+  .context__leader_rank {
+    color: #5a5350;
+  }
+
+  .context__leader_name {
+    color: #0a0a0f;
+  }
+
+  .context__leader_score {
+    color: #5a5350;
+  }
+
+  .context__info p {
+    color: #5a5350;
+  }
+
+  .context__stat {
+    background: rgba(10, 10, 15, 0.03);
+    border-color: rgba(10, 10, 15, 0.1);
+  }
+
+  .context__stat_value {
+    color: #0a0a0f;
+  }
+
+  .context__stat_label {
+    color: #5a5350;
+  }
+}

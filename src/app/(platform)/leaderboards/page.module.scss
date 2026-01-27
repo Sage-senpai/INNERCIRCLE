@@ -154,8 +154,41 @@
   display: flex;
   flex-direction: column;
   gap: $spacing-md;
-  
+
   @include responsive(mobile) {
     gap: $spacing-sm;
+  }
+}
+
+// ============================================================================
+// LIGHT MODE OVERRIDES
+// ============================================================================
+
+.segmented {
+  [data-theme='light'] & {
+    background: rgba(10, 10, 15, 0.05);
+
+    button {
+      color: #5a5350;
+
+      &:hover:not(.active) {
+        background: rgba(10, 10, 15, 0.1);
+        color: #0a0a0f;
+      }
+    }
+  }
+}
+
+.pills {
+  [data-theme='light'] & {
+    button {
+      background: rgba(10, 10, 15, 0.05);
+      color: #5a5350;
+
+      &:hover:not(.active) {
+        background: rgba(10, 10, 15, 0.1);
+        color: #0a0a0f;
+      }
+    }
   }
 }

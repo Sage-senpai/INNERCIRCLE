@@ -1,5 +1,7 @@
 // File: src/types/user.ts
 
+import type { Chain } from '@/lib/locke/types';
+
 export interface User {
   id: string;
   walletAddress: string;
@@ -16,7 +18,7 @@ export interface User {
 export interface WalletVerification {
   id: string;
   userId: string;
-  chain: 'solana' | 'polkadot';
+  chain: Chain;
   walletAddress: string;
   verifiedAt: string;
   isPrimary: boolean;

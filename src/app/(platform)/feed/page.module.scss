@@ -110,8 +110,30 @@
   flex: 1;
   overflow-y: auto;
   touch-action: pan-y;
-  
+
   @include responsive(mobile) {
     padding-bottom: $mobile-nav-height;
+  }
+}
+
+// ============================================================================
+// LIGHT MODE OVERRIDES
+// ============================================================================
+
+.tabs {
+  [data-theme='light'] & {
+    background: #ffffff;
+    border-bottom-color: rgba(10, 10, 15, 0.1);
+  }
+}
+
+.tab {
+  [data-theme='light'] & {
+    color: #5a5350;
+
+    &:hover {
+      background: rgba(10, 10, 15, 0.05);
+      color: #0a0a0f;
+    }
   }
 }

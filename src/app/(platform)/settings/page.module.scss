@@ -254,8 +254,68 @@
   font-size: $font-size-sm;
   color: $color-text-secondary;
   line-height: $line-height-normal;
-  
+
   @include responsive(mobile) {
     font-size: $font-size-xs;
+  }
+}
+
+// ============================================================================
+// LIGHT MODE OVERRIDES
+// ============================================================================
+
+.settings__section_title {
+  [data-theme='light'] & {
+    color: #0a0a0f;
+  }
+}
+
+.settings__label {
+  [data-theme='light'] & {
+    color: #5a5350;
+  }
+}
+
+.settings__value {
+  [data-theme='light'] & {
+    color: #0a0a0f;
+  }
+}
+
+.settings__value_mono {
+  [data-theme='light'] & {
+    color: #0a0a0f;
+  }
+}
+
+.settings__toggle_label {
+  [data-theme='light'] & {
+    color: #0a0a0f;
+  }
+}
+
+.settings__toggle_description {
+  [data-theme='light'] & {
+    color: #5a5350;
+  }
+}
+
+.settings__toggle_switch {
+  [data-theme='light'] & {
+    input[type='checkbox'] {
+      & + label {
+        background: rgba(10, 10, 15, 0.1);
+
+        &::after {
+          background: #0a0a0f;
+        }
+      }
+    }
+  }
+}
+
+.settings__danger_description {
+  [data-theme='light'] & {
+    color: #5a5350;
   }
 }

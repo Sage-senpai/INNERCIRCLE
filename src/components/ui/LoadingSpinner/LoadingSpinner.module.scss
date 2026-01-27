@@ -1,31 +1,41 @@
 // File: src/components/ui/LoadingSpinner/LoadingSpinner.module.scss
+@use 'sass:color';
 @use '../../../styles/abstracts' as *;
+
+// Define a darker shade for light mode
+$color-jungle-dark: color.adjust($color-medium-jungle, $lightness: -15%);
 .spinner {
   display: inline-flex;
   @include flex-center;
-  
+  position: relative;
+
   &--sm {
     width: 20px;
     height: 20px;
   }
-  
+
   &--md {
     width: 32px;
     height: 32px;
   }
-  
+
   &--lg {
     width: 48px;
     height: 48px;
   }
-  
+
   svg {
     width: 100%;
     height: 100%;
     color: $color-medium-jungle;
+
+    [data-theme='light'] & {
+      color: $color-jungle-dark;
+    }
   }
 }
 
+// Ring spinner (default)
 .spinner__ring {
   width: 100%;
   height: 100%;
@@ -34,13 +44,61 @@
   border-radius: $radius-full;
   box-shadow: $shadow-glow-green;
   animation: spin 0.8s linear infinite;
-  
+
   .spinner--sm & {
     border-width: 2px;
   }
-  
+
   .spinner--lg & {
     border-width: 4px;
+  }
+
+  [data-theme='light'] & {
+    border-color: rgba($color-jungle-dark, 0.1);
+    border-top-color: $color-jungle-dark;
+  }
+}
+
+// Lock spinner (pulsing padlock with trace)
+.spinner--lock {
+  .spinner__icon {
+    width: 60%;
+    height: 60%;
+    position: relative;
+    z-index: 2;
+    color: $color-medium-jungle;
+
+    [data-theme='light'] & {
+      color: $color-jungle-dark;
+    }
+
+    svg {
+      filter: drop-shadow(0 0 8px rgba($color-medium-jungle, 0.4));
+
+      [data-theme='light'] & {
+        filter: drop-shadow(0 0 8px rgba($color-jungle-dark, 0.3));
+      }
+    }
+  }
+
+  .spinner__trace {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    color: $color-medium-jungle;
+    opacity: 0.6;
+
+    [data-theme='light'] & {
+      color: $color-jungle-dark;
+      opacity: 0.5;
+    }
+
+    circle {
+      transform-origin: center;
+    }
   }
 }
 

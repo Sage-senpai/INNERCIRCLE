@@ -45,8 +45,33 @@
   display: flex;
   justify-content: flex-end;
   gap: $spacing-sm;
-  
+
   @include responsive(mobile) {
     gap: $spacing-xs;
+  }
+}
+
+// ============================================================================
+// LIGHT MODE OVERRIDES
+// ============================================================================
+
+[data-theme='light'] {
+  .composer {
+    border-top-color: rgba(10, 10, 15, 0.1);
+  }
+
+  .composer__input {
+    background: rgba(10, 10, 15, 0.03);
+    border-color: rgba(10, 10, 15, 0.1);
+    color: #0a0a0f;
+
+    &::placeholder {
+      color: #5a5350;
+    }
+
+    &:focus {
+      background: rgba(10, 10, 15, 0.05);
+      border-color: rgba(10, 10, 15, 0.2);
+    }
   }
 }

@@ -1,10 +1,17 @@
 // File: src/lib/bags-api/client.ts
 // ============================================================================
 // Bags API Client - Full Implementation
-// Based on https://docs.bags.fm/
+// Based on https://docs.bags.fm/ and https://docs.bitquery.io/docs/blockchain/Solana/bags-fm-api/
 // ============================================================================
 
 import { Chain } from '../locke/types';
+
+// ============================================================================
+// API CONFIGURATION
+// ============================================================================
+
+const BAGS_PUBLIC_API_V2 = 'https://public-api-v2.bags.fm/api/v1';
+const BITQUERY_API = 'https://streaming.bitquery.io/graphql';
 
 // ============================================================================
 // TYPES (from Bags API documentation)
@@ -18,6 +25,8 @@ export interface BagsToken {
   decimals: number;
   logo_uri?: string;
   verified: boolean;
+  price_usd?: number;
+  market_cap?: number;
 }
 
 export interface BagsHolding {
@@ -130,16 +139,21 @@ export class BagsAPIError extends Error {
 
 export class BagsAPI {
   private baseURL: string;
+  private bitqueryURL: string;
   private apiKey: string;
-  private cache: Map<string, { data: any; timestamp: number }> = new Map();
+  private bitqueryKey: string;
+  private cache: Map<string, { data: unknown; timestamp: number }> = new Map();
   private cacheTTL = 30000; // 30 seconds default
 
   constructor(apiKey?: string) {
-    this.baseURL = process.env.NEXT_PUBLIC_BAGS_API_URL || 'https://api.bags.fm/v1';
+    // Use the public API v2 as primary
+    this.baseURL = process.env.NEXT_PUBLIC_BAGS_API_URL || BAGS_PUBLIC_API_V2;
+    this.bitqueryURL = BITQUERY_API;
     this.apiKey = apiKey || process.env.NEXT_PUBLIC_BAGS_API_KEY || '';
-    
+    this.bitqueryKey = process.env.NEXT_PUBLIC_BITQUERY_API_KEY || '';
+
     if (!this.apiKey) {
-      console.warn('Bags API key not found. Some features may not work.');
+      console.warn('Bags API key not found. Using public endpoints only.');
     }
   }
 
@@ -152,12 +166,12 @@ export class BagsAPI {
     options: RequestInit = {}
   ): Promise<T> {
     const url = `${this.baseURL}${endpoint}`;
-    
+
     try {
       const response = await fetch(url, {
         ...options,
         headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
+          'x-api-key': this.apiKey,
           'Content-Type': 'application/json',
           ...options.headers,
         },
@@ -185,6 +199,37 @@ export class BagsAPI {
     }
   }
 
+  /**
+   * Query Bitquery GraphQL API for real-time Solana token data
+   */
+  private async queryBitquery<T>(query: string, variables?: Record<string, unknown>): Promise<T | null> {
+    if (!this.bitqueryKey) {
+      console.warn('Bitquery API key not found. Using fallback data.');
+      return null;
+    }
+
+    try {
+      const response = await fetch(this.bitqueryURL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.bitqueryKey}`,
+        },
+        body: JSON.stringify({ query, variables }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Bitquery API error: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      return result.data as T;
+    } catch (error) {
+      console.error('Bitquery query failed:', error);
+      return null;
+    }
+  }
+
   private getCacheKey(endpoint: string): string {
     return endpoint;
   }
@@ -202,20 +247,18 @@ export class BagsAPI {
     return cached.data as T;
   }
 
-  private setCache<T>(key: string, data: T, ttl?: number): void {
+  private setCache<T>(key: string, data: T): void {
     this.cache.set(key, {
       data,
       timestamp: Date.now(),
     });
-    
-   if (this.cache.size > 100) {
-  const oldestKey = this.cache.keys().next().value;
 
-  if (typeof oldestKey === 'string') {
-    this.cache.delete(oldestKey);
-  }
-}
-
+    if (this.cache.size > 100) {
+      const oldestKey = this.cache.keys().next().value;
+      if (typeof oldestKey === 'string') {
+        this.cache.delete(oldestKey);
+      }
+    }
   }
 
   // ==========================================================================
@@ -225,7 +268,7 @@ export class BagsAPI {
   /**
    * Get all token holdings for a wallet address
    * @param walletAddress - Wallet address to query
-   * @param chain - Blockchain (solana or polkadot)
+   * @param chain - Blockchain (solana only)
    * @param useCache - Whether to use cache (default: true)
    */
   async getHoldings(
@@ -300,6 +343,7 @@ export class BagsAPI {
 
   /**
    * Get comprehensive metrics for a specific token
+   * Uses multiple data sources for accuracy
    */
   async getTokenMetrics(
     tokenAddress: string,
@@ -312,11 +356,124 @@ export class BagsAPI {
     if (cached) return cached;
 
     try {
+      // Try primary API first
       const data = await this.request<BagsTokenMetrics>(endpoint);
-      this.setCache(cacheKey, data, 300000); // 5 minute cache for metrics
+      this.setCache(cacheKey, data);
       return data;
     } catch (error) {
+      console.warn(`Primary API failed for ${tokenAddress}, trying Bitquery...`);
+
+      // Fallback to Bitquery for real-time data
+      const bitqueryData = await this.fetchTokenMetricsFromBitquery(tokenAddress);
+      if (bitqueryData) {
+        this.setCache(cacheKey, bitqueryData);
+        return bitqueryData;
+      }
+
       console.error(`Failed to fetch token metrics for ${tokenAddress}:`, error);
+      return null;
+    }
+  }
+
+  /**
+   * Fetch token metrics from Bitquery GraphQL API
+   */
+  private async fetchTokenMetricsFromBitquery(tokenAddress: string): Promise<BagsTokenMetrics | null> {
+    const query = `
+      query GetTokenMetrics($token: String!) {
+        Solana {
+          DEXTradeByTokens(
+            where: {
+              Trade: {
+                Currency: {
+                  MintAddress: { is: $token }
+                }
+              }
+            }
+            limit: { count: 1 }
+            orderBy: { descending: Block_Time }
+          ) {
+            Trade {
+              Currency {
+                Symbol
+                Name
+                Decimals
+                MintAddress
+              }
+              Price
+              PriceInUSD
+            }
+            volume: sum(of: Trade_Amount)
+            volumeUSD: sum(of: Trade_Side_AmountInUSD)
+          }
+        }
+      }
+    `;
+
+    const data = await this.queryBitquery<{
+      Solana: {
+        DEXTradeByTokens: Array<{
+          Trade: {
+            Currency: {
+              Symbol: string;
+              Name: string;
+              Decimals: number;
+              MintAddress: string;
+            };
+            Price: number;
+            PriceInUSD: number;
+          };
+          volume: number;
+          volumeUSD: number;
+        }>;
+      };
+    }>(query, { token: tokenAddress });
+
+    if (!data?.Solana?.DEXTradeByTokens?.[0]) {
+      return null;
+    }
+
+    const trade = data.Solana.DEXTradeByTokens[0];
+
+    return {
+      token_address: tokenAddress,
+      chain: 'solana',
+      symbol: trade.Trade.Currency.Symbol,
+      name: trade.Trade.Currency.Name,
+      price_usd: trade.Trade.PriceInUSD || 0,
+      price_change_24h: 0, // Would need historical data
+      price_change_7d: 0,
+      holder_count: 0, // Would need separate query
+      volume_24h: trade.volumeUSD || 0,
+      market_cap: 0, // Would need supply data
+      liquidity_usd: 0,
+      fully_diluted_valuation: 0,
+      fetched_at: new Date().toISOString(),
+    };
+  }
+
+  /**
+   * Get real-time price stream for a token (subscription-based)
+   */
+  async getLivePrice(tokenAddress: string): Promise<{ price: number; change24h: number } | null> {
+    const cacheKey = `live_price_${tokenAddress}`;
+    const cached = this.getCache<{ price: number; change24h: number }>(cacheKey);
+    if (cached) return cached;
+
+    try {
+      // Try Bags API first
+      const endpoint = `/tokens/solana/${tokenAddress}/price`;
+      const data = await this.request<{ price_usd: number; price_change_24h: number }>(endpoint);
+
+      const result = {
+        price: data.price_usd,
+        change24h: data.price_change_24h,
+      };
+
+      this.setCache(cacheKey, result);
+      return result;
+    } catch (error) {
+      console.error(`Failed to get live price for ${tokenAddress}:`, error);
       return null;
     }
   }
@@ -336,7 +493,7 @@ export class BagsAPI {
 
     try {
       const data = await this.request<BagsHolderDistribution>(endpoint);
-      this.setCache(cacheKey, data, 300000); // 5 minute cache
+      this.setCache(cacheKey, data);
       return data;
     } catch (error) {
       console.error(`Failed to fetch holder distribution for ${tokenAddress}:`, error);
@@ -364,7 +521,7 @@ export class BagsAPI {
 
     try {
       const data = await this.request<BagsTradingActivity>(endpoint);
-      this.setCache(cacheKey, data, 60000); // 1 minute cache for activity
+      this.setCache(cacheKey, data);
       return data;
     } catch (error) {
       console.error(`Failed to fetch trading activity for ${walletAddress}:`, error);

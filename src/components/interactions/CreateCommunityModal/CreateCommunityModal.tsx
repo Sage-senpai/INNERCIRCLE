@@ -25,7 +25,6 @@ export function CreateCommunityModal({ isOpen, onClose, onSuccess }: CreateCommu
     slug: '',
     description: '',
     tokenAddress: '',
-    chain: 'solana' as 'solana' | 'polkadot',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -55,7 +54,6 @@ export function CreateCommunityModal({ isOpen, onClose, onSuccess }: CreateCommu
         slug: '',
         description: '',
         tokenAddress: '',
-        chain: 'solana',
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create community');
@@ -140,27 +138,15 @@ export function CreateCommunityModal({ isOpen, onClose, onSuccess }: CreateCommu
               </div>
 
               <div className={styles.modal__field}>
-                <label className={styles.modal__label}>Token Address</label>
+                <label className={styles.modal__label}>Token Address (Optional)</label>
                 <input
                   type="text"
                   className={styles.modal__input}
                   value={formData.tokenAddress}
                   onChange={(e) => setFormData({ ...formData, tokenAddress: e.target.value })}
-                  placeholder="DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"
-                  required
+                  placeholder="For future token-gating (optional)"
                 />
-              </div>
-
-              <div className={styles.modal__field}>
-                <label className={styles.modal__label}>Chain</label>
-                <select
-                  className={styles.modal__select}
-                  value={formData.chain}
-                  onChange={(e) => setFormData({ ...formData, chain: e.target.value as any })}
-                >
-                  <option value="solana">Solana</option>
-                  <option value="polkadot">Polkadot</option>
-                </select>
+                <span className={styles.modal__hint}>Token gating coming soon</span>
               </div>
 
               {error && (

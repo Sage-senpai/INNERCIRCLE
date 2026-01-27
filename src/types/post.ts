@@ -1,5 +1,7 @@
 // File: src/types/post.ts
 import { User } from './user';
+import type { Chain } from '@/lib/locke/types';
+
 export interface Post {
   id: string;
   authorId: string;
@@ -24,7 +26,7 @@ export interface PostGate {
   postId: string;
   ruleType: 'token_ownership' | 'minimum_balance' | 'holder_tier' | 'combined';
   tokenAddress?: string;
-  chain?: 'solana' | 'polkadot';
+  chain?: Chain;
   minimumBalance?: number;
   requiredTier?: 'holder' | 'whale' | 'elite';
   customLogic?: Record<string, any>;

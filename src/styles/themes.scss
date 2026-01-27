@@ -1,0 +1,105 @@
+// File: src/styles/themes.scss
+// ============================================================================
+// Theme Variables - Dark & Light Mode
+// ============================================================================
+
+:root {
+  // Dark theme (default)
+  --color-background: #0a0a0f;
+  --color-surface: #131318;
+  --color-surface-elevated: #1a1a22;
+  --color-surface-hover: #22222c;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-strong: rgba(255, 255, 255, 0.12);
+
+  --color-text-primary: #ffffff;
+  --color-text-secondary: rgba(255, 255, 255, 0.7);
+  --color-text-tertiary: rgba(255, 255, 255, 0.5);
+  --color-text-muted: rgba(255, 255, 255, 0.35);
+
+  --color-primary: #8b5cf6;
+  --color-primary-hover: #9f7aea;
+  --color-primary-muted: rgba(139, 92, 246, 0.1);
+
+  --color-success: #10b981;
+  --color-success-muted: rgba(16, 185, 129, 0.1);
+
+  --color-warning: #f59e0b;
+  --color-warning-muted: rgba(245, 158, 11, 0.1);
+
+  --color-error: #ef4444;
+  --color-error-muted: rgba(239, 68, 68, 0.1);
+
+  --color-info: #3b82f6;
+  --color-info-muted: rgba(59, 130, 246, 0.1);
+
+  // Shadows
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
+
+  // Gradients
+  --gradient-primary: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  --gradient-surface: linear-gradient(135deg, #131318 0%, #1a1a22 100%);
+
+  // Blur effects
+  --blur-sm: blur(8px);
+  --blur-md: blur(16px);
+  --blur-lg: blur(24px);
+}
+
+// Light theme
+[data-theme='light'] {
+  --color-background: #fafafa;
+  --color-surface: #ffffff;
+  --color-surface-elevated: #f5f5f5;
+  --color-surface-hover: #eeeeee;
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-border-strong: rgba(0, 0, 0, 0.12);
+
+  --color-text-primary: #0a0a0f;
+  --color-text-secondary: rgba(0, 0, 0, 0.75);
+  --color-text-tertiary: rgba(0, 0, 0, 0.6);
+  --color-text-muted: rgba(0, 0, 0, 0.4);
+
+  --color-primary: #7c3aed;
+  --color-primary-hover: #6d28d9;
+  --color-primary-muted: rgba(124, 58, 237, 0.08);
+
+  --color-success: #059669;
+  --color-success-muted: rgba(5, 150, 105, 0.08);
+
+  --color-warning: #d97706;
+  --color-warning-muted: rgba(217, 119, 6, 0.08);
+
+  --color-error: #dc2626;
+  --color-error-muted: rgba(220, 38, 38, 0.08);
+
+  --color-info: #2563eb;
+  --color-info-muted: rgba(37, 99, 235, 0.08);
+
+  // Shadows
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.15);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+
+  // Gradients
+  --gradient-primary: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%);
+  --gradient-surface: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%);
+}
+
+// Smooth transitions for theme changes
+* {
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+// Prevent transition on page load
+.no-transition * {
+  transition: none !important;
+}

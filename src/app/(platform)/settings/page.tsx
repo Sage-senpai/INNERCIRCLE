@@ -6,11 +6,13 @@
 import { motion } from 'framer-motion';
 import { PageHeader } from '@/components/ui/PageHeader/PageHeader';
 import { useAuthStore } from '@/store/auth.store';
+import { useTheme } from '@/contexts/ThemeContext';
 import { Button } from '@/components/ui/Button/Button';
 import styles from './page.module.scss';
 
 export default function SettingsPage() {
   const { user, logout } = useAuthStore();
+  const { theme, toggleTheme } = useTheme();
 
   const handleLogout = () => {
     logout();
@@ -57,10 +59,23 @@ export default function SettingsPage() {
           transition={{ delay: 0.2 }}
         >
           <h2 className={styles.settings__section_title}>Preferences</h2>
-          
-          <div className={styles.settings__field}>
-            <label className={styles.settings__label}>Theme</label>
-            <div className={styles.settings__value}>Dark (Default)</div>
+
+          <div className={styles.settings__toggle}>
+            <div className={styles.settings__toggle_info}>
+              <span className={styles.settings__toggle_label}>Theme</span>
+              <span className={styles.settings__toggle_description}>
+                {theme === 'dark' ? 'Dark mode' : 'Light mode'}
+              </span>
+            </div>
+            <div className={styles.settings__toggle_switch}>
+              <input
+                type="checkbox"
+                id="themeToggle"
+                checked={theme === 'light'}
+                onChange={toggleTheme}
+              />
+              <label htmlFor="themeToggle" />
+            </div>
           </div>
 
           <div className={styles.settings__field}>

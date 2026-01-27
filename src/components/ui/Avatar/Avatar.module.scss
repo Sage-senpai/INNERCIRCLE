@@ -77,8 +77,31 @@
   border-radius: $radius-full;
   border: 2px solid $color-bg-primary;
   box-shadow: $shadow-glow-green;
-  
+
   .avatar--sm & {
     border-width: 1px;
+  }
+}
+
+// ============================================================================
+// LIGHT MODE OVERRIDES
+// ============================================================================
+
+[data-theme='light'] {
+  .avatar {
+    background: rgba(10, 10, 15, 0.05);
+    border-color: rgba(10, 10, 15, 0.1);
+
+    &:hover {
+      border-color: rgba(10, 10, 15, 0.2);
+    }
+  }
+
+  .avatar__placeholder {
+    color: #0a0a0f;
+  }
+
+  .avatar__status {
+    border-color: #ffffff;
   }
 }

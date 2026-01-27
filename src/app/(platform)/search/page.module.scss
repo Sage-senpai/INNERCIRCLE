@@ -221,9 +221,84 @@
   height: 48px;
   color: $color-text-secondary;
   opacity: 0.5;
-  
+
   @include responsive(mobile) {
     width: 40px;
     height: 40px;
+  }
+}
+
+// ============================================================================
+// LIGHT MODE OVERRIDES
+// ============================================================================
+
+.search__input_icon {
+  [data-theme='light'] & {
+    color: #5a5350;
+  }
+}
+
+.search__input {
+  [data-theme='light'] & {
+    color: #0a0a0f;
+
+    &::placeholder {
+      color: #5a5350;
+    }
+
+    &:focus {
+      background: rgba(10, 10, 15, 0.05);
+    }
+  }
+}
+
+.search__input_spinner {
+  [data-theme='light'] & {
+    border-color: rgba(10, 10, 15, 0.2);
+  }
+}
+
+.search__result {
+  [data-theme='light'] & {
+    &:hover {
+      background: rgba(10, 10, 15, 0.05);
+    }
+  }
+}
+
+.search__result_name {
+  [data-theme='light'] & {
+    color: #0a0a0f;
+  }
+}
+
+.search__result_username {
+  [data-theme='light'] & {
+    color: #5a5350;
+  }
+}
+
+.search__result_bio {
+  [data-theme='light'] & {
+    color: #5a5350;
+  }
+}
+
+.search__result_meta {
+  [data-theme='light'] & {
+    color: #5a5350;
+  }
+}
+
+.search__prompt,
+.search__empty {
+  [data-theme='light'] & {
+    color: #5a5350;
+  }
+}
+
+.search__prompt_icon {
+  [data-theme='light'] & {
+    color: #5a5350;
   }
 }

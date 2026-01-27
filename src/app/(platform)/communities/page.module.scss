@@ -74,8 +74,18 @@
   @include flex-column;
   @include flex-center;
   gap: $spacing-md;
-  
+
   @include responsive(mobile) {
     padding: $spacing-2xl $spacing-lg;
+  }
+}
+
+// ============================================================================
+// LIGHT MODE OVERRIDES
+// ============================================================================
+
+.communities__empty {
+  [data-theme='light'] & {
+    color: #5a5350;
   }
 }

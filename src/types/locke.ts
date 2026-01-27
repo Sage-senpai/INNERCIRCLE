@@ -1,6 +1,6 @@
 // File: src/types/locke.ts
 
-export type Chain = 'solana' | 'polkadot';
+export type Chain = 'solana';
 
 export type RuleType = 
   | 'token_ownership'

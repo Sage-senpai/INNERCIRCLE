@@ -18,7 +18,12 @@
   z-index: $z-sidebar;
   overflow-y: auto;
   @include custom-scrollbar;
-  
+
+  [data-theme='light'] & {
+    background: #ffffff;
+    border-right-color: rgba(10, 10, 15, 0.1);
+  }
+
   @include responsive(mobile) {
     display: none;
   }
@@ -64,6 +69,10 @@
   color: $color-text-primary;
   line-height: 1;
   letter-spacing: -0.5px;
+
+  [data-theme='light'] & {
+    color: #0a0a0f;
+  }
 }
 
 .sidebar__tagline {
@@ -71,6 +80,10 @@
   color: $color-text-secondary;
   font-style: italic;
   letter-spacing: 0.5px;
+
+  [data-theme='light'] & {
+    color: #5a5350;
+  }
 }
 
 // ============================================================================
@@ -100,6 +113,10 @@
   letter-spacing: 1.2px;
   padding: 0 $spacing-lg;
   margin-bottom: $spacing-sm;
+
+  [data-theme='light'] & {
+    color: #5a5350;
+  }
 }
 
 .sidebar__list {
@@ -125,11 +142,20 @@
   background: transparent;
   width: 100%;
   text-align: left;
-  
+
+  [data-theme='light'] & {
+    color: #5a5350;
+  }
+
   &:hover {
     background: rgba($color-frozen-water, 0.05);
     color: $color-text-primary;
     transform: translateX(2px);
+
+    [data-theme='light'] & {
+      background: rgba(10, 10, 15, 0.05);
+      color: #0a0a0f;
+    }
   }
   
   &--active {
@@ -186,6 +212,10 @@
   padding: $spacing-lg 0;
   border-top: 1px solid $color-border;
   margin-top: auto;
+
+  [data-theme='light'] & {
+    border-top-color: rgba(10, 10, 15, 0.1);
+  }
 }
 
 .sidebar__user {
@@ -202,13 +232,22 @@
   border: 1px solid $color-border;
   width: calc(100% - #{$spacing-xl});
   text-align: left;
-  
+
+  [data-theme='light'] & {
+    border-color: rgba(10, 10, 15, 0.1);
+  }
+
   &:hover {
     background: rgba($color-frozen-water, 0.08);
     border-color: $color-border-hover;
     transform: translateX(2px);
+
+    [data-theme='light'] & {
+      background: rgba(10, 10, 15, 0.05);
+      border-color: rgba(10, 10, 15, 0.15);
+    }
   }
-  
+
   &:active {
     transform: translateX(0) scale(0.98);
   }
@@ -237,6 +276,10 @@
   font-weight: $font-weight-semibold;
   color: $color-text-primary;
   @include truncate;
+
+  [data-theme='light'] & {
+    color: #0a0a0f;
+  }
 }
 
 .sidebar__user_wallet {
@@ -244,13 +287,21 @@
   color: $color-text-secondary;
   font-family: $font-family-mono;
   margin-top: 2px;
+
+  [data-theme='light'] & {
+    color: #5a5350;
+  }
 }
 
 .sidebar__user_indicator {
   color: $color-text-secondary;
   font-size: $font-size-base;
   @include transition(transform);
-  
+
+  [data-theme='light'] & {
+    color: #5a5350;
+  }
+
   .sidebar__user:hover & {
     transform: translateX(2px);
   }

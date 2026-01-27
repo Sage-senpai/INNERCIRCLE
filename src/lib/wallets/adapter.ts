@@ -5,11 +5,11 @@
 
 export interface WalletConnection {
   address: string;
-  chain: 'solana' | 'polkadot';
+  chain: 'solana';
   publicKey?: string;
 }
 
-export type WalletAdapter = 'phantom' | 'solflare' | 'polkadot';
+export type WalletAdapter = 'phantom' | 'solflare';
 
 // Extend Window interface to include wallet objects
 declare global {
@@ -41,8 +41,6 @@ export class WalletManager {
         return this.connectPhantom();
       case 'solflare':
         return this.connectSolflare();
-      case 'polkadot':
-        return this.connectPolkadot();
       default:
         throw new Error(`Unsupported wallet adapter: ${adapter}`);
     }
@@ -180,13 +178,6 @@ export class WalletManager {
   }
 
   /**
-   * Polkadot.js Wallet Connection - Placeholder
-   */
-  private async connectPolkadot(): Promise<WalletConnection> {
-    throw new Error('Polkadot wallet support coming soon');
-  }
-
-  /**
    * Disconnect from current wallet
    */
   async disconnect(adapter: WalletAdapter): Promise<void> {
@@ -201,9 +192,6 @@ export class WalletManager {
           if (window.solflare?.disconnect) {
             await window.solflare.disconnect();
           }
-          break;
-        case 'polkadot':
-          // Polkadot disconnect logic
           break;
       }
       console.log(`Disconnected from ${adapter}`);
@@ -224,8 +212,6 @@ export class WalletManager {
         return !!(window.solana?.isPhantom);
       case 'solflare':
         return !!(window.solflare?.isSolflare);
-      case 'polkadot':
-        return false; // TODO: Add Polkadot detection
       default:
         return false;
     }

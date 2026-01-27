@@ -19,9 +19,90 @@
 
 .landing {
   min-height: 100vh;
-  background: black;
-  color: #daffed;
+  background: var(--color-background);
+  color: var(--color-text-primary);
   overflow-x: hidden;
+}
+
+// ============================================================================
+// TOP BAR
+// ============================================================================
+
+.topBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(var(--color-surface-rgb, 19, 19, 24), 0.8);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--color-border);
+
+  [data-theme='light'] & {
+    background: rgba(255, 255, 255, 0.8);
+  }
+}
+
+.topBar__container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.topBar__logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  svg {
+    width: 32px;
+    height: 32px;
+    color: #09a129;
+  }
+}
+
+.topBar__brand {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  letter-spacing: -0.5px;
+}
+
+.topBar__actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.topBar__connect {
+  padding: 0.625rem 1.5rem;
+  background: #09a129;
+  color: #000f08;
+  border: none;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 20px rgba(9, 161, 41, 0.3);
+
+  &:hover:not(:disabled) {
+    background: #0bc12f;
+    box-shadow: 0 0 30px rgba(9, 161, 41, 0.5);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.5rem 1rem;
+    font-size: 0.8125rem;
+  }
 }
 
 // ============================================================================
@@ -34,7 +115,7 @@
   align-items: center;
   justify-content: center;
   position: relative;
-  padding: 6rem 1.5rem;
+  padding: 8rem 1.5rem 6rem;
   overflow: hidden;
 }
 
@@ -138,6 +219,13 @@
   background-clip: text;
   line-height: 1.1;
   letter-spacing: -2px;
+
+  [data-theme='light'] & {
+    background: linear-gradient(to right, #0a5f2d, #09a129);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
 }
 
 .hero__tagline {
@@ -146,6 +234,10 @@
   color: #948b89;
   margin-bottom: 2.5rem;
   letter-spacing: 2px;
+
+  [data-theme='light'] & {
+    color: #5a5350;
+  }
 }
 
 .hero__description {
@@ -155,6 +247,10 @@
   margin-bottom: 3rem;
   max-width: 600px;
   margin-left: auto;
+
+  [data-theme='light'] & {
+    color: rgba(10, 10, 15, 0.85);
+  }
   margin-right: auto;
 }
 
@@ -196,6 +292,10 @@
   font-size: 0.875rem;
   color: #948b89;
   font-family: 'Courier New', monospace;
+
+  [data-theme='light'] & {
+    color: #5a5350;
+  }
 }
 
 .hero__scroll {
@@ -210,7 +310,11 @@
   color: #948b89;
   font-size: 0.875rem;
   animation: bounce 2s ease-in-out infinite;
-  
+
+  [data-theme='light'] & {
+    color: #5a5350;
+  }
+
   @media (max-width: 768px) {
     display: none;
   }
@@ -241,6 +345,10 @@
   color: #daffed;
   margin-bottom: 1.5rem;
   text-align: center;
+
+  [data-theme='light'] & {
+    color: #0a0a0f;
+  }
 }
 
 .wallets__options {
@@ -264,20 +372,31 @@
   color: #daffed;
   cursor: pointer;
   transition: all 0.3s ease;
-  
+
+  [data-theme='light'] & {
+    background: rgba(10, 10, 15, 0.05);
+    border-color: rgba(10, 10, 15, 0.15);
+    color: #0a0a0f;
+  }
+
   svg, span:first-child {
     width: 32px;
     height: 32px;
     font-size: 32px;
     flex-shrink: 0;
   }
-  
+
   &:hover:not(:disabled) {
     background: rgba(218, 255, 237, 0.08);
     border-color: rgba(218, 255, 237, 0.2);
     transform: translateY(-2px);
+
+    [data-theme='light'] & {
+      background: rgba(10, 10, 15, 0.08);
+      border-color: rgba(10, 10, 15, 0.25);
+    }
   }
-  
+
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -305,6 +424,12 @@
   border-radius: 9999px;
   color: #948b89;
   font-weight: 600;
+
+  [data-theme='light'] & {
+    background: rgba(10, 10, 15, 0.08);
+    border-color: rgba(10, 10, 15, 0.15);
+    color: #5a5350;
+  }
 }
 
 .wallets__error {
@@ -323,6 +448,10 @@
   color: #948b89;
   padding: 1rem;
   font-size: 0.875rem;
+
+  [data-theme='light'] & {
+    color: #5a5350;
+  }
 }
 
 .wallets__back {
@@ -335,7 +464,11 @@
   border: none;
   cursor: pointer;
   transition: color 0.3s ease;
-  
+
+  [data-theme='light'] & {
+    color: #5a5350;
+  }
+
   &:hover {
     color: #09a129;
   }
@@ -354,7 +487,11 @@
   padding: 6rem 1.5rem;
   position: relative;
   background: rgba(218, 255, 237, 0.02);
-  
+
+  [data-theme='light'] & {
+    background: rgba(10, 10, 15, 0.02);
+  }
+
   &::before {
     content: '';
     position: absolute;
@@ -381,6 +518,10 @@
   text-align: center;
   margin-bottom: 3rem;
   color: #daffed;
+
+  [data-theme='light'] & {
+    color: #0a0a0f;
+  }
 }
 
 .features__grid {
@@ -396,11 +537,21 @@
   border-radius: 1.5rem;
   text-align: center;
   transition: all 0.3s ease;
-  
+
+  [data-theme='light'] & {
+    background: rgba(10, 10, 15, 0.03);
+    border-color: rgba(10, 10, 15, 0.1);
+  }
+
   &:hover {
     background: rgba(218, 255, 237, 0.08);
     border-color: rgba(9, 161, 41, 0.3);
     transform: translateY(-4px);
+
+    [data-theme='light'] & {
+      background: rgba(10, 10, 15, 0.06);
+      border-color: rgba(9, 161, 41, 0.3);
+    }
   }
 }
 
@@ -416,7 +567,11 @@
   color: #daffed;
   margin-bottom: 0.75rem;
   transition: color 0.3s ease;
-  
+
+  [data-theme='light'] & {
+    color: #0a0a0f;
+  }
+
   .feature:hover & {
     color: #09a129;
   }
@@ -426,6 +581,10 @@
   font-size: 0.875rem;
   color: #948b89;
   line-height: 1.6;
+
+  [data-theme='light'] & {
+    color: #5a5350;
+  }
 }
 
 // ============================================================================
@@ -436,6 +595,10 @@
   padding: 6rem 1.5rem;
   background: black;
   position: relative;
+
+  [data-theme='light'] & {
+    background: #f5f5f5;
+  }
 }
 
 .howItWorks__container {
@@ -452,6 +615,13 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+
+  [data-theme='light'] & {
+    background: linear-gradient(to right, #09a129, #0a5f2d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
 }
 
 .howItWorks__steps {
@@ -501,10 +671,19 @@
   border: 1px solid rgba(218, 255, 237, 0.1);
   border-radius: 1.5rem;
   transition: all 0.3s ease;
-  
+
+  [data-theme='light'] & {
+    background: rgba(10, 10, 15, 0.03);
+    border-color: rgba(10, 10, 15, 0.1);
+  }
+
   .step:hover & {
     background: rgba(218, 255, 237, 0.08);
     border-color: rgba(9, 161, 41, 0.2);
+
+    [data-theme='light'] & {
+      background: rgba(10, 10, 15, 0.06);
+    }
   }
 }
 
@@ -513,12 +692,20 @@
   font-weight: 700;
   margin-bottom: 0.5rem;
   color: #daffed;
+
+  [data-theme='light'] & {
+    color: #0a0a0f;
+  }
 }
 
 .step__description {
   color: #948b89;
   font-size: 0.875rem;
   line-height: 1.6;
+
+  [data-theme='light'] & {
+    color: #5a5350;
+  }
 }
 
 // ============================================================================
@@ -566,6 +753,10 @@
   font-weight: 700;
   margin-bottom: 1rem;
   color: #daffed;
+
+  [data-theme='light'] & {
+    color: #0a0a0f;
+  }
 }
 
 .cta__description {
@@ -576,6 +767,10 @@
   max-width: 500px;
   margin-left: auto;
   margin-right: auto;
+
+  [data-theme='light'] & {
+    color: rgba(10, 10, 15, 0.85);
+  }
 }
 
 .cta__button {
@@ -621,17 +816,21 @@
   justify-content: center;
   gap: 0.5rem;
   margin-bottom: 1rem;
-  
+
   svg {
     width: 24px;
     height: 24px;
     color: #09a129;
   }
-  
+
   span {
     font-size: 1.125rem;
     font-weight: 700;
     color: #daffed;
+
+    [data-theme='light'] & {
+      color: #0a0a0f;
+    }
   }
 }
 
@@ -640,11 +839,19 @@
   color: #948b89;
   font-style: italic;
   margin-bottom: 0.5rem;
+
+  [data-theme='light'] & {
+    color: #5a5350;
+  }
 }
 
 .footer__disclaimer {
   font-size: 0.75rem;
   color: rgba(148, 139, 137, 0.7);
+
+  [data-theme='light'] & {
+    color: rgba(90, 83, 80, 0.8);
+  }
 }
 
 // ============================================================================

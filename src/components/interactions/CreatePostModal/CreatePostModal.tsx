@@ -27,7 +27,7 @@ export function CreatePostModal({ isOpen, onClose, onPost }: CreatePostModalProp
   // Gating parameters
   const [ruleType, setRuleType] = useState<'token_ownership' | 'minimum_balance' | 'holder_tier'>('token_ownership');
   const [tokenAddress, setTokenAddress] = useState('');
-  const [chain, setChain] = useState<'solana' | 'polkadot'>('solana');
+  const chain = 'solana' as const; // Solana only
   const [minimumBalance, setMinimumBalance] = useState('');
   const [requiredTier, setRequiredTier] = useState<'holder' | 'whale' | 'elite'>('holder');
 
@@ -176,14 +176,7 @@ export function CreatePostModal({ isOpen, onClose, onPost }: CreatePostModalProp
 
                   <div className={styles.gating__field}>
                     <label className={styles.gating__label}>Blockchain</label>
-                    <select
-                      className={styles.gating__select}
-                      value={chain}
-                      onChange={(e) => setChain(e.target.value as any)}
-                    >
-                      <option value="solana">Solana</option>
-                      <option value="polkadot">Polkadot</option>
-                    </select>
+                    <div className={styles.gating__static}>Solana</div>
                   </div>
 
                   <div className={styles.gating__field}>

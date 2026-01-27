@@ -326,10 +326,106 @@
   gap: $spacing-md;
   padding-top: $spacing-lg;
   border-top: 1px solid $color-border;
-  
+
   @include responsive(mobile) {
     flex-direction: column-reverse;
     gap: $spacing-sm;
     padding-top: $spacing-md;
+  }
+}
+
+// ============================================================================
+// LIGHT MODE OVERRIDES
+// ============================================================================
+
+[data-theme='light'] {
+  .overlay {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .modal {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: rgba(10, 10, 15, 0.1);
+  }
+
+  .modal__header {
+    border-bottom-color: rgba(10, 10, 15, 0.1);
+  }
+
+  .modal__title {
+    color: #0a0a0f;
+  }
+
+  .modal__close {
+    color: #5a5350;
+
+    &:hover {
+      background: rgba(10, 10, 15, 0.1);
+      color: #0a0a0f;
+    }
+  }
+
+  .modal__username {
+    color: #0a0a0f;
+  }
+
+  .modal__textarea {
+    background: rgba(10, 10, 15, 0.03);
+    border-color: rgba(10, 10, 15, 0.1);
+    color: #0a0a0f;
+
+    &::placeholder {
+      color: #5a5350;
+    }
+
+    &:focus {
+      background: rgba(10, 10, 15, 0.05);
+      border-color: rgba(10, 10, 15, 0.2);
+    }
+  }
+
+  .modal__option {
+    color: #0a0a0f;
+  }
+
+  .modal__count {
+    color: #5a5350;
+  }
+
+  .gating {
+    background: rgba(10, 10, 15, 0.03);
+    border-color: rgba(10, 10, 15, 0.1);
+  }
+
+  .gating__title {
+    color: #0a0a0f;
+  }
+
+  .gating__label {
+    color: #5a5350;
+  }
+
+  .gating__select,
+  .gating__input {
+    background: rgba(10, 10, 15, 0.03);
+    border-color: rgba(10, 10, 15, 0.1);
+    color: #0a0a0f;
+
+    &:focus {
+      background: rgba(10, 10, 15, 0.05);
+    }
+  }
+
+  .gating__info {
+    background: rgba(74, 222, 128, 0.05);
+    border-color: rgba(74, 222, 128, 0.2);
+  }
+
+  .gating__info_text {
+    color: #5a5350;
+  }
+
+  .modal__actions {
+    border-top-color: rgba(10, 10, 15, 0.1);
   }
 }

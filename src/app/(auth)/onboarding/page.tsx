@@ -12,6 +12,7 @@ import { useAuthStore } from '@/store/auth.store';
 import { Button } from '@/components/ui/Button/Button';
 import { LockIcon } from '@/components/locke/LockIcon/LockIcon';
 import { supabase } from '@/lib/supabase/client';
+import { getUserByWallet, getUserWithLinkedWallets } from '@/lib/supabase/actions';
 import styles from './page.module.scss';
 
 function OnboardingContent() {
@@ -44,33 +45,37 @@ function OnboardingContent() {
     }
 
     try {
-      console.log('Checking for existing user:', walletAddress);
-      
-      const { data: existingUser, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('wallet_address', walletAddress)
-        .maybeSingle(); // Use maybeSingle instead of single to avoid errors on no match
+      console.log('Checking for existing user via wallet_verifications:', walletAddress);
 
-      if (error) {
-        console.error('Error checking user:', error);
-        // Don't throw - just proceed with onboarding
-        setIsCheckingUser(false);
-        return;
-      }
+      // Use the multi-wallet system to check for existing user
+      const existingUser = await getUserByWallet(walletAddress);
 
       if (existingUser) {
-        console.log('User exists, logging in');
+        console.log('User exists via linked wallet, logging in:', existingUser.username);
+
+        // Get full user data with linked wallets
+        const userData = await getUserWithLinkedWallets(existingUser.id);
+
         setUser({
-          id: existingUser.id,
-          walletAddress: existingUser.wallet_address,
-          username: existingUser.username,
-          displayName: existingUser.display_name,
-          avatarUrl: existingUser.avatar_url,
-          role: existingUser.role,
-          onboardingCompleted: existingUser.onboarding_completed,
+          id: userData.id,
+          walletAddress: walletAddress,
+          primaryWalletAddress: userData.primary_wallet_address,
+          username: userData.username,
+          displayName: userData.display_name,
+          avatarUrl: userData.avatar_url,
+          bio: userData.bio,
+          role: userData.role,
+          onboardingCompleted: userData.onboarding_completed,
+          linkedWallets: userData.linkedWallets,
         });
-        router.push('/feed');
+
+        // Redirect based on onboarding status
+        if (userData.onboarding_completed) {
+          router.push('/feed');
+        } else {
+          // User exists but hasn't completed onboarding - stay on page
+          setIsCheckingUser(false);
+        }
         return;
       }
 
@@ -152,18 +157,76 @@ function OnboardingContent() {
     setError(null);
 
     try {
-      console.log('Creating user:', {
+      const finalUsername = username.toLowerCase().trim() || `user_${Date.now()}`;
+
+      console.log('Completing onboarding for:', {
         wallet_address: walletAddress,
-        username: username.toLowerCase() || 'anonymous',
+        username: finalUsername,
         chain: chain || 'solana'
       });
 
-      // Create user in database
+      // First check if username is available
+      const { data: existingUsername } = await supabase
+        .from('users')
+        .select('id')
+        .eq('username', finalUsername)
+        .maybeSingle();
+
+      if (existingUsername) {
+        setError('Username already taken. Please choose another.');
+        setCurrentStep(0);
+        setIsCompleting(false);
+        return;
+      }
+
+      // Check if this wallet already has a user (via wallet_verifications)
+      const existingUser = await getUserByWallet(walletAddress);
+
+      if (existingUser) {
+        // User already exists - just update username and complete onboarding
+        console.log('User already exists, updating profile');
+
+        const { error: updateError } = await supabase
+          .from('users')
+          .update({
+            username: finalUsername,
+            onboarding_completed: true,
+          })
+          .eq('id', existingUser.id);
+
+        if (updateError) {
+          console.error('Update error:', updateError);
+          setError(`Failed to update account: ${updateError.message}`);
+          return;
+        }
+
+        // Get updated user data
+        const userData = await getUserWithLinkedWallets(existingUser.id);
+
+        setUser({
+          id: userData.id,
+          walletAddress: walletAddress,
+          primaryWalletAddress: userData.primary_wallet_address,
+          username: userData.username,
+          displayName: userData.display_name,
+          avatarUrl: userData.avatar_url,
+          bio: userData.bio,
+          role: userData.role,
+          onboardingCompleted: true,
+          linkedWallets: userData.linkedWallets,
+        });
+
+        router.push('/feed');
+        return;
+      }
+
+      // Create new user with wallet verification
       const { data: newUser, error: insertError } = await supabase
         .from('users')
         .insert({
           wallet_address: walletAddress,
-          username: username.toLowerCase() || `user_${Date.now()}`,
+          primary_wallet_address: walletAddress,
+          username: finalUsername,
           role: 'member',
           onboarding_completed: true,
         })
@@ -172,10 +235,8 @@ function OnboardingContent() {
 
       if (insertError) {
         console.error('Insert error:', insertError);
-        
-        // Check specific error codes
+
         if (insertError.code === '23505') {
-          // Unique constraint violation
           if (insertError.message.includes('username')) {
             setError('Username already taken. Please choose another.');
             setCurrentStep(0);
@@ -193,16 +254,38 @@ function OnboardingContent() {
         return;
       }
 
+      // Create wallet verification entry
+      const { error: walletError } = await supabase
+        .from('wallet_verifications')
+        .insert({
+          user_id: newUser.id,
+          wallet_address: walletAddress,
+          chain: chain || 'solana',
+          is_primary: true,
+        });
+
+      if (walletError) {
+        console.error('Wallet verification error:', walletError);
+        // Continue anyway - user was created
+      }
+
       console.log('User created successfully:', newUser);
 
       setUser({
         id: newUser.id,
         walletAddress: newUser.wallet_address,
+        primaryWalletAddress: newUser.primary_wallet_address,
         username: newUser.username,
         role: newUser.role,
-        onboardingCompleted: newUser.onboarding_completed,
+        onboardingCompleted: true,
+        linkedWallets: [{
+          walletAddress: walletAddress,
+          chain: chain || 'solana',
+          isPrimary: true,
+          verifiedAt: new Date().toISOString(),
+        }],
       });
-      
+
       router.push('/feed');
     } catch (error) {
       console.error('Onboarding failed:', error);

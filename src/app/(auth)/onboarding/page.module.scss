@@ -211,3 +211,53 @@
   font-size: $font-size-lg;
   color: $color-text-secondary;
 }
+
+// ============================================================================
+// LIGHT MODE OVERRIDES
+// ============================================================================
+
+.onboarding {
+  [data-theme='light'] & {
+    color: #0a0a0f;
+  }
+}
+
+.progressDot {
+  [data-theme='light'] & {
+    background: rgba(10, 10, 15, 0.2);
+  }
+}
+
+.description {
+  [data-theme='light'] & {
+    color: #5a5350;
+  }
+}
+
+.usernameInput {
+  [data-theme='light'] & {
+    color: #0a0a0f;
+
+    &::placeholder {
+      color: rgba(10, 10, 15, 0.6);
+    }
+  }
+}
+
+.hint {
+  [data-theme='light'] & {
+    color: #5a5350;
+  }
+}
+
+.footerText {
+  [data-theme='light'] & {
+    color: #5a5350;
+  }
+}
+
+.checking__text {
+  [data-theme='light'] & {
+    color: #5a5350;
+  }
+}

@@ -58,6 +58,13 @@
 // TEXT UTILITIES
 // ============================================================================
 
+// Light mode text color helper
+@mixin light-mode-text($dark-color) {
+  [data-theme='light'] & {
+    color: $dark-color;
+  }
+}
+
 @mixin truncate {
   overflow: hidden;
   text-overflow: ellipsis;

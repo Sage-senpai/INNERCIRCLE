@@ -18,10 +18,17 @@
 // ============================================================================
 
 .profile__loading {
+  @include flex-column;
   @include flex-center;
+  gap: $spacing-lg;
   min-height: 400px;
   color: $color-text-secondary;
-  
+
+  p {
+    margin: 0;
+    font-size: $font-size-base;
+  }
+
   @include responsive(mobile) {
     min-height: 300px;
   }
@@ -89,10 +96,72 @@
 
 .profile__actions {
   margin-top: $spacing-lg;
-  
+  display: flex;
+  gap: $spacing-md;
+
   @include responsive(mobile) {
     margin-top: $spacing-md;
   }
+}
+
+// ============================================================================
+// EDIT FORM
+// ============================================================================
+
+.profile__edit_form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  width: 100%;
+  max-width: 400px;
+}
+
+.profile__edit_input,
+.profile__edit_textarea {
+  background: rgba($color-frozen-water, 0.05);
+  border: 1px solid rgba($color-frozen-water, 0.1);
+  padding: $spacing-md;
+  border-radius: $radius-md;
+  font-size: $font-size-base;
+  color: $color-text-primary;
+  width: 100%;
+  transition: all 0.2s ease;
+
+  &::placeholder {
+    color: $color-text-secondary;
+  }
+
+  &:focus {
+    outline: none;
+    background: rgba($color-frozen-water, 0.08);
+    border-color: $color-medium-jungle;
+  }
+
+  [data-theme='light'] & {
+    background: rgba(10, 10, 15, 0.03);
+    border-color: rgba(10, 10, 15, 0.1);
+    color: #0a0a0f;
+
+    &::placeholder {
+      color: #5a5350;
+    }
+
+    &:focus {
+      background: rgba(10, 10, 15, 0.05);
+    }
+  }
+}
+
+.profile__edit_textarea {
+  resize: vertical;
+  font-family: inherit;
+  min-height: 80px;
+}
+
+.profile__error {
+  color: #ef4444;
+  font-size: $font-size-sm;
+  margin: 0;
 }
 
 // ============================================================================
@@ -178,8 +247,60 @@
   @include flex-column;
   @include flex-center;
   gap: $spacing-md;
-  
+
   @include responsive(mobile) {
     padding: $spacing-2xl $spacing-lg;
+  }
+}
+
+// ============================================================================
+// LIGHT MODE OVERRIDES
+// ============================================================================
+
+.profile__loading {
+  [data-theme='light'] & {
+    color: #5a5350;
+  }
+}
+
+.profile__name {
+  [data-theme='light'] & {
+    color: #0a0a0f;
+  }
+}
+
+.profile__username {
+  [data-theme='light'] & {
+    color: #5a5350;
+  }
+}
+
+.profile__bio {
+  [data-theme='light'] & {
+    color: #0a0a0f;
+  }
+}
+
+.profile__stat_value {
+  [data-theme='light'] & {
+    color: #0a0a0f;
+  }
+}
+
+.profile__stat_label {
+  [data-theme='light'] & {
+    color: #5a5350;
+  }
+}
+
+.profile__content_title {
+  [data-theme='light'] & {
+    color: #0a0a0f;
+  }
+}
+
+.profile__empty {
+  [data-theme='light'] & {
+    color: #5a5350;
   }
 }

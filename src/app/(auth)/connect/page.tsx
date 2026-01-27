@@ -1,6 +1,6 @@
 // File: src/app/(auth)/connect/page.tsx
 // ============================================================================
-// Connect Page - Fixed with Better Error Handling
+// Connect Page - Professional Design with Theme Support
 // ============================================================================
 
 'use client';
@@ -10,9 +10,10 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { WalletManager } from '@/lib/wallets/adapter';
 import { useAuthStore } from '@/store/auth.store';
-import { supabase } from '@/lib/supabase/client';
+import { getOrCreateUserByWallet, getUserWithLinkedWallets } from '@/lib/supabase/actions';
 import { LockIcon } from '@/components/locke/LockIcon/LockIcon';
-import { PhantomIcon, SolflareIcon, PolkadotIcon } from '@/components/icons';
+import { PhantomIcon, SolflareIcon } from '@/components/icons';
+import { ThemeToggle } from '@/components/ui/ThemeToggle/ThemeToggle';
 import styles from './page.module.scss';
 
 export default function LandingPage() {
@@ -62,36 +63,39 @@ export default function LandingPage() {
       // Connect wallet
       const connection = await walletManager.connect(adapter);
       console.log('Wallet connected:', connection.address);
-      
-      // Check for existing user in Supabase
-      const { data: existingUser, error: userError } = await supabase
-        .from('users')
-        .select('*')
-        .eq('wallet_address', connection.address)
-        .maybeSingle();
 
-      if (userError) {
-        console.error('Error checking user:', userError);
-        // Continue to onboarding on error
-      }
+      // Use multi-wallet system to get or create user
+      const result = await getOrCreateUserByWallet(connection.address);
+      console.log('User lookup result:', result);
 
-      if (existingUser) {
-        // User exists - log them in directly
-        console.log('Existing user found, logging in');
-        setUser({
-          id: existingUser.id,
-          walletAddress: existingUser.wallet_address,
-          username: existingUser.username,
-          displayName: existingUser.display_name,
-          avatarUrl: existingUser.avatar_url,
-          role: existingUser.role,
-          onboardingCompleted: existingUser.onboarding_completed,
-        });
-        router.push('/feed');
+      if (result.is_new_user) {
+        // New user - send to onboarding with auto-generated username
+        console.log('New user created, redirecting to onboarding');
+        router.push(`/onboarding?wallet=${connection.address}&username=${result.username}&chain=${connection.chain}`);
       } else {
-        // New user - send to onboarding
-        console.log('New user, redirecting to onboarding');
-        router.push(`/onboarding?wallet=${connection.address}&chain=${connection.chain}`);
+        // Existing user - load full profile with linked wallets
+        console.log('Existing user found, loading profile');
+        const userData = await getUserWithLinkedWallets(result.user_id);
+
+        setUser({
+          id: userData.id,
+          walletAddress: connection.address, // Current connected wallet
+          primaryWalletAddress: userData.primary_wallet_address,
+          username: userData.username,
+          displayName: userData.display_name,
+          avatarUrl: userData.avatar_url,
+          bio: userData.bio,
+          role: userData.role,
+          onboardingCompleted: userData.onboarding_completed,
+          linkedWallets: userData.linkedWallets,
+        });
+
+        // Redirect based on onboarding status
+        if (userData.onboarding_completed) {
+          router.push('/feed');
+        } else {
+          router.push('/onboarding');
+        }
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to connect wallet';
@@ -113,6 +117,34 @@ export default function LandingPage() {
 
   return (
     <div className={styles.landing}>
+      {/* Top Bar */}
+      <motion.header
+        className={styles.topBar}
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+      >
+        <div className={styles.topBar__container}>
+          <div className={styles.topBar__logo}>
+            <LockIcon locked={false} size="sm" />
+            <span className={styles.topBar__brand}>InnerCircle</span>
+          </div>
+
+          <div className={styles.topBar__actions}>
+            <ThemeToggle />
+            <motion.button
+              className={styles.topBar__connect}
+              onClick={() => setShowWallets(true)}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              disabled={isConnecting}
+            >
+              Connect Wallet
+            </motion.button>
+          </div>
+        </div>
+      </motion.header>
+
       {/* Hero Section with Wallet Connection */}
       <section className={styles.hero}>
         <div className={styles.hero__background}>
@@ -143,21 +175,7 @@ export default function LandingPage() {
             are unlocked through on-chain memecoin ownership.
           </p>
 
-          {!showWallets ? (
-            <div className={styles.hero__cta}>
-              <motion.button
-                className={styles.hero__button}
-                onClick={() => setShowWallets(true)}
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Connect Wallet
-              </motion.button>
-              <p className={styles.hero__note}>
-                Supports Solana & Polkadot chains
-              </p>
-            </div>
-          ) : (
+          {showWallets ? (
             <motion.div 
               className={styles.wallets}
               initial={{ opacity: 0, height: 0 }}
@@ -201,17 +219,7 @@ export default function LandingPage() {
                   )}
                 </motion.button>
 
-                <motion.button
-                  className={styles.wallet}
-                  disabled
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3 }}
-                >
-                  <PolkadotIcon />
-                  <span>Polkadot.js</span>
-                  <span className={styles.wallet__badge}>Soon</span>
-                </motion.button>
+                {/* Polkadot removed - Solana only */}
               </div>
 
               <AnimatePresence>
@@ -248,7 +256,7 @@ export default function LandingPage() {
                 ← Back
               </button>
             </motion.div>
-          )}
+          ) : null}
         </motion.div>
 
         {/* Scroll indicator */}
@@ -345,7 +353,7 @@ export default function LandingPage() {
 
           <div className={styles.howItWorks__steps}>
             {[
-              { number: '01', title: 'Connect Wallet', description: 'Link your Solana or Polkadot wallet to get started.' },
+              { number: '01', title: 'Connect Wallet', description: 'Link your Solana wallet to get started.' },
               { number: '02', title: 'Verify Holdings', description: 'Your token holdings are verified in real-time via Bags API.' },
               { number: '03', title: 'Unlock Access', description: 'Access content, communities, and features based on what you hold.' },
               { number: '04', title: 'Earn Influence', description: 'Your rank and access grow as your holdings and engagement increase.' },
