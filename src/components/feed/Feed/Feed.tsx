@@ -36,16 +36,16 @@ interface PostData {
   author_id: string;
   community_id: string | null;
   content: string;
-  media_urls: string[];
-  is_gated: boolean;
-  visibility: string;
+  media_urls?: string[] | null; // Optional - may not exist in DB schema
+  is_gated?: boolean | null; // Optional - may not exist in DB schema
+  visibility?: string | null; // Optional - may not exist in DB schema
   signal_count: number;
   echo_count: number;
   relay_count: number;
   created_at: string;
-  updated_at: string;
+  updated_at?: string;
   author: PostAuthor;
-  gates: PostGate[];
+  gates?: PostGate[];
 }
 
 interface TransformedPost {
@@ -86,21 +86,27 @@ interface NewPostData {
 }
 
 function transformPost(post: PostData): TransformedPost {
+  // Handle potentially undefined/null fields gracefully
+  let mediaUrls: string[] | undefined = undefined;
+  if (post.media_urls && Array.isArray(post.media_urls) && post.media_urls.length > 0) {
+    mediaUrls = post.media_urls;
+  }
+
   return {
     id: post.id,
     author: {
-      id: post.author.id,
-      username: post.author.username,
-      displayName: post.author.display_name || undefined,
-      avatarUrl: post.author.avatar_url || undefined,
+      id: post.author?.id || '',
+      username: post.author?.username || 'unknown',
+      displayName: post.author?.display_name || undefined,
+      avatarUrl: post.author?.avatar_url || undefined,
     },
-    content: post.content,
-    mediaUrls: post.media_urls.length > 0 ? post.media_urls : undefined,
-    isGated: post.is_gated,
+    content: post.content || '',
+    mediaUrls,
+    isGated: post.is_gated === true,
     gates: post.gates || [],
-    signalCount: post.signal_count,
-    echoCount: post.echo_count,
-    relayCount: post.relay_count,
+    signalCount: post.signal_count ?? 0,
+    echoCount: post.echo_count ?? 0,
+    relayCount: post.relay_count ?? 0,
     createdAt: post.created_at,
   };
 }
@@ -282,8 +288,6 @@ export function Feed({ type = 'home', communityId, authorId }: FeedProps) {
         createdPost = await createPost({
           authorId: user.id,
           content,
-          isGated: false,
-          visibility: communityId ? 'community' : 'public',
           communityId,
         });
       }

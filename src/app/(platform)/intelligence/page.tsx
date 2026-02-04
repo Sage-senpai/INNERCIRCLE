@@ -1,6 +1,6 @@
 // File: src/app/(platform)/intelligence/page.tsx
 // ============================================================================
-// Market Intelligence with Real Bags API Data
+// Market Intelligence with DexScreener + Jupiter APIs
 // ============================================================================
 
 'use client';
@@ -13,7 +13,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner/LoadingSpinner';
 import { Avatar } from '@/components/ui/Avatar/Avatar';
 import { useIntelligenceStore, SUPPORTED_TOKENS, TokenActivityScore } from '@/store/intelligence.store';
 import { TrendUpIcon, TrendDownIcon } from '@/components/icons';
-import type { BagsTokenMetrics } from '@/lib/bags-api/client';
+import type { TokenMetrics } from '@/lib/token-metrics/client';
 import styles from './page.module.scss';
 
 type Tab = 'token-metrics' | 'community-activity' | 'activity-leaderboard';
@@ -58,7 +58,7 @@ export default function IntelligencePage() {
     <>
       <PageHeader
         title="Market Intelligence"
-        subtitle="Real-time token analytics and community insights powered by Bags API"
+        subtitle="Real-time token analytics powered by DexScreener + Jupiter"
       />
 
       <div className={styles.intelligence}>
@@ -177,7 +177,7 @@ export default function IntelligencePage() {
 }
 
 // TOKEN METRICS VIEW
-function TokenMetricsView({ metrics, loading }: { metrics: BagsTokenMetrics | null; loading: boolean }) {
+function TokenMetricsView({ metrics, loading }: { metrics: TokenMetrics | null; loading: boolean }) {
   if (loading) {
     return (
       <div className={styles.view__loading}>
@@ -196,7 +196,7 @@ function TokenMetricsView({ metrics, loading }: { metrics: BagsTokenMetrics | nu
     );
   }
 
-  const priceChangePositive = metrics.price_change_24h >= 0;
+  const priceChangePositive = metrics.priceChange24h >= 0;
 
   return (
     <div className={styles.metrics}>
@@ -207,10 +207,10 @@ function TokenMetricsView({ metrics, loading }: { metrics: BagsTokenMetrics | nu
           <span className={styles.metrics__chain}>Chain: {metrics.chain}</span>
         </div>
         <div className={styles.metrics__price_group}>
-          <div className={styles.metrics__price}>${metrics.price_usd.toFixed(8)}</div>
+          <div className={styles.metrics__price}>${metrics.priceUsd.toFixed(8)}</div>
           <div className={`${styles.metrics__change} ${priceChangePositive ? styles['metrics__change--up'] : styles['metrics__change--down']}`}>
             {priceChangePositive ? <TrendUpIcon /> : <TrendDownIcon />}
-            {priceChangePositive ? '+' : ''}{metrics.price_change_24h.toFixed(2)}%
+            {priceChangePositive ? '+' : ''}{metrics.priceChange24h.toFixed(2)}%
           </div>
         </div>
       </div>
@@ -218,22 +218,27 @@ function TokenMetricsView({ metrics, loading }: { metrics: BagsTokenMetrics | nu
       <div className={styles.metrics__divider} />
 
       <div className={styles.metrics__grid}>
-        <MetricCard label="Market Cap" value={formatNumber(metrics.market_cap)} icon="💰" trend={null} />
-        <MetricCard label="24h Volume" value={formatNumber(metrics.volume_24h)} icon="📈" trend={null} />
-        <MetricCard label="Liquidity" value={formatNumber(metrics.liquidity_usd)} icon="💧" trend={null} />
-        <MetricCard label="Holders" value={metrics.holder_count.toLocaleString()} icon="👥" trend={null} />
+        <MetricCard label="Market Cap" value={formatNumber(metrics.marketCap)} icon="💰" trend={null} />
+        <MetricCard label="24h Volume" value={formatNumber(metrics.volume24h)} icon="📈" trend={null} />
+        <MetricCard label="Liquidity" value={formatNumber(metrics.liquidity)} icon="💧" trend={null} />
         <MetricCard
-          label="7d Change"
-          value={`${metrics.price_change_7d >= 0 ? '+' : ''}${metrics.price_change_7d.toFixed(2)}%`}
-          icon={metrics.price_change_7d >= 0 ? '📈' : '📉'}
-          trend={metrics.price_change_7d >= 0 ? 'up' : 'down'}
+          label="6h Change"
+          value={`${metrics.priceChange6h >= 0 ? '+' : ''}${metrics.priceChange6h.toFixed(2)}%`}
+          icon={metrics.priceChange6h >= 0 ? '📈' : '📉'}
+          trend={metrics.priceChange6h >= 0 ? 'up' : 'down'}
         />
-        <MetricCard label="FDV" value={formatNumber(metrics.fully_diluted_valuation)} icon="💎" trend={null} />
+        <MetricCard
+          label="1h Change"
+          value={`${metrics.priceChange1h >= 0 ? '+' : ''}${metrics.priceChange1h.toFixed(2)}%`}
+          icon={metrics.priceChange1h >= 0 ? '📈' : '📉'}
+          trend={metrics.priceChange1h >= 0 ? 'up' : 'down'}
+        />
+        <MetricCard label="FDV" value={formatNumber(metrics.fdv)} icon="💎" trend={null} />
       </div>
 
       <div className={styles.metrics__footer}>
         <span className={styles.metrics__timestamp}>
-          Data fetched: {new Date(metrics.fetched_at).toLocaleString()}
+          Data fetched: {new Date(metrics.fetchedAt).toLocaleString()}
         </span>
       </div>
     </div>
@@ -280,8 +285,8 @@ function ActivityLeaderboardView({
   return (
     <div className={styles.leaderboard}>
       <div className={styles.leaderboard__header}>
-        <h3>Top Active Holders</h3>
-        <p>Ranked by holdings, trading volume, and engagement</p>
+        <h3>Trading Pairs Activity</h3>
+        <p>Top trading pairs ranked by volume and liquidity</p>
       </div>
 
       <div className={styles.leaderboard__divider} />
@@ -303,19 +308,19 @@ function ActivityLeaderboardView({
             </div>
             <Avatar src={entry.avatarUrl} alt={entry.username} size="md" />
             <div className={styles.leaderboard__user}>
-              <div className={styles.leaderboard__username}>{entry.username}</div>
+              <div className={styles.leaderboard__username}>{entry.displayName || entry.username}</div>
               <div className={styles.leaderboard__stats}>
-                {entry.holdingPercentage.toFixed(4)}% supply · Rank #{entry.holderRank}
+                Liquidity: ${entry.holdingValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}
               </div>
               {entry.tradingVolume24h > 0 && (
                 <div className={styles.leaderboard__volume}>
-                  24h Vol: ${entry.tradingVolume24h.toLocaleString()}
+                  24h Vol: ${entry.tradingVolume24h.toLocaleString(undefined, { maximumFractionDigits: 0 })} · {entry.tradeCount24h} trades
                 </div>
               )}
             </div>
             <div className={styles.leaderboard__score}>
               <div className={styles.leaderboard__score_value}>{Math.floor(entry.totalScore).toLocaleString()}</div>
-              <div className={styles.leaderboard__score_label}>points</div>
+              <div className={styles.leaderboard__score_label}>score</div>
             </div>
           </motion.div>
         ))}

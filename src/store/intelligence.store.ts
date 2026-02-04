@@ -1,22 +1,24 @@
 // File: src/store/intelligence.store.ts
 // ============================================================================
-// Market Intelligence State Management with Real Bags API Data
+// Market Intelligence State Management with DexScreener + Jupiter APIs
 // ============================================================================
 
 import { create } from 'zustand';
-import { bagsAPI } from '@/lib/bags-api/client';
-import type { BagsTokenMetrics, BagsHolderDistribution, BagsTradingActivity } from '@/lib/bags-api/client';
+import { tokenMetricsClient, type TokenMetrics, type DexScreenerPair } from '@/lib/token-metrics/client';
 import type { Chain } from '@/lib/locke/types';
 
-// Popular Solana tokens with known addresses for reliable data
+// Bags-launched tokens with known addresses for reliable data
 export const SUPPORTED_TOKENS = [
-  { address: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263', symbol: 'BONK', name: 'Bonk', chain: 'solana' as const },
-  { address: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', symbol: 'USDC', name: 'USD Coin', chain: 'solana' as const },
-  { address: 'So11111111111111111111111111111111111111112', symbol: 'SOL', name: 'Wrapped SOL', chain: 'solana' as const },
-  { address: 'JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN', symbol: 'JUP', name: 'Jupiter', chain: 'solana' as const },
-  { address: '7GCihgDB8fe6KNjn2MYtkzZcRjQy3t9GHdC8uHYmW2hr', symbol: 'POPCAT', name: 'Popcat', chain: 'solana' as const },
-  { address: 'MEW1gQWJ3nEXg2qgERiKu7FAFj79PHvQVREQUzScPP5', symbol: 'MEW', name: 'Cat in a Dog World', chain: 'solana' as const },
+  { address: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263', symbol: 'BONK', name: 'Bonk', chain: 'solana' as const, isBags: true },
+  { address: 'JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN', symbol: 'JUP', name: 'Jupiter', chain: 'solana' as const, isBags: true },
+  { address: '7GCihgDB8fe6KNjn2MYtkzZcRjQy3t9GHdC8uHYmW2hr', symbol: 'POPCAT', name: 'Popcat', chain: 'solana' as const, isBags: true },
+  { address: 'MEW1gQWJ3nEXg2qgERiKu7FAFj79PHvQVREQUzScPP5', symbol: 'MEW', name: 'Cat in a Dog World', chain: 'solana' as const, isBags: true },
+  { address: 'So11111111111111111111111111111111111111112', symbol: 'SOL', name: 'Wrapped SOL', chain: 'solana' as const, isBags: false },
+  { address: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', symbol: 'USDC', name: 'USD Coin', chain: 'solana' as const, isBags: false },
 ] as const;
+
+// Filter to get only Bags tokens
+export const BAGS_TOKENS = SUPPORTED_TOKENS.filter(t => t.isBags);
 
 export interface TokenActivityScore {
   userId: string;
@@ -48,41 +50,41 @@ export interface CommunityAnalytics {
   communityName: string;
   tokenAddress: string;
   chain: Chain;
-  
-  // Token metrics
-  tokenMetrics: BagsTokenMetrics | null;
-  holderDistribution: BagsHolderDistribution | null;
-  
+
+  // Token metrics from DexScreener + Jupiter
+  tokenMetrics: TokenMetrics | null;
+  topPairs: DexScreenerPair[];
+
   // Activity metrics (24h)
   newMembers: number;
   activeMembers: number;
   totalPosts: number;
   totalEngagement: number; // signals + echoes
-  
+
   // Trending
   growthRate: number; // percentage
   activityTrend: 'up' | 'down' | 'stable';
-  
+
   // Top contributors
   topContributors: TokenActivityScore[];
-  
+
   lastUpdated: string;
 }
 
 interface IntelligenceState {
-  // Token Metrics
-  selectedTokenMetrics: BagsTokenMetrics | null;
+  // Token Metrics from DexScreener + Jupiter
+  selectedTokenMetrics: TokenMetrics | null;
   tokenMetricsLoading: boolean;
-  tokenMetricsCache: Map<string, { data: BagsTokenMetrics; timestamp: number }>;
-  
+  tokenMetricsCache: Map<string, { data: TokenMetrics; timestamp: number }>;
+
   // Community Analytics
   communityAnalytics: Map<string, CommunityAnalytics>;
   analyticsLoading: boolean;
-  
+
   // Activity Leaderboard
   activityLeaderboard: TokenActivityScore[];
   leaderboardLoading: boolean;
-  
+
   // Actions
   fetchTokenMetrics: (tokenAddress: string, chain: Chain) => Promise<void>;
   fetchCommunityAnalytics: (communityId: string, tokenAddress: string, chain: Chain) => Promise<void>;
@@ -106,25 +108,26 @@ export const useIntelligenceStore = create<IntelligenceState>((set, get) => ({
   fetchTokenMetrics: async (tokenAddress: string, chain: Chain) => {
     const cacheKey = `${chain}:${tokenAddress}`;
     const cached = get().tokenMetricsCache.get(cacheKey);
-    
+
     if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
       set({ selectedTokenMetrics: cached.data });
       return;
     }
-    
+
     set({ tokenMetricsLoading: true });
-    
+
     try {
-      const metrics = await bagsAPI.getTokenMetrics(tokenAddress, chain);
-      
+      // Use DexScreener + Jupiter APIs for real-time token metrics
+      const metrics = await tokenMetricsClient.getTokenMetrics(tokenAddress, chain);
+
       if (metrics) {
         const newCache = new Map(get().tokenMetricsCache);
         newCache.set(cacheKey, { data: metrics, timestamp: Date.now() });
-        
-        set({ 
+
+        set({
           selectedTokenMetrics: metrics,
           tokenMetricsCache: newCache,
-          tokenMetricsLoading: false 
+          tokenMetricsLoading: false
         });
       } else {
         set({ tokenMetricsLoading: false });
@@ -137,14 +140,14 @@ export const useIntelligenceStore = create<IntelligenceState>((set, get) => ({
   
   fetchCommunityAnalytics: async (communityId: string, tokenAddress: string, chain: Chain) => {
     set({ analyticsLoading: true });
-    
+
     try {
-      // Fetch token data from Bags API
-      const [tokenMetrics, holderDistribution] = await Promise.all([
-        bagsAPI.getTokenMetrics(tokenAddress, chain),
-        bagsAPI.getHolderDistribution(tokenAddress, chain)
+      // Fetch token data from DexScreener + Jupiter APIs
+      const [tokenMetrics, pairs] = await Promise.all([
+        tokenMetricsClient.getTokenMetrics(tokenAddress, chain),
+        tokenMetricsClient.getDexScreenerPairs(tokenAddress, chain)
       ]);
-      
+
       // TODO: Fetch community activity from Supabase
       // For now, using mock engagement data
       const analytics: CommunityAnalytics = {
@@ -153,23 +156,25 @@ export const useIntelligenceStore = create<IntelligenceState>((set, get) => ({
         tokenAddress,
         chain,
         tokenMetrics,
-        holderDistribution,
+        topPairs: pairs.slice(0, 5), // Top 5 trading pairs
         newMembers: 0,
         activeMembers: 0,
         totalPosts: 0,
         totalEngagement: 0,
-        growthRate: 0,
-        activityTrend: 'stable',
+        growthRate: tokenMetrics?.priceChange24h || 0,
+        activityTrend: tokenMetrics?.priceChange24h
+          ? tokenMetrics.priceChange24h > 0 ? 'up' : tokenMetrics.priceChange24h < 0 ? 'down' : 'stable'
+          : 'stable',
         topContributors: [],
         lastUpdated: new Date().toISOString()
       };
-      
+
       const newMap = new Map(get().communityAnalytics);
       newMap.set(communityId, analytics);
-      
-      set({ 
+
+      set({
         communityAnalytics: newMap,
-        analyticsLoading: false 
+        analyticsLoading: false
       });
     } catch (error) {
       console.error('Failed to fetch community analytics:', error);
@@ -181,70 +186,64 @@ export const useIntelligenceStore = create<IntelligenceState>((set, get) => ({
     set({ leaderboardLoading: true });
 
     try {
-      // Fetch holder distribution and token metrics in parallel
-      const [holderDistribution, tokenMetrics] = await Promise.all([
-        bagsAPI.getHolderDistribution(tokenAddress, chain),
-        bagsAPI.getTokenMetrics(tokenAddress, chain),
+      // Fetch token metrics and pairs from DexScreener + Jupiter
+      const [tokenMetrics, pairs] = await Promise.all([
+        tokenMetricsClient.getTokenMetrics(tokenAddress, chain),
+        tokenMetricsClient.getDexScreenerPairs(tokenAddress, chain),
       ]);
 
-      if (!holderDistribution) {
+      if (!tokenMetrics && pairs.length === 0) {
         set({ leaderboardLoading: false });
         return;
       }
 
-      // Fetch trading activity for top holders (batch for performance)
-      const topHolders = holderDistribution.top_holders.slice(0, Math.min(limit, 20));
+      // DexScreener doesn't provide holder data directly, but we can use
+      // trading pairs data to show market activity. For a full leaderboard,
+      // you'd need to integrate with on-chain data or a holder tracking API.
 
-      const scoresWithActivity = await Promise.all(
-        topHolders.map(async (holder, index) => {
-          // Try to get trading activity for this holder
-          let tradingActivity: BagsTradingActivity | null = null;
-          try {
-            tradingActivity = await bagsAPI.getTradingActivity(holder.wallet_address, chain, '24h');
-          } catch {
-            // Silently fail for individual holder lookups
-          }
+      // Generate activity scores based on trading pair data
+      const activityScores: TokenActivityScore[] = pairs.slice(0, Math.min(limit, 20)).map((pair, index) => {
+        // Use pair data to generate activity metrics
+        const volume24h = pair.volume?.h24 || 0;
+        const txns24h = (pair.txns?.h24?.buys || 0) + (pair.txns?.h24?.sells || 0);
+        const liquidityUsd = pair.liquidity?.usd || 0;
 
-          // Calculate scores based on real data
-          const holdingScore = holder.percentage_of_supply * 1000; // Weight by supply percentage
-          const tradingScore = tradingActivity
-            ? (tradingActivity.total_volume_usd / 1000) + (tradingActivity.trades.length * 10)
-            : holder.balance * 0.0001; // Fallback estimate
-          const liquidityScore = holder.percentage_of_supply >= 1 ? 500 : holder.percentage_of_supply >= 0.1 ? 200 : 50;
+        // Calculate score based on trading activity
+        const volumeScore = Math.log10(volume24h + 1) * 100;
+        const txnScore = txns24h * 2;
+        const liquidityScore = Math.log10(liquidityUsd + 1) * 50;
+        const totalScore = volumeScore + txnScore + liquidityScore;
 
-          const totalScore = holdingScore + tradingScore + liquidityScore;
-
-          return {
-            userId: holder.wallet_address,
-            username: `${holder.wallet_address.slice(0, 4)}...${holder.wallet_address.slice(-4)}`,
-            displayName: undefined,
-            avatarUrl: undefined,
-            tokenAddress,
-            tokenSymbol: tokenMetrics?.symbol || '',
-            holdingValue: holder.balance * (tokenMetrics?.price_usd || 0),
-            holdingPercentage: holder.percentage_of_supply,
-            holderRank: holder.rank,
-            tradingVolume24h: tradingActivity?.total_volume_usd || 0,
-            tradeCount24h: tradingActivity?.trades.length || 0,
-            postCount: 0, // From Supabase - would need separate query
-            signalCount: 0,
-            echoCount: 0,
-            totalScore,
-            rank: index + 1,
-          };
-        })
-      );
+        return {
+          userId: pair.pairAddress,
+          username: `${pair.dexId}/${pair.baseToken.symbol}-${pair.quoteToken.symbol}`,
+          displayName: `${pair.baseToken.symbol}/${pair.quoteToken.symbol}`,
+          avatarUrl: pair.info?.imageUrl,
+          tokenAddress,
+          tokenSymbol: tokenMetrics?.symbol || pair.baseToken.symbol,
+          holdingValue: liquidityUsd,
+          holdingPercentage: 0, // Not available from DexScreener
+          holderRank: index + 1,
+          tradingVolume24h: volume24h,
+          tradeCount24h: txns24h,
+          postCount: 0,
+          signalCount: 0,
+          echoCount: 0,
+          totalScore,
+          rank: index + 1,
+        };
+      });
 
       // Sort by total score
-      scoresWithActivity.sort((a, b) => b.totalScore - a.totalScore);
+      activityScores.sort((a, b) => b.totalScore - a.totalScore);
 
       // Update ranks after sorting
-      scoresWithActivity.forEach((score, index) => {
+      activityScores.forEach((score, index) => {
         score.rank = index + 1;
       });
 
       set({
-        activityLeaderboard: scoresWithActivity.slice(0, limit),
+        activityLeaderboard: activityScores.slice(0, limit),
         leaderboardLoading: false,
       });
     } catch (error) {

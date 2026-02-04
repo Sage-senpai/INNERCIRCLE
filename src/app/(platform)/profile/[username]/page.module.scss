@@ -257,50 +257,74 @@
 // LIGHT MODE OVERRIDES
 // ============================================================================
 
-.profile__loading {
-  [data-theme='light'] & {
+[data-theme='light'] {
+  .profile__loading {
     color: #5a5350;
   }
-}
 
-.profile__name {
-  [data-theme='light'] & {
+  .profile__header {
+    background: #ffffff;
+    border: 1px solid rgba(10, 10, 15, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  }
+
+  .profile__name {
     color: #0a0a0f;
   }
-}
 
-.profile__username {
-  [data-theme='light'] & {
+  .profile__username {
     color: #5a5350;
   }
-}
 
-.profile__bio {
-  [data-theme='light'] & {
+  .profile__bio {
     color: #0a0a0f;
   }
-}
 
-.profile__stat_value {
-  [data-theme='light'] & {
+  .profile__stats {
+    background: #ffffff;
+    border: 1px solid rgba(10, 10, 15, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  }
+
+  .profile__stat_value {
     color: #0a0a0f;
   }
-}
 
-.profile__stat_label {
-  [data-theme='light'] & {
+  .profile__stat_label {
     color: #5a5350;
   }
-}
 
-.profile__content_title {
-  [data-theme='light'] & {
+  .profile__content {
+    background: #ffffff;
+    border: 1px solid rgba(10, 10, 15, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  }
+
+  .profile__content_title {
     color: #0a0a0f;
   }
-}
 
-.profile__empty {
-  [data-theme='light'] & {
+  .profile__empty {
+    background: #ffffff;
+    border: 1px solid rgba(10, 10, 15, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     color: #5a5350;
+  }
+
+  .profile__edit_input,
+  .profile__edit_textarea {
+    background: #fafafa;
+    border: 1px solid rgba(10, 10, 15, 0.12);
+    color: #0a0a0f;
+
+    &::placeholder {
+      color: #9a9590;
+    }
+
+    &:focus {
+      background: #ffffff;
+      border-color: #16a34a;
+      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+    }
   }
 }

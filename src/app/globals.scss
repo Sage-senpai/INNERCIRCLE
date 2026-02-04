@@ -4,23 +4,123 @@
 @use '@/styles/abstracts/variables' as *;
 @use '@/styles/base/reset';
 
-:root {
+// ============================================================================
+// DARK THEME (Default)
+// ============================================================================
+:root,
+[data-theme='dark'] {
+  // Brand colors
   --color-onyx: #{$color-onyx};
   --color-frozen-water: #{$color-frozen-water};
   --color-night-bordeaux: #{$color-night-bordeaux};
   --color-rosy-granite: #{$color-rosy-granite};
   --color-medium-jungle: #{$color-medium-jungle};
+
+  // Backgrounds
+  --color-bg-primary: #{$color-onyx};
+  --color-bg-secondary: rgba(218, 255, 237, 0.03);
+  --color-bg-tertiary: rgba(218, 255, 237, 0.05);
+  --color-bg-elevated: rgba(218, 255, 237, 0.08);
+
+  // Text
+  --color-text-primary: #{$color-frozen-water};
+  --color-text-secondary: #{$color-rosy-granite};
+  --color-text-tertiary: rgba(218, 255, 237, 0.6);
+  --color-text-muted: rgba(218, 255, 237, 0.4);
+
+  // Surfaces
+  --color-surface: rgba(218, 255, 237, 0.05);
+  --color-surface-hover: rgba(218, 255, 237, 0.08);
+  --color-surface-active: rgba(218, 255, 237, 0.12);
+
+  // Borders
+  --color-border: rgba(218, 255, 237, 0.1);
+  --color-border-hover: rgba(218, 255, 237, 0.15);
+  --color-border-focus: rgba(218, 255, 237, 0.2);
+  --color-border-subtle: rgba(218, 255, 237, 0.06);
+
+  // Status colors
+  --color-success: #{$color-medium-jungle};
+  --color-error: #a73548;
+  --color-warning: #f59e0b;
+  --color-locked: #{$color-night-bordeaux};
+  --color-unlocked: #{$color-medium-jungle};
+
+  // Shadows
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+  // Component-specific
+  --sidebar-bg: rgba(0, 0, 0, 0.4);
+  --card-bg: rgba(218, 255, 237, 0.03);
+  --input-bg: rgba(218, 255, 237, 0.05);
+  --button-ghost-hover: rgba(218, 255, 237, 0.08);
 }
 
-body {
-  background: $color-bg-primary;
-  color: $color-text-primary;
-  overflow-x: hidden;
+// ============================================================================
+// LIGHT THEME
+// ============================================================================
+[data-theme='light'] {
+  // Brand colors (adjusted for light mode)
+  --color-onyx: #ffffff;
+  --color-frozen-water: #0a0a0f;
+  --color-night-bordeaux: #{$color-night-bordeaux};
+  --color-rosy-granite: #5a5458;
+  --color-medium-jungle: #{$color-medium-jungle};
 
-  [data-theme='light'] & {
-    background: #fafafa;
-    color: #0a0a0f;
-  }
+  // Backgrounds
+  --color-bg-primary: #fafafa;
+  --color-bg-secondary: #f5f5f5;
+  --color-bg-tertiary: #eeeeee;
+  --color-bg-elevated: #ffffff;
+
+  // Text
+  --color-text-primary: #0a0a0f;
+  --color-text-secondary: #5a5458;
+  --color-text-tertiary: rgba(10, 10, 15, 0.6);
+  --color-text-muted: rgba(10, 10, 15, 0.4);
+
+  // Surfaces
+  --color-surface: #ffffff;
+  --color-surface-hover: #f5f5f5;
+  --color-surface-active: #eeeeee;
+
+  // Borders - IMPORTANT for light mode demarcation
+  --color-border: rgba(10, 10, 15, 0.12);
+  --color-border-hover: rgba(10, 10, 15, 0.2);
+  --color-border-focus: rgba(10, 10, 15, 0.3);
+  --color-border-subtle: rgba(10, 10, 15, 0.08);
+
+  // Status colors
+  --color-success: #{$color-medium-jungle};
+  --color-error: #dc2626;
+  --color-warning: #f59e0b;
+  --color-locked: #{$color-night-bordeaux};
+  --color-unlocked: #{$color-medium-jungle};
+
+  // Shadows - softer for light mode
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+
+  // Component-specific
+  --sidebar-bg: #ffffff;
+  --card-bg: #ffffff;
+  --input-bg: #ffffff;
+  --button-ghost-hover: rgba(10, 10, 15, 0.05);
+}
+
+// ============================================================================
+// BASE STYLES
+// ============================================================================
+body {
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  overflow-x: hidden;
+  transition: background-color 0.2s ease, color 0.2s ease;
 
   // Custom scrollbar
   &::-webkit-scrollbar {
@@ -28,29 +128,16 @@ body {
   }
 
   &::-webkit-scrollbar-track {
-    background: rgba($color-frozen-water, 0.03);
-
-    [data-theme='light'] & {
-      background: rgba(10, 10, 15, 0.03);
-    }
+    background: var(--color-bg-secondary);
   }
 
   &::-webkit-scrollbar-thumb {
-    background: rgba($color-frozen-water, 0.2);
+    background: var(--color-border-hover);
     border-radius: $radius-full;
-    border: 3px solid $color-bg-primary;
-
-    [data-theme='light'] & {
-      background: rgba(10, 10, 15, 0.2);
-      border-color: #fafafa;
-    }
+    border: 3px solid var(--color-bg-primary);
 
     &:hover {
-      background: rgba($color-frozen-water, 0.3);
-
-      [data-theme='light'] & {
-        background: rgba(10, 10, 15, 0.3);
-      }
+      background: var(--color-text-muted);
     }
   }
 }
@@ -58,15 +145,53 @@ body {
 // Selection styling
 ::selection {
   background: rgba($color-medium-jungle, 0.3);
-  color: $color-text-primary;
-
-  [data-theme='light'] & {
-    color: #0a0a0f;
-  }
+  color: var(--color-text-primary);
 }
 
 // Focus visible styles
 :focus-visible {
   outline: 2px solid $color-medium-jungle;
   outline-offset: 2px;
+}
+
+// ============================================================================
+// LIGHT MODE GLOBAL ENHANCEMENTS
+// ============================================================================
+[data-theme='light'] {
+  // Add subtle borders to all major sections
+  .sidebar,
+  [class*='sidebar'] {
+    border-right: 1px solid var(--color-border);
+  }
+
+  // Cards and panels get borders
+  [class*='card'],
+  [class*='panel'],
+  [class*='section'] {
+    border: 1px solid var(--color-border);
+  }
+
+  // Input fields get visible borders
+  input,
+  textarea,
+  select {
+    border: 1px solid var(--color-border) !important;
+
+    &:hover {
+      border-color: var(--color-border-hover) !important;
+    }
+
+    &:focus {
+      border-color: var(--color-medium-jungle) !important;
+    }
+  }
+
+  // Buttons get subtle borders
+  button {
+    border: 1px solid var(--color-border-subtle);
+
+    &:hover {
+      border-color: var(--color-border);
+    }
+  }
 }

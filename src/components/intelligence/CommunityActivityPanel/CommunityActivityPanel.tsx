@@ -7,9 +7,7 @@ import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useIntelligenceStore } from '@/store/intelligence.store';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner/LoadingSpinner';
-import { Avatar } from '@/components/ui/Avatar/Avatar';
 import { TrendUpIcon, TrendDownIcon } from '@/components/icons';
-import type { CommunityAnalytics } from '@/store/intelligence.store';
 import type { Chain } from '@/lib/locke/types';
 import styles from './CommunityActivityPanel.module.scss';
 
@@ -20,21 +18,21 @@ interface CommunityActivityPanelProps {
   chain: Chain;
 }
 
-export function CommunityActivityPanel({ 
-  communityId, 
-  communityName, 
-  tokenAddress, 
-  chain 
+export function CommunityActivityPanel({
+  communityId,
+  communityName,
+  tokenAddress,
+  chain
 }: CommunityActivityPanelProps) {
-  const { 
-    communityAnalytics, 
-    analyticsLoading, 
-    fetchCommunityAnalytics 
+  const {
+    communityAnalytics,
+    analyticsLoading,
+    fetchCommunityAnalytics
   } = useIntelligenceStore();
 
   useEffect(() => {
     fetchCommunityAnalytics(communityId, tokenAddress, chain);
-  }, [communityId, tokenAddress, chain]);
+  }, [communityId, tokenAddress, chain, fetchCommunityAnalytics]);
 
   const analytics = communityAnalytics.get(communityId);
 
@@ -57,7 +55,7 @@ export function CommunityActivityPanel({
   }
 
   return (
-    <motion.div 
+    <motion.div
       className={styles.panel}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -67,9 +65,9 @@ export function CommunityActivityPanel({
       <div className={styles.panel__header}>
         <h2 className={styles.panel__title}>{communityName} Activity</h2>
         <div className={`${styles.panel__trend} ${styles[`panel__trend--${analytics.activityTrend}`]}`}>
-          {analytics.activityTrend === 'up' ? <TrendUpIcon /> : 
+          {analytics.activityTrend === 'up' ? <TrendUpIcon /> :
            analytics.activityTrend === 'down' ? <TrendDownIcon /> : '→'}
-          {analytics.activityTrend === 'up' ? 'Trending Up' : 
+          {analytics.activityTrend === 'up' ? 'Trending Up' :
            analytics.activityTrend === 'down' ? 'Trending Down' : 'Stable'}
         </div>
       </div>
@@ -81,88 +79,50 @@ export function CommunityActivityPanel({
           <div className={styles.health}>
             <HealthMetric
               label="Price"
-              value={`$${analytics.tokenMetrics.price_usd.toFixed(6)}`}
-              change={analytics.tokenMetrics.price_change_24h}
+              value={`$${analytics.tokenMetrics.priceUsd.toFixed(6)}`}
+              change={analytics.tokenMetrics.priceChange24h}
             />
             <HealthMetric
               label="Market Cap"
-              value={formatNumber(analytics.tokenMetrics.market_cap)}
+              value={formatNumber(analytics.tokenMetrics.marketCap)}
               change={analytics.growthRate}
             />
             <HealthMetric
               label="Volume 24h"
-              value={formatNumber(analytics.tokenMetrics.volume_24h)}
+              value={formatNumber(analytics.tokenMetrics.volume24h)}
             />
             <HealthMetric
-              label="Holders"
-              value={analytics.tokenMetrics.holder_count.toLocaleString()}
+              label="Liquidity"
+              value={formatNumber(analytics.tokenMetrics.liquidity)}
             />
           </div>
         </section>
       )}
 
-      {/* Holder Distribution */}
-      {analytics.holderDistribution && (
+      {/* Top Trading Pairs */}
+      {analytics.topPairs && analytics.topPairs.length > 0 && (
         <section className={styles.section}>
-          <h3 className={styles.section__title}>Holder Distribution</h3>
-          <div className={styles.distribution}>
-            <DistributionBar
-              label="Whales (>1%)"
-              count={analytics.holderDistribution.distribution.whales}
-              total={analytics.holderDistribution.total_holders}
-              color="#3b82f6"
-            />
-            <DistributionBar
-              label="Large (0.1-1%)"
-              count={analytics.holderDistribution.distribution.large}
-              total={analytics.holderDistribution.total_holders}
-              color="#8b5cf6"
-            />
-            <DistributionBar
-              label="Medium (0.01-0.1%)"
-              count={analytics.holderDistribution.distribution.medium}
-              total={analytics.holderDistribution.total_holders}
-              color="#10b981"
-            />
-            <DistributionBar
-              label="Small (<0.01%)"
-              count={analytics.holderDistribution.distribution.small}
-              total={analytics.holderDistribution.total_holders}
-              color="#f59e0b"
-            />
-          </div>
-        </section>
-      )}
-
-      {/* Top Holders */}
-      {analytics.holderDistribution && (
-        <section className={styles.section}>
-          <h3 className={styles.section__title}>Top Holders</h3>
+          <h3 className={styles.section__title}>Top Trading Pairs</h3>
           <div className={styles.holders}>
-            {analytics.holderDistribution.top_holders.slice(0, 5).map((holder, index) => (
-              <motion.div 
-                key={holder.wallet_address}
+            {analytics.topPairs.slice(0, 5).map((pair, index) => (
+              <motion.div
+                key={pair.pairAddress}
                 className={styles.holder}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
               >
-                <div className={styles.holder__rank}>#{holder.rank}</div>
-                <Avatar 
-                  src={null}
-                  alt={holder.wallet_address}
-                  size="sm"
-                />
+                <div className={styles.holder__rank}>#{index + 1}</div>
                 <div className={styles.holder__info}>
                   <div className={styles.holder__address}>
-                    {holder.wallet_address.slice(0, 6)}...{holder.wallet_address.slice(-4)}
+                    {pair.baseToken.symbol}/{pair.quoteToken.symbol}
                   </div>
                   <div className={styles.holder__percentage}>
-                    {holder.percentage_of_supply.toFixed(2)}% of supply
+                    {pair.dexId} · ${(pair.liquidity?.usd || 0).toLocaleString()} liquidity
                   </div>
                 </div>
                 <div className={styles.holder__balance}>
-                  {formatNumber(holder.balance)}
+                  ${(pair.volume?.h24 || 0).toLocaleString()}
                 </div>
               </motion.div>
             ))}
@@ -200,38 +160,6 @@ function HealthMetric({ label, value, change }: HealthMetricProps) {
           {change >= 0 ? '+' : ''}{change.toFixed(2)}%
         </div>
       )}
-    </div>
-  );
-}
-
-interface DistributionBarProps {
-  label: string;
-  count: number;
-  total: number;
-  color: string;
-}
-
-function DistributionBar({ label, count, total, color }: DistributionBarProps) {
-  const percentage = (count / total) * 100;
-
-  return (
-    <div className={styles.distribution__item}>
-      <div className={styles.distribution__header}>
-        <span className={styles.distribution__label}>{label}</span>
-        <span className={styles.distribution__count}>{count.toLocaleString()}</span>
-      </div>
-      <div className={styles.distribution__bar}>
-        <div 
-          className={styles.distribution__fill}
-          style={{ 
-            width: `${percentage}%`,
-            backgroundColor: color
-          }}
-        />
-      </div>
-      <div className={styles.distribution__percentage}>
-        {percentage.toFixed(1)}%
-      </div>
     </div>
   );
 }

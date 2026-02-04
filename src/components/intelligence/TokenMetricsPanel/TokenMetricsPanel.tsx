@@ -31,10 +31,10 @@ export function TokenMetricsPanel() {
   }
 
   const metrics = selectedTokenMetrics;
-  const priceChangePositive = metrics.price_change_24h >= 0;
+  const priceChangePositive = metrics.priceChange24h >= 0;
 
   return (
-    <motion.div 
+    <motion.div
       className={styles.panel}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -48,11 +48,11 @@ export function TokenMetricsPanel() {
         </div>
         <div className={styles.panel__price}>
           <div className={styles.panel__price_value}>
-            ${metrics.price_usd.toFixed(6)}
+            ${metrics.priceUsd.toFixed(6)}
           </div>
           <div className={`${styles.panel__price_change} ${priceChangePositive ? styles['panel__price_change--up'] : styles['panel__price_change--down']}`}>
             {priceChangePositive ? <TrendUpIcon /> : <TrendDownIcon />}
-            {priceChangePositive ? '+' : ''}{metrics.price_change_24h.toFixed(2)}%
+            {priceChangePositive ? '+' : ''}{metrics.priceChange24h.toFixed(2)}%
           </div>
         </div>
       </div>
@@ -61,33 +61,34 @@ export function TokenMetricsPanel() {
       <div className={styles.metrics}>
         <MetricCard
           label="Market Cap"
-          value={formatLargeNumber(metrics.market_cap)}
+          value={formatLargeNumber(metrics.marketCap)}
           icon="💰"
         />
         <MetricCard
           label="24h Volume"
-          value={formatLargeNumber(metrics.volume_24h)}
+          value={formatLargeNumber(metrics.volume24h)}
           icon="📈"
         />
         <MetricCard
           label="Liquidity"
-          value={formatLargeNumber(metrics.liquidity_usd)}
+          value={formatLargeNumber(metrics.liquidity)}
           icon="💧"
         />
         <MetricCard
-          label="Holders"
-          value={metrics.holder_count.toLocaleString()}
-          icon="👥"
+          label="6h Change"
+          value={`${metrics.priceChange6h >= 0 ? '+' : ''}${metrics.priceChange6h.toFixed(2)}%`}
+          icon={metrics.priceChange6h >= 0 ? '📈' : '📉'}
+          trend={metrics.priceChange6h >= 0 ? 'up' : 'down'}
         />
         <MetricCard
-          label="7d Change"
-          value={`${metrics.price_change_7d >= 0 ? '+' : ''}${metrics.price_change_7d.toFixed(2)}%`}
-          icon={metrics.price_change_7d >= 0 ? '📈' : '📉'}
-          trend={metrics.price_change_7d >= 0 ? 'up' : 'down'}
+          label="1h Change"
+          value={`${metrics.priceChange1h >= 0 ? '+' : ''}${metrics.priceChange1h.toFixed(2)}%`}
+          icon={metrics.priceChange1h >= 0 ? '📈' : '📉'}
+          trend={metrics.priceChange1h >= 0 ? 'up' : 'down'}
         />
         <MetricCard
           label="FDV"
-          value={formatLargeNumber(metrics.fully_diluted_valuation)}
+          value={formatLargeNumber(metrics.fdv)}
           icon="💎"
         />
       </div>
@@ -99,7 +100,7 @@ export function TokenMetricsPanel() {
           <span className={styles.panel__chain_value}>{metrics.chain.toUpperCase()}</span>
         </div>
         <div className={styles.panel__updated}>
-          Updated: {new Date(metrics.fetched_at).toLocaleString()}
+          Updated: {new Date(metrics.fetchedAt).toLocaleString()}
         </div>
       </div>
     </motion.div>
@@ -115,7 +116,7 @@ interface MetricCardProps {
 
 function MetricCard({ label, value, icon, trend }: MetricCardProps) {
   return (
-    <motion.div 
+    <motion.div
       className={styles.metric}
       whileHover={{ scale: 1.02 }}
       transition={{ type: 'spring', stiffness: 300 }}

@@ -208,11 +208,166 @@
   color: $color-text-secondary;
   font-family: $font-family-mono;
   font-weight: $font-weight-medium;
-  
+
   &--error {
     color: $color-error;
     font-weight: $font-weight-bold;
   }
+}
+
+// ============================================================================
+// TOOLBAR
+// ============================================================================
+
+.modal__toolbar {
+  @include flex-between;
+  margin-top: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 1px solid $color-border;
+}
+
+.modal__toolbar_buttons {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.modal__toolbar_btn {
+  position: relative;
+  @include flex-center;
+  width: 36px;
+  height: 36px;
+  border-radius: $radius-md;
+  background: transparent;
+  border: 1px solid $color-border;
+  color: $color-text-secondary;
+  cursor: pointer;
+  @include transition(all);
+
+  &:hover:not(:disabled) {
+    background: rgba($color-medium-jungle, 0.1);
+    border-color: $color-medium-jungle;
+    color: $color-medium-jungle;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.modal__toolbar_badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  @include flex-center;
+  width: 16px;
+  height: 16px;
+  background: $color-medium-jungle;
+  color: white;
+  font-size: 10px;
+  font-weight: $font-weight-bold;
+  border-radius: $radius-full;
+}
+
+// ============================================================================
+// IMAGE ATTACHMENTS
+// ============================================================================
+
+.modal__images {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: $spacing-sm;
+  margin-top: $spacing-md;
+}
+
+.modal__image_preview {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: $radius-md;
+  overflow: hidden;
+  border: 1px solid $color-border;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.modal__image_remove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  @include flex-center;
+  width: 24px;
+  height: 24px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: none;
+  border-radius: $radius-full;
+  cursor: pointer;
+  font-size: $font-size-lg;
+  line-height: 1;
+  @include transition(background);
+
+  &:hover {
+    background: $color-error;
+  }
+}
+
+.modal__image_input {
+  margin-top: $spacing-md;
+  padding: $spacing-md;
+  @include glass-surface(0.03);
+  border-radius: $radius-md;
+  border: 1px solid $color-border;
+
+  input {
+    width: 100%;
+    padding: $spacing-sm $spacing-md;
+    @include glass-surface(0.05);
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    font-size: $font-size-sm;
+    color: $color-text-primary;
+    @include transition(border-color);
+
+    &:focus {
+      outline: none;
+      border-color: $color-medium-jungle;
+    }
+
+    &::placeholder {
+      color: $color-text-tertiary;
+    }
+  }
+}
+
+.modal__image_input_actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-sm;
+  margin-top: $spacing-sm;
+}
+
+.modal__image_error {
+  font-size: $font-size-xs;
+  color: $color-error;
+  margin-top: $spacing-xs;
+}
+
+// ============================================================================
+// ERROR MESSAGE
+// ============================================================================
+
+.modal__error {
+  padding: $spacing-md;
+  background: rgba($color-error, 0.1);
+  border: 1px solid rgba($color-error, 0.3);
+  border-radius: $radius-md;
+  color: $color-error;
+  font-size: $font-size-sm;
+  margin-bottom: $spacing-md;
 }
 
 // ============================================================================
@@ -273,16 +428,30 @@
   font-size: $font-size-base;
   color: $color-text-primary;
   @include transition(background, border-color);
-  
+
   @include responsive(mobile) {
     padding: $spacing-xs $spacing-sm;
     font-size: $font-size-sm;
   }
-  
+
   &:focus {
     outline: none;
     background: rgba($color-frozen-water, 0.08);
     border-color: $color-medium-jungle;
+  }
+}
+
+.gating__static {
+  padding: $spacing-sm $spacing-md;
+  @include glass-surface(0.03);
+  border-radius: $radius-md;
+  font-size: $font-size-base;
+  color: $color-text-secondary;
+  font-weight: $font-weight-medium;
+
+  @include responsive(mobile) {
+    padding: $spacing-xs $spacing-sm;
+    font-size: $font-size-sm;
   }
 }
 
@@ -304,6 +473,13 @@
 .gating__info_icon {
   font-size: $font-size-lg;
   flex-shrink: 0;
+}
+
+.gating__hint {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-top: $spacing-xs;
+  font-style: italic;
 }
 
 .gating__info_text {
@@ -344,12 +520,13 @@
   }
 
   .modal {
-    background: rgba(255, 255, 255, 0.95);
-    border-color: rgba(10, 10, 15, 0.1);
+    background: #ffffff;
+    border: 1px solid rgba(10, 10, 15, 0.12);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 12px 24px -8px rgba(0, 0, 0, 0.15);
   }
 
   .modal__header {
-    border-bottom-color: rgba(10, 10, 15, 0.1);
+    border-bottom-color: rgba(10, 10, 15, 0.08);
   }
 
   .modal__title {
@@ -360,7 +537,7 @@
     color: #5a5350;
 
     &:hover {
-      background: rgba(10, 10, 15, 0.1);
+      background: rgba(10, 10, 15, 0.08);
       color: #0a0a0f;
     }
   }
@@ -370,17 +547,18 @@
   }
 
   .modal__textarea {
-    background: rgba(10, 10, 15, 0.03);
-    border-color: rgba(10, 10, 15, 0.1);
+    background: #fafafa;
+    border: 1px solid rgba(10, 10, 15, 0.12);
     color: #0a0a0f;
 
     &::placeholder {
-      color: #5a5350;
+      color: #9a9590;
     }
 
     &:focus {
-      background: rgba(10, 10, 15, 0.05);
-      border-color: rgba(10, 10, 15, 0.2);
+      background: #ffffff;
+      border-color: #16a34a;
+      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
     }
   }
 
@@ -393,8 +571,8 @@
   }
 
   .gating {
-    background: rgba(10, 10, 15, 0.03);
-    border-color: rgba(10, 10, 15, 0.1);
+    background: #fafafa;
+    border: 1px solid rgba(22, 163, 74, 0.2);
   }
 
   .gating__title {
@@ -407,25 +585,81 @@
 
   .gating__select,
   .gating__input {
-    background: rgba(10, 10, 15, 0.03);
-    border-color: rgba(10, 10, 15, 0.1);
+    background: #ffffff;
+    border: 1px solid rgba(10, 10, 15, 0.12);
     color: #0a0a0f;
 
     &:focus {
-      background: rgba(10, 10, 15, 0.05);
+      background: #ffffff;
+      border-color: #16a34a;
+      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
     }
   }
 
   .gating__info {
-    background: rgba(74, 222, 128, 0.05);
-    border-color: rgba(74, 222, 128, 0.2);
+    background: rgba(22, 163, 74, 0.05);
+    border-color: rgba(22, 163, 74, 0.2);
   }
 
   .gating__info_text {
     color: #5a5350;
   }
 
+  .gating__hint {
+    color: #9a9590;
+  }
+
   .modal__actions {
-    border-top-color: rgba(10, 10, 15, 0.1);
+    border-top-color: rgba(10, 10, 15, 0.08);
+  }
+
+  .modal__toolbar {
+    border-top-color: rgba(10, 10, 15, 0.08);
+  }
+
+  .modal__toolbar_btn {
+    background: #ffffff;
+    border-color: rgba(10, 10, 15, 0.12);
+    color: #5a5350;
+
+    &:hover:not(:disabled) {
+      background: rgba(22, 163, 74, 0.08);
+      border-color: #16a34a;
+      color: #16a34a;
+    }
+  }
+
+  .modal__image_preview {
+    border-color: rgba(10, 10, 15, 0.12);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+
+  .modal__image_input {
+    background: #fafafa;
+    border-color: rgba(10, 10, 15, 0.12);
+
+    input {
+      background: #ffffff;
+      border-color: rgba(10, 10, 15, 0.12);
+      color: #0a0a0f;
+
+      &::placeholder {
+        color: #9a9590;
+      }
+
+      &:focus {
+        border-color: #16a34a;
+      }
+    }
+  }
+
+  .gating__static {
+    background: #f5f5f5;
+    color: #5a5350;
+  }
+
+  .modal__error {
+    background: rgba(239, 68, 68, 0.08);
+    border-color: rgba(239, 68, 68, 0.25);
   }
 }

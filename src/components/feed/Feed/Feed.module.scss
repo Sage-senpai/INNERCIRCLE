@@ -91,8 +91,32 @@
 .feed__empty_text {
   color: $color-text-secondary;
   font-size: $font-size-lg;
-  
+
   @include responsive(mobile) {
     font-size: $font-size-base;
+  }
+}
+
+// ============================================================================
+// LIGHT MODE OVERRIDES
+// ============================================================================
+
+[data-theme='light'] {
+  .feed {
+    background: #fafafa;
+  }
+
+  .feed__end {
+    color: #5a5350;
+  }
+
+  .feed__empty {
+    background: #ffffff;
+    border: 1px solid rgba(10, 10, 15, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  .feed__empty_text {
+    color: #5a5350;
   }
 }

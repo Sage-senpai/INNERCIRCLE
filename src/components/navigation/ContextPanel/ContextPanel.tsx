@@ -1,13 +1,17 @@
 // File: src/components/navigation/ContextPanel/ContextPanel.tsx
 // ============================================================================
+// Context panel with real-time leaderboard data
+// ============================================================================
 
 'use client';
 
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { Avatar } from '@/components/ui/Avatar/Avatar';
 import { TrendUpIcon, TrendDownIcon } from '@/components/icons';
+import { useLeaderboardStore } from '@/store/leaderboard.store';
 import styles from './ContextPanel.module.scss';
 
 export function ContextPanel() {
@@ -23,6 +27,9 @@ export function ContextPanel() {
     }
     if (pathname === '/leaderboards') {
       return <LeaderboardContext />;
+    }
+    if (pathname === '/intelligence') {
+      return <IntelligenceContext />;
     }
     return <DefaultContext />;
   };
@@ -41,29 +48,82 @@ export function ContextPanel() {
 }
 
 function FeedContext() {
-  const trendingCommunities = [
-    { name: 'BONK Holders', members: '15.4K', change: +12, slug: 'bonk-holders' },
-    { name: 'PEPE Elites', members: '8.9K', change: +8, slug: 'pepe-elites' },
-    { name: 'WIF Collective', members: '11.2K', change: +15, slug: 'wif-collective' },
-  ];
+  const { topThree, isLoading, lastUpdated, fetchLeaderboard } = useLeaderboardStore();
 
-  const tokenMovers = [
-    { symbol: 'BONK', change: +23.4, volume: '$2.3M' },
-    { symbol: 'PEPE', change: -5.2, volume: '$1.8M' },
-    { symbol: 'WIF', change: +15.8, volume: '$3.1M' },
-  ];
+  useEffect(() => {
+    // Fetch engagement leaderboard for the feed context
+    fetchLeaderboard('engagement', 'daily');
+  }, [fetchLeaderboard]);
+
+  const formatScore = (score: number): string => {
+    if (score >= 1e6) return `${(score / 1e6).toFixed(1)}M`;
+    if (score >= 1e3) return `${(score / 1e3).toFixed(1)}K`;
+    return score.toString();
+  };
 
   return (
     <>
       <div className={styles.context__section}>
+        <div className={styles.context__header}>
+          <h3 className={styles.context__title}>Top Engagers Today</h3>
+          {lastUpdated && (
+            <span className={styles.context__live}>
+              <span className={styles.context__live_dot} />
+              Live
+            </span>
+          )}
+        </div>
+        <div className={styles.context__list}>
+          {isLoading ? (
+            Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className={styles.context__skeleton} />
+            ))
+          ) : topThree.length > 0 ? (
+            topThree.map((entry, i) => (
+              <motion.div
+                key={entry.user.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <Link href={`/profile/${entry.user.username}`}>
+                  <div className={styles.context__leader}>
+                    <span className={styles.context__leader_rank}>
+                      {i === 0 ? '🥇' : i === 1 ? '🥈' : '🥉'}
+                    </span>
+                    <Avatar src={entry.user.avatarUrl} alt={entry.user.username} size="sm" />
+                    <div className={styles.context__leader_info}>
+                      <span className={styles.context__leader_name}>{entry.user.username}</span>
+                      <span className={styles.context__leader_score}>
+                        {formatScore(entry.score)} pts
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            ))
+          ) : (
+            <p className={styles.context__empty}>No activity yet today</p>
+          )}
+        </div>
+        <Link href="/leaderboards" className={styles.context__view_all}>
+          View full leaderboard →
+        </Link>
+      </div>
+
+      <div className={styles.context__section}>
         <h3 className={styles.context__title}>Trending Communities</h3>
         <div className={styles.context__list}>
-          {trendingCommunities.map((community, i) => (
+          {[
+            { name: 'BONK Holders', members: '15.4K', change: +12, slug: 'bonk-holders' },
+            { name: 'JUP Traders', members: '8.9K', change: +8, slug: 'jup-traders' },
+            { name: 'SOL Whales', members: '11.2K', change: +15, slug: 'sol-whales' },
+          ].map((community, i) => (
             <motion.div
               key={community.slug}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
+              transition={{ delay: 0.3 + i * 0.1 }}
             >
               <Link href={`/communities/${community.slug}`}>
                 <div className={styles.context__item}>
@@ -83,65 +143,54 @@ function FeedContext() {
           ))}
         </div>
       </div>
-
-      <div className={styles.context__section}>
-        <h3 className={styles.context__title}>Token Movers</h3>
-        <div className={styles.context__list}>
-          {tokenMovers.map((token, i) => (
-            <motion.div
-              key={token.symbol}
-              className={styles.context__token}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 + i * 0.1 }}
-            >
-              <div className={styles.context__token_info}>
-                <span className={styles.context__token_symbol}>{token.symbol}</span>
-                <span className={styles.context__token_volume}>{token.volume}</span>
-              </div>
-              <div className={`${styles.context__token_change} ${
-                token.change > 0 ? styles['context__token_change--up'] : styles['context__token_change--down']
-              }`}>
-                {token.change > 0 ? '+' : ''}{token.change}%
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
     </>
   );
 }
 
 function CommunityContext() {
-  const leaderboard = [
-    { rank: 1, username: 'whale_trader', score: 250000 },
-    { rank: 2, username: 'crypto_king', score: 180000 },
-    { rank: 3, username: 'token_master', score: 145000 },
-  ];
+  const { topThree, fetchLeaderboard, isLoading } = useLeaderboardStore();
+
+  useEffect(() => {
+    fetchLeaderboard('holdings', 'all_time');
+  }, [fetchLeaderboard]);
+
+  const formatScore = (score: number): string => {
+    if (score >= 1e6) return `$${(score / 1e6).toFixed(1)}M`;
+    if (score >= 1e3) return `$${(score / 1e3).toFixed(1)}K`;
+    return `$${score.toFixed(0)}`;
+  };
 
   return (
     <>
       <div className={styles.context__section}>
-        <h3 className={styles.context__title}>Community Leaderboard</h3>
+        <h3 className={styles.context__title}>Top Holders</h3>
         <div className={styles.context__list}>
-          {leaderboard.map((entry, i) => (
-            <motion.div
-              key={entry.username}
-              className={styles.context__leader}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.1 }}
-            >
-              <span className={styles.context__leader_rank}>#{entry.rank}</span>
-              <Avatar src={null} alt={entry.username} size="sm" />
-              <div className={styles.context__leader_info}>
-                <span className={styles.context__leader_name}>{entry.username}</span>
-                <span className={styles.context__leader_score}>
-                  ${(entry.score / 1000).toFixed(1)}K
-                </span>
-              </div>
-            </motion.div>
-          ))}
+          {isLoading ? (
+            Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className={styles.context__skeleton} />
+            ))
+          ) : topThree.length > 0 ? (
+            topThree.map((entry, i) => (
+              <motion.div
+                key={entry.user.id}
+                className={styles.context__leader}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <span className={styles.context__leader_rank}>#{entry.rank}</span>
+                <Avatar src={entry.user.avatarUrl} alt={entry.user.username} size="sm" />
+                <div className={styles.context__leader_info}>
+                  <span className={styles.context__leader_name}>{entry.user.username}</span>
+                  <span className={styles.context__leader_score}>
+                    {formatScore(entry.score)}
+                  </span>
+                </div>
+              </motion.div>
+            ))
+          ) : (
+            <p className={styles.context__empty}>No holders data</p>
+          )}
         </div>
       </div>
     </>
@@ -149,30 +198,90 @@ function CommunityContext() {
 }
 
 function LeaderboardContext() {
+  const { lastUpdated, currentMetric, currentPeriod } = useLeaderboardStore();
+
   return (
     <div className={styles.context__section}>
       <h3 className={styles.context__title}>Ranking Info</h3>
       <div className={styles.context__info}>
-        <p>Rankings update every 24 hours based on holdings, trading volume, and engagement.</p>
+        <div className={styles.context__info_item}>
+          <span className={styles.context__info_label}>Current View</span>
+          <span className={styles.context__info_value}>
+            {currentMetric.charAt(0).toUpperCase() + currentMetric.slice(1)} · {currentPeriod.replace('_', ' ')}
+          </span>
+        </div>
+        <div className={styles.context__info_item}>
+          <span className={styles.context__info_label}>Refresh Rate</span>
+          <span className={styles.context__info_value}>Every minute</span>
+        </div>
+        {lastUpdated && (
+          <div className={styles.context__info_item}>
+            <span className={styles.context__info_label}>Last Updated</span>
+            <span className={styles.context__info_value}>{lastUpdated.toLocaleTimeString()}</span>
+          </div>
+        )}
+      </div>
+      <div className={styles.context__metrics}>
+        <h4>Score Calculation</h4>
+        <ul>
+          <li>Posts: 10 points</li>
+          <li>Signals: 5 points</li>
+          <li>Echoes: 3 points</li>
+          <li>Relays: 2 points</li>
+        </ul>
       </div>
     </div>
   );
 }
 
-function DefaultContext() {
+function IntelligenceContext() {
   return (
     <div className={styles.context__section}>
-      <h3 className={styles.context__title}>Quick Stats</h3>
+      <h3 className={styles.context__title}>Data Sources</h3>
+      <div className={styles.context__info}>
+        <div className={styles.context__source}>
+          <span className={styles.context__source_name}>DexScreener</span>
+          <span className={styles.context__source_desc}>Price, volume, liquidity data</span>
+        </div>
+        <div className={styles.context__source}>
+          <span className={styles.context__source_name}>Jupiter</span>
+          <span className={styles.context__source_desc}>Real-time prices</span>
+        </div>
+      </div>
+      <p className={styles.context__note}>
+        Data refreshes every 60 seconds for accurate market information.
+      </p>
+    </div>
+  );
+}
+
+function DefaultContext() {
+  const { entries, fetchLeaderboard } = useLeaderboardStore();
+
+  useEffect(() => {
+    if (entries.length === 0) {
+      fetchLeaderboard('engagement', 'all_time');
+    }
+  }, [entries.length, fetchLeaderboard]);
+
+  return (
+    <div className={styles.context__section}>
+      <h3 className={styles.context__title}>Platform Stats</h3>
       <div className={styles.context__stats}>
         <div className={styles.context__stat}>
-          <span className={styles.context__stat_value}>1,234</span>
+          <span className={styles.context__stat_value}>{entries.length || '—'}</span>
           <span className={styles.context__stat_label}>Active Users</span>
         </div>
         <div className={styles.context__stat}>
-          <span className={styles.context__stat_value}>45</span>
-          <span className={styles.context__stat_label}>Communities</span>
+          <span className={styles.context__stat_value}>
+            {entries.reduce((sum, e) => sum + (e.metrics.postCount || 0), 0) || '—'}
+          </span>
+          <span className={styles.context__stat_label}>Total Posts</span>
         </div>
       </div>
+      <Link href="/leaderboards" className={styles.context__view_all}>
+        View leaderboards →
+      </Link>
     </div>
   );
 }

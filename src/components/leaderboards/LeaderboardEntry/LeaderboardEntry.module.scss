@@ -119,10 +119,61 @@
   color: $color-text-secondary;
   margin-top: 2px;
   @include truncate;
-  
+  display: block;
+
   @include responsive(mobile) {
     font-size: $font-size-xs;
   }
+}
+
+.entry__detail {
+  font-size: $font-size-xs;
+  color: $color-text-muted;
+  margin-top: 4px;
+  display: block;
+}
+
+.entry__you {
+  font-size: $font-size-xs;
+  color: $color-medium-jungle;
+  font-weight: $font-weight-semibold;
+  margin-left: $spacing-xs;
+}
+
+// ============================================================================
+// MEDAL STYLES
+// ============================================================================
+
+.entry--gold {
+  border: 2px solid rgba(255, 215, 0, 0.4);
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), transparent);
+
+  .entry__rank {
+    color: gold;
+  }
+}
+
+.entry--silver {
+  border: 2px solid rgba(192, 192, 192, 0.4);
+  background: linear-gradient(135deg, rgba(192, 192, 192, 0.1), transparent);
+
+  .entry__rank {
+    color: silver;
+  }
+}
+
+.entry--bronze {
+  border: 2px solid rgba(205, 127, 50, 0.4);
+  background: linear-gradient(135deg, rgba(205, 127, 50, 0.1), transparent);
+
+  .entry__rank {
+    color: #cd7f32;
+  }
+}
+
+.entry--current {
+  border: 2px solid $color-medium-jungle;
+  background: linear-gradient(135deg, rgba($color-medium-jungle, 0.1), transparent);
 }
 
 .entry__score {
@@ -188,20 +239,43 @@
 
 [data-theme='light'] {
   .entry {
-    background: rgba(10, 10, 15, 0.03);
-    border-color: rgba(10, 10, 15, 0.1);
+    background: #ffffff;
+    border: 1px solid rgba(10, 10, 15, 0.1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 
     &:hover {
-      background: rgba(10, 10, 15, 0.05);
+      background: #fafafa;
+      border-color: rgba(10, 10, 15, 0.15);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.06);
     }
 
     &:nth-child(n+4) {
-      background: rgba(10, 10, 15, 0.02);
+      background: #fafafa;
 
       &:hover {
-        background: rgba(10, 10, 15, 0.05);
+        background: #f5f5f5;
       }
     }
+  }
+
+  .entry--gold {
+    border-color: rgba(255, 215, 0, 0.4);
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.08), #ffffff);
+  }
+
+  .entry--silver {
+    border-color: rgba(192, 192, 192, 0.4);
+    background: linear-gradient(135deg, rgba(192, 192, 192, 0.08), #ffffff);
+  }
+
+  .entry--bronze {
+    border-color: rgba(205, 127, 50, 0.4);
+    background: linear-gradient(135deg, rgba(205, 127, 50, 0.08), #ffffff);
+  }
+
+  .entry--current {
+    border-color: #16a34a;
+    background: linear-gradient(135deg, rgba(22, 163, 74, 0.08), #ffffff);
   }
 
   .entry__rank {
@@ -209,7 +283,7 @@
   }
 
   .entry__avatar {
-    border-color: rgba(10, 10, 15, 0.1);
+    border-color: rgba(10, 10, 15, 0.15);
   }
 
   .entry__name {
@@ -218,6 +292,10 @@
 
   .entry__username {
     color: #5a5350;
+  }
+
+  .entry__detail {
+    color: #888;
   }
 
   .entry__score_value {

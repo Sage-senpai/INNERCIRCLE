@@ -12,6 +12,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@bagsfm/bags-sdk": "^1.2.7",
     "@polkadot/api": "^16.5.4",
     "@polkadot/extension-dapp": "^0.62.6",
     "@solana/web3.js": "^1.98.4",

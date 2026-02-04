@@ -232,73 +232,67 @@
 // LIGHT MODE OVERRIDES
 // ============================================================================
 
-.search__input_icon {
-  [data-theme='light'] & {
+[data-theme='light'] {
+  .search__input_icon {
     color: #5a5350;
   }
-}
 
-.search__input {
-  [data-theme='light'] & {
+  .search__input {
+    background: #ffffff;
+    border: 1px solid rgba(10, 10, 15, 0.12);
     color: #0a0a0f;
 
     &::placeholder {
-      color: #5a5350;
+      color: #9a9590;
     }
 
     &:focus {
-      background: rgba(10, 10, 15, 0.05);
+      background: #ffffff;
+      border-color: #16a34a;
+      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
     }
   }
-}
 
-.search__input_spinner {
-  [data-theme='light'] & {
+  .search__input_spinner {
     border-color: rgba(10, 10, 15, 0.2);
   }
-}
 
-.search__result {
-  [data-theme='light'] & {
+  .search__result {
+    background: #ffffff;
+    border: 1px solid rgba(10, 10, 15, 0.1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+
     &:hover {
-      background: rgba(10, 10, 15, 0.05);
+      background: #fafafa;
+      border-color: rgba(10, 10, 15, 0.15);
     }
   }
-}
 
-.search__result_name {
-  [data-theme='light'] & {
+  .search__result_name {
     color: #0a0a0f;
   }
-}
 
-.search__result_username {
-  [data-theme='light'] & {
+  .search__result_username {
     color: #5a5350;
   }
-}
 
-.search__result_bio {
-  [data-theme='light'] & {
+  .search__result_bio {
     color: #5a5350;
   }
-}
 
-.search__result_meta {
-  [data-theme='light'] & {
+  .search__result_meta {
     color: #5a5350;
   }
-}
 
-.search__prompt,
-.search__empty {
-  [data-theme='light'] & {
+  .search__prompt,
+  .search__empty {
+    background: #ffffff;
+    border: 1px solid rgba(10, 10, 15, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     color: #5a5350;
   }
-}
 
-.search__prompt_icon {
-  [data-theme='light'] & {
+  .search__prompt_icon {
     color: #5a5350;
   }
 }

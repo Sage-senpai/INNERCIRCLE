@@ -160,13 +160,22 @@
 
 [data-theme='light'] {
   .gated__skeleton {
-    background: rgba(10, 10, 15, 0.03);
-    border-color: rgba(10, 10, 15, 0.1);
+    background: #fafafa;
+    border: 1px solid rgba(10, 10, 15, 0.1);
   }
 
   .gated__locked {
-    background: rgba(10, 10, 15, 0.03);
-    border-color: rgba(10, 10, 15, 0.1);
+    background: rgba(239, 68, 68, 0.04);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+
+    &::before {
+      background: linear-gradient(
+        135deg,
+        rgba(239, 68, 68, 0.08),
+        transparent
+      );
+    }
   }
 
   .gated__reason {
@@ -174,8 +183,8 @@
   }
 
   .gated__requirements {
-    background: rgba(10, 10, 15, 0.03);
-    border-color: rgba(10, 10, 15, 0.1);
+    background: #fafafa;
+    border: 1px solid rgba(239, 68, 68, 0.15);
   }
 
   .gated__requirements_title {

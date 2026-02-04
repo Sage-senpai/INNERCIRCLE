@@ -137,34 +137,37 @@
 // LIGHT MODE OVERRIDES
 // ============================================================================
 
-.transmissions__empty_title {
-  [data-theme='light'] & {
+[data-theme='light'] {
+  .transmissions__empty {
+    background: #ffffff;
+    border: 1px solid rgba(10, 10, 15, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  .transmissions__empty_title {
     color: #0a0a0f;
   }
-}
 
-.transmissions__empty_description {
-  [data-theme='light'] & {
+  .transmissions__empty_description {
     color: #5a5350;
   }
-}
 
-.transmissions__feature {
-  [data-theme='light'] & {
+  .transmissions__feature {
+    background: #ffffff;
+    border: 1px solid rgba(10, 10, 15, 0.1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+
     &:hover {
-      background: rgba(10, 10, 15, 0.05);
+      background: #fafafa;
+      border-color: rgba(10, 10, 15, 0.15);
     }
   }
-}
 
-.transmissions__feature_title {
-  [data-theme='light'] & {
+  .transmissions__feature_title {
     color: #0a0a0f;
   }
-}
 
-.transmissions__feature_description {
-  [data-theme='light'] & {
+  .transmissions__feature_description {
     color: #5a5350;
   }
 }

@@ -84,8 +84,11 @@
 // LIGHT MODE OVERRIDES
 // ============================================================================
 
-.communities__empty {
-  [data-theme='light'] & {
+[data-theme='light'] {
+  .communities__empty {
+    background: #ffffff;
+    border: 1px solid rgba(10, 10, 15, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     color: #5a5350;
   }
 }

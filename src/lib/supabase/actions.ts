@@ -108,6 +108,92 @@ export async function getUserByWallet(
 
 
 // ============================================================================
+// USER PROFILE ACTIONS
+// ============================================================================
+
+export async function checkUsernameAvailable(
+  username: string,
+  currentUserId?: string
+): Promise<boolean> {
+  let query = supabase
+    .from('users')
+    .select('id')
+    .eq('username', username);
+
+  // Exclude current user when checking (for when user keeps their own username)
+  if (currentUserId) {
+    query = query.neq('id', currentUserId);
+  }
+
+  const { data, error } = await query.single();
+
+  if (error && error.code === 'PGRST116') {
+    // No rows found - username is available
+    return true;
+  }
+
+  if (error) {
+    console.error('Username check error:', error);
+    throw new Error('Failed to check username availability');
+  }
+
+  // If data exists, username is taken
+  return !data;
+}
+
+export async function updateUserProfile(
+  userId: string,
+  updates: {
+    username?: string;
+    bio?: string;
+    display_name?: string;
+    avatar_url?: string;
+  }
+): Promise<UserRecord> {
+  // Validate username if provided
+  if (updates.username) {
+    // Check format: only letters, numbers, and underscores allowed
+    const usernameRegex = /^[A-Za-z0-9_]+$/;
+    if (!usernameRegex.test(updates.username)) {
+      throw new Error('Username can only contain letters, numbers, and underscores');
+    }
+
+    // Check length
+    if (updates.username.length < 3 || updates.username.length > 30) {
+      throw new Error('Username must be between 3 and 30 characters');
+    }
+
+    // Check uniqueness
+    const isAvailable = await checkUsernameAvailable(updates.username, userId);
+    if (!isAvailable) {
+      throw new Error('Username is already taken');
+    }
+  }
+
+  // Validate bio length if provided
+  if (updates.bio && updates.bio.length > 500) {
+    throw new Error('Bio must be 500 characters or less');
+  }
+
+  const { data, error } = await supabase
+    .from('users')
+    .update({
+      ...updates,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', userId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Profile update error:', error);
+    throw new Error(error.message || 'Failed to update profile');
+  }
+
+  return data as UserRecord;
+}
+
+// ============================================================================
 // USER ACTIONS
 // ============================================================================
 
@@ -153,20 +239,15 @@ export async function checkFollowStatus(userId: string, targetUserId: string) {
 export async function createPost(post: {
   authorId: string;
   content: string;
-  mediaUrls?: string[];
-  isGated?: boolean;
-  visibility?: 'public' | 'gated' | 'community';
   communityId?: string;
 }) {
+  // Schema only has: author_id, community_id, content, signal_count, echo_count, relay_count
   const { data, error } = await supabase
     .from('posts')
     .insert({
       author_id: post.authorId,
       content: post.content,
-      media_urls: post.mediaUrls || [],
-      is_gated: post.isGated || false,
-      visibility: post.visibility || 'public',
-      community_id: post.communityId,
+      community_id: post.communityId || null,
     })
     .select(`
       *,
@@ -174,7 +255,10 @@ export async function createPost(post: {
     `)
     .single();
 
-  if (error) throw error;
+  if (error) {
+    console.error('Post creation error:', error);
+    throw new Error(error.message || 'Failed to create post');
+  }
   return data;
 }
 
@@ -413,13 +497,13 @@ export async function createCommunity(community: {
   name: string;
   slug: string;
   description?: string;
-  tokenAddress?: string; // Optional - for future token-gated communities
-  chain?: Chain; // Optional - for future token-gated communities
+  tokenAddress?: string;
   creatorId: string;
   bannerUrl?: string;
   avatarUrl?: string;
 }) {
-  // Communities table schema: name, slug, description, avatar_url, banner_url, creator_id, member_count, post_count
+  // Communities table columns: name, slug, description, creator_id, token_address, banner_url, avatar_url, member_count
+  // Note: 'chain' column does NOT exist in deployed database
   const { data, error } = await supabase
     .from('communities')
     .insert({
@@ -427,6 +511,7 @@ export async function createCommunity(community: {
       slug: community.slug,
       description: community.description || null,
       creator_id: community.creatorId,
+      token_address: community.tokenAddress || null,
       banner_url: community.bannerUrl || null,
       avatar_url: community.avatarUrl || null,
     })
@@ -438,14 +523,15 @@ export async function createCommunity(community: {
     throw new Error(error.message || 'Failed to create community');
   }
 
-  // After creating community, add creator as admin member
+  // After creating community, add creator as founding member
   if (data) {
     const { error: memberError } = await supabase
       .from('community_members')
       .insert({
         community_id: data.id,
         user_id: community.creatorId,
-        role: 'admin',
+        token_balance: 0, // Creator doesn't need tokens to be founder
+        tier: 'elite', // Founder gets elite status
       });
 
     if (memberError) {
@@ -464,13 +550,14 @@ export async function createCommunity(community: {
 }
 
 export async function joinCommunity(userId: string, communityId: string) {
-  // Community_members table schema: community_id, user_id, role, joined_at
-  const { data, error} = await supabase
+  // Community_members table schema: community_id, user_id, token_balance, tier, joined_at, last_verified
+  const { data, error } = await supabase
     .from('community_members')
     .insert({
       user_id: userId,
       community_id: communityId,
-      role: 'member', // Default role
+      token_balance: 0, // Will be updated when verified
+      tier: 'holder', // Default tier
     })
     .select()
     .single();

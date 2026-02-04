@@ -682,3 +682,88 @@
     color: #5a5350;
   }
 }
+
+// ============================================================================
+// LIGHT MODE OVERRIDES (Consolidated)
+// ============================================================================
+
+[data-theme='light'] {
+  .section {
+    background: #ffffff;
+    border: 1px solid rgba(10, 10, 15, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  }
+
+  .selector__token {
+    background: #ffffff;
+    border: 1px solid rgba(10, 10, 15, 0.1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+
+    &:hover {
+      background: #fafafa;
+      border-color: rgba(10, 10, 15, 0.15);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+    }
+
+    &--active {
+      background: rgba(22, 163, 74, 0.08);
+      border-color: #16a34a;
+      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+    }
+  }
+
+  .metric_card {
+    background: #ffffff;
+    border: 1px solid rgba(10, 10, 15, 0.1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+
+    &:hover {
+      background: #fafafa;
+      border-color: rgba(10, 10, 15, 0.15);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+    }
+
+    &--up {
+      border-color: rgba(22, 163, 74, 0.3);
+      background: rgba(22, 163, 74, 0.04);
+    }
+
+    &--down {
+      border-color: rgba(239, 68, 68, 0.3);
+      background: rgba(239, 68, 68, 0.04);
+    }
+  }
+
+  .leaderboard__entry {
+    background: #ffffff;
+    border: 1px solid rgba(10, 10, 15, 0.1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+
+    &:hover {
+      background: #fafafa;
+      border-color: rgba(10, 10, 15, 0.15);
+    }
+
+    &--top1 {
+      border-color: rgba(255, 215, 0, 0.4);
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.08), #ffffff);
+    }
+
+    &--top2 {
+      border-color: rgba(192, 192, 192, 0.4);
+      background: linear-gradient(135deg, rgba(192, 192, 192, 0.08), #ffffff);
+    }
+
+    &--top3 {
+      border-color: rgba(205, 127, 50, 0.4);
+      background: linear-gradient(135deg, rgba(205, 127, 50, 0.08), #ffffff);
+    }
+  }
+
+  .view__loading,
+  .view__empty {
+    background: #fafafa;
+    border-radius: $radius-lg;
+    border: 1px solid rgba(10, 10, 15, 0.08);
+  }
+}

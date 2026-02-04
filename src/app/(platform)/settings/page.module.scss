@@ -115,11 +115,188 @@
   border-radius: $radius-sm;
   font-size: $font-size-sm;
   font-weight: $font-weight-semibold;
-  
+
   @include responsive(mobile) {
     font-size: $font-size-xs;
     padding: 4px $spacing-sm;
   }
+}
+
+// ============================================================================
+// EDITABLE FIELDS
+// ============================================================================
+
+.settings__value_editable {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-md;
+  font-size: $font-size-base;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+
+  @include responsive(mobile) {
+    font-size: $font-size-sm;
+  }
+}
+
+.settings__bio_text {
+  color: $color-text-secondary;
+  font-weight: $font-weight-normal;
+  line-height: $line-height-relaxed;
+  max-width: 400px;
+}
+
+.settings__edit_btn {
+  background: transparent;
+  border: 1px solid $color-border;
+  color: $color-medium-jungle;
+  padding: $spacing-xs $spacing-md;
+  border-radius: $radius-sm;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  @include transition(all);
+
+  &:hover {
+    background: rgba($color-medium-jungle, 0.1);
+    border-color: $color-medium-jungle;
+  }
+
+  @include responsive(mobile) {
+    font-size: $font-size-xs;
+    padding: 4px $spacing-sm;
+  }
+}
+
+.settings__edit_field {
+  @include flex-column;
+  gap: $spacing-sm;
+}
+
+.settings__input_wrapper {
+  display: flex;
+  align-items: center;
+  @include glass-surface(0.05);
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  overflow: hidden;
+  @include transition(border-color);
+
+  &:focus-within {
+    border-color: $color-medium-jungle;
+  }
+}
+
+.settings__input_prefix {
+  padding: $spacing-sm $spacing-md;
+  color: $color-text-secondary;
+  font-size: $font-size-base;
+  background: rgba($color-frozen-water, 0.05);
+  border-right: 1px solid $color-border;
+
+  @include responsive(mobile) {
+    padding: $spacing-xs $spacing-sm;
+    font-size: $font-size-sm;
+  }
+}
+
+.settings__input {
+  flex: 1;
+  padding: $spacing-sm $spacing-md;
+  background: transparent;
+  border: none;
+  color: $color-text-primary;
+  font-size: $font-size-base;
+  font-family: inherit;
+  outline: none;
+
+  &::placeholder {
+    color: $color-text-tertiary;
+  }
+
+  &--error {
+    color: $color-error;
+  }
+
+  @include responsive(mobile) {
+    padding: $spacing-xs $spacing-sm;
+    font-size: $font-size-sm;
+  }
+}
+
+.settings__textarea {
+  width: 100%;
+  padding: $spacing-md;
+  @include glass-surface(0.05);
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  color: $color-text-primary;
+  font-size: $font-size-base;
+  font-family: inherit;
+  line-height: $line-height-relaxed;
+  resize: vertical;
+  min-height: 100px;
+  outline: none;
+  @include transition(border-color);
+
+  &:focus {
+    border-color: $color-medium-jungle;
+  }
+
+  &::placeholder {
+    color: $color-text-tertiary;
+  }
+
+  &--error {
+    border-color: $color-error;
+  }
+
+  @include responsive(mobile) {
+    padding: $spacing-sm;
+    font-size: $font-size-sm;
+  }
+}
+
+.settings__char_count {
+  text-align: right;
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.settings__hint {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  line-height: $line-height-normal;
+}
+
+.settings__error {
+  font-size: $font-size-sm;
+  color: $color-error;
+  margin: 0;
+
+  @include responsive(mobile) {
+    font-size: $font-size-xs;
+  }
+}
+
+.settings__success {
+  font-size: $font-size-sm;
+  color: $color-medium-jungle;
+  margin: 0;
+  padding: $spacing-sm $spacing-md;
+  background: rgba($color-medium-jungle, 0.1);
+  border-radius: $radius-sm;
+
+  @include responsive(mobile) {
+    font-size: $font-size-xs;
+  }
+}
+
+.settings__edit_actions {
+  display: flex;
+  gap: $spacing-sm;
+  margin-top: $spacing-xs;
 }
 
 // ============================================================================
@@ -317,5 +494,124 @@
 .settings__danger_description {
   [data-theme='light'] & {
     color: #5a5350;
+  }
+}
+
+.settings__value_editable {
+  [data-theme='light'] & {
+    color: #0a0a0f;
+  }
+}
+
+.settings__bio_text {
+  [data-theme='light'] & {
+    color: #5a5350;
+  }
+}
+
+.settings__input {
+  [data-theme='light'] & {
+    color: #0a0a0f;
+
+    &::placeholder {
+      color: #9a9590;
+    }
+  }
+}
+
+.settings__textarea {
+  [data-theme='light'] & {
+    color: #0a0a0f;
+
+    &::placeholder {
+      color: #9a9590;
+    }
+  }
+}
+
+.settings__hint {
+  [data-theme='light'] & {
+    color: #9a9590;
+  }
+}
+
+.settings__char_count {
+  [data-theme='light'] & {
+    color: #9a9590;
+  }
+}
+
+.settings__section {
+  [data-theme='light'] & {
+    background: #ffffff;
+    border: 1px solid rgba(10, 10, 15, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+    &--danger {
+      background: rgba(239, 68, 68, 0.03);
+      border-color: rgba(239, 68, 68, 0.2);
+    }
+  }
+}
+
+.settings__section_title {
+  [data-theme='light'] & {
+    border-bottom-color: rgba(10, 10, 15, 0.08);
+  }
+}
+
+.settings__toggle {
+  [data-theme='light'] & {
+    &:not(:last-child) {
+      border-bottom-color: rgba(10, 10, 15, 0.08);
+    }
+  }
+}
+
+.settings__input_wrapper {
+  [data-theme='light'] & {
+    background: #ffffff;
+    border-color: rgba(10, 10, 15, 0.15);
+
+    &:focus-within {
+      border-color: #16a34a;
+    }
+  }
+}
+
+.settings__input_prefix {
+  [data-theme='light'] & {
+    background: #f5f5f5;
+    border-right-color: rgba(10, 10, 15, 0.1);
+    color: #5a5350;
+  }
+}
+
+.settings__textarea {
+  [data-theme='light'] & {
+    background: #ffffff;
+    border-color: rgba(10, 10, 15, 0.15);
+
+    &:focus {
+      border-color: #16a34a;
+    }
+  }
+}
+
+.settings__value_mono {
+  [data-theme='light'] & {
+    background: #f5f5f5;
+    border: 1px solid rgba(10, 10, 15, 0.1);
+  }
+}
+
+.settings__edit_btn {
+  [data-theme='light'] & {
+    border-color: rgba(10, 10, 15, 0.15);
+
+    &:hover {
+      background: rgba(22, 163, 74, 0.1);
+      border-color: #16a34a;
+    }
   }
 }

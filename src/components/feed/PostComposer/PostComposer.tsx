@@ -34,8 +34,6 @@ export function PostComposer({ onPost, placeholder = "What's on your mind?", com
       const newPost = await createPost({
         authorId: user.id,
         content: content.trim(),
-        isGated,
-        visibility: communityId ? 'community' : 'public',
         communityId,
       });
 

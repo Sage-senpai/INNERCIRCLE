@@ -255,12 +255,14 @@
 
 [data-theme='light'] {
   .composer {
-    background: rgba(10, 10, 15, 0.03);
-    border-color: rgba(10, 10, 15, 0.1);
+    background: #ffffff;
+    border: 1px solid rgba(10, 10, 15, 0.12);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
 
     &--focused {
-      background: rgba(10, 10, 15, 0.05);
-      border-color: rgba(10, 10, 15, 0.2);
+      background: #ffffff;
+      border-color: #16a34a;
+      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1), 0 2px 8px rgba(0, 0, 0, 0.08);
     }
   }
 
@@ -273,26 +275,31 @@
   }
 
   .composer__input {
-    background: rgba(10, 10, 15, 0.03);
-    border-color: rgba(10, 10, 15, 0.1);
+    background: #fafafa;
+    border-color: rgba(10, 10, 15, 0.12);
     color: #0a0a0f;
 
     &::placeholder {
-      color: #5a5350;
+      color: #9a9590;
     }
 
     &:focus {
-      background: rgba(10, 10, 15, 0.05);
-      border-color: rgba(10, 10, 15, 0.2);
+      background: #ffffff;
+      border-color: #16a34a;
+      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
     }
   }
 
   .composer__footer {
-    border-top-color: rgba(10, 10, 15, 0.1);
+    border-top-color: rgba(10, 10, 15, 0.08);
   }
 
   .composer__option {
     color: #0a0a0f;
+
+    &:hover {
+      color: #16a34a;
+    }
   }
 
   .composer__char_count {
@@ -300,11 +307,16 @@
   }
 
   .composer__media_item {
-    background: rgba(10, 10, 15, 0.03);
-    border-color: rgba(10, 10, 15, 0.1);
+    background: #fafafa;
+    border: 1px solid rgba(10, 10, 15, 0.1);
   }
 
   .composer__media_remove {
-    color: #0a0a0f;
+    background: rgba(239, 68, 68, 0.9);
+    color: #ffffff;
+
+    &:hover {
+      background: #ef4444;
+    }
   }
 }

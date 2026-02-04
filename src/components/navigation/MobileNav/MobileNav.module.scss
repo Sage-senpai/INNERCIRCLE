@@ -94,3 +94,33 @@
   padding: 0 4px;
   box-shadow: $shadow-sm;
 }
+
+// ============================================================================
+// LIGHT MODE OVERRIDES
+// ============================================================================
+
+[data-theme='light'] {
+  .mobile_nav {
+    @include responsive(mobile) {
+      background: rgba(255, 255, 255, 0.95);
+      border-top: 1px solid rgba(10, 10, 15, 0.12);
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+    }
+  }
+
+  .mobile_nav__link {
+    color: #5a5350;
+
+    &--active {
+      color: #16a34a;
+    }
+  }
+
+  .mobile_nav__label {
+    color: inherit;
+  }
+
+  .mobile_nav__badge {
+    color: #ffffff;
+  }
+}
