@@ -16,10 +16,13 @@ export function FloatingActionButton({ onPost, composerRef }: FloatingActionButt
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    if (!composerRef.current) return;
-
     const handleScroll = () => {
-      const rect = composerRef.current!.getBoundingClientRect();
+      // Null check inside handler - ref can become null after unmount
+      if (!composerRef.current) {
+        setIsVisible(false);
+        return;
+      }
+      const rect = composerRef.current.getBoundingClientRect();
       // Show FAB when top composer is scrolled out of view (80px threshold)
       setIsVisible(rect.bottom < 80);
     };

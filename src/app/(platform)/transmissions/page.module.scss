@@ -1,54 +1,284 @@
 // File: src/app/(platform)/transmissions/page.module.scss
 @use '../../../styles/abstracts' as *;
+
 .transmissions {
   max-width: $max-content-width;
   margin: 0 auto;
   padding: $spacing-lg;
-  
+
   @include responsive(mobile) {
     padding: $spacing-md;
   }
 }
+
+.transmissions__tabs {
+  display: flex;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-xl;
+
+  @include responsive(mobile) {
+    margin-bottom: $spacing-lg;
+  }
+}
+
+.transmissions__tab {
+  padding: $spacing-sm $spacing-lg;
+  border-radius: $radius-full;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  background: rgba($color-frozen-water, 0.05);
+  border: 1px solid transparent;
+  color: $color-text-secondary;
+  cursor: pointer;
+  @include transition(background, color, border-color);
+
+  &:hover {
+    background: rgba($color-frozen-water, 0.1);
+    color: $color-text-primary;
+  }
+
+  &--active {
+    background: rgba($color-medium-jungle, 0.15);
+    color: $color-medium-jungle;
+    border-color: $color-medium-jungle;
+  }
+
+  @include responsive(mobile) {
+    padding: $spacing-xs $spacing-md;
+    font-size: $font-size-xs;
+  }
+}
+
+.transmissions__content {
+  min-height: 500px;
+
+  @include responsive(mobile) {
+    min-height: 400px;
+  }
+}
+
+.transmissions__loading {
+  @include flex-center;
+  @include flex-column;
+  gap: $spacing-md;
+  padding: $spacing-3xl;
+  color: $color-text-secondary;
+
+  p {
+    margin: 0;
+    font-size: $font-size-sm;
+  }
+}
+
+.transmissions__layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: $spacing-lg;
+  height: calc(100vh - 280px);
+  min-height: 500px;
+
+  @include responsive(tablet) {
+    grid-template-columns: 220px 1fr;
+  }
+
+  @include responsive(mobile) {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    height: auto;
+    min-height: auto;
+  }
+}
+
+.transmissions__sidebar {
+  @include glass-surface(0.05);
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  @include responsive(mobile) {
+    max-height: 200px;
+  }
+}
+
+.transmissions__sidebar_title {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-secondary;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 $spacing-md 0;
+  padding: 0 $spacing-sm;
+}
+
+.transmissions__community_list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.transmissions__community_item {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm;
+  border-radius: $radius-md;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  @include transition(background);
+
+  &:hover {
+    background: rgba($color-frozen-water, 0.08);
+  }
+
+  &--active {
+    background: rgba($color-medium-jungle, 0.15);
+
+    &:hover {
+      background: rgba($color-medium-jungle, 0.2);
+    }
+  }
+}
+
+.transmissions__community_info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.transmissions__community_name {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+  @include truncate;
+}
+
+.transmissions__community_members {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+}
+
+.transmissions__chat_area {
+  display: flex;
+  flex-direction: column;
+  min-height: 400px;
+
+  @include responsive(mobile) {
+    min-height: 350px;
+  }
+}
+
+.transmissions__select_prompt {
+  @include flex-center;
+  height: 100%;
+  min-height: 400px;
+  @include glass-surface(0.05);
+  border-radius: $radius-lg;
+  color: $color-text-secondary;
+  font-size: $font-size-sm;
+}
+
+.transmissions__no_communities {
+  @include flex-center;
+  @include flex-column;
+  gap: $spacing-md;
+  @include glass-surface(0.05);
+  border-radius: $radius-lg;
+  padding: $spacing-3xl;
+  text-align: center;
+
+  h3 {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    color: $color-text-primary;
+    margin: 0;
+  }
+
+  p {
+    color: $color-text-secondary;
+    font-size: $font-size-sm;
+    margin: 0;
+  }
+
+  @include responsive(mobile) {
+    padding: $spacing-2xl $spacing-lg;
+
+    h3 {
+      font-size: $font-size-lg;
+    }
+  }
+}
+
+.transmissions__no_icon {
+  font-size: 4rem;
+
+  @include responsive(mobile) {
+    font-size: 3rem;
+  }
+}
+
+// ============================================================================
+// COMING SOON / EMPTY STATES
+// ============================================================================
 
 .transmissions__empty {
   @include glass-surface(0.05);
   border-radius: $radius-xl;
   padding: $spacing-3xl;
   text-align: center;
-  
+
   @include responsive(mobile) {
     padding: $spacing-2xl $spacing-lg;
   }
 }
 
-.transmissions__empty_icon {
+.transmissions__coming_soon {
+  @include glass-surface(0.05);
+  border-radius: $radius-xl;
+  padding: $spacing-3xl;
+  text-align: center;
+
+  @include responsive(mobile) {
+    padding: $spacing-2xl $spacing-lg;
+  }
+}
+
+.transmissions__coming_soon_icon {
   font-size: 5rem;
   margin-bottom: $spacing-xl;
-  
+
   @include responsive(mobile) {
     font-size: 4rem;
     margin-bottom: $spacing-lg;
   }
 }
 
-.transmissions__empty_title {
+.transmissions__coming_soon_title {
   font-size: $font-size-3xl;
   font-weight: $font-weight-extrabold;
   color: $color-text-primary;
   margin-bottom: $spacing-md;
-  
+
   @include responsive(mobile) {
     font-size: $font-size-2xl;
   }
 }
 
-.transmissions__empty_description {
+.transmissions__coming_soon_description {
   color: $color-text-secondary;
   font-size: $font-size-base;
   line-height: $line-height-relaxed;
   max-width: 600px;
   margin: 0 auto $spacing-3xl;
-  
+
   @include responsive(mobile) {
     font-size: $font-size-sm;
     margin-bottom: $spacing-2xl;
@@ -61,7 +291,7 @@
   gap: $spacing-lg;
   max-width: 600px;
   margin: 0 auto;
-  
+
   @include responsive(mobile) {
     gap: $spacing-md;
   }
@@ -76,12 +306,12 @@
   border-radius: $radius-md;
   text-align: left;
   @include transition(background, border-color);
-  
+
   @include responsive(mobile) {
     padding: $spacing-md;
     gap: $spacing-sm;
   }
-  
+
   &:hover {
     background: rgba($color-frozen-water, 0.08);
     border-color: $color-border-hover;
@@ -91,16 +321,16 @@
 .transmissions__feature_icon {
   font-size: 2rem;
   flex-shrink: 0;
-  
+
   @include responsive(mobile) {
     font-size: 1.5rem;
   }
-  
+
   svg {
     width: 32px;
     height: 32px;
     color: $color-medium-jungle;
-    
+
     @include responsive(mobile) {
       width: 24px;
       height: 24px;
@@ -117,7 +347,7 @@
   font-weight: $font-weight-semibold;
   color: $color-text-primary;
   margin-bottom: $spacing-xs;
-  
+
   @include responsive(mobile) {
     font-size: $font-size-base;
   }
@@ -138,17 +368,95 @@
 // ============================================================================
 
 [data-theme='light'] {
+  .transmissions__tab {
+    background: rgba(10, 10, 15, 0.05);
+    color: #5a5350;
+
+    &:hover {
+      background: rgba(10, 10, 15, 0.08);
+      color: #0a0a0f;
+    }
+
+    &--active {
+      background: rgba(22, 163, 74, 0.1);
+      color: #16a34a;
+      border-color: #16a34a;
+    }
+  }
+
+  .transmissions__sidebar {
+    background: #ffffff;
+    border: 1px solid rgba(10, 10, 15, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  .transmissions__sidebar_title {
+    color: #5a5350;
+  }
+
+  .transmissions__community_item {
+    &:hover {
+      background: rgba(10, 10, 15, 0.05);
+    }
+
+    &--active {
+      background: rgba(22, 163, 74, 0.1);
+
+      &:hover {
+        background: rgba(22, 163, 74, 0.15);
+      }
+    }
+  }
+
+  .transmissions__community_name {
+    color: #0a0a0f;
+  }
+
+  .transmissions__community_members {
+    color: #5a5350;
+  }
+
+  .transmissions__select_prompt {
+    background: #ffffff;
+    border: 1px solid rgba(10, 10, 15, 0.1);
+    color: #5a5350;
+  }
+
+  .transmissions__no_communities {
+    background: #ffffff;
+    border: 1px solid rgba(10, 10, 15, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+    h3 {
+      color: #0a0a0f;
+    }
+
+    p {
+      color: #5a5350;
+    }
+  }
+
+  .transmissions__loading {
+    color: #5a5350;
+  }
+
   .transmissions__empty {
     background: #ffffff;
     border: 1px solid rgba(10, 10, 15, 0.1);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   }
 
-  .transmissions__empty_title {
+  .transmissions__coming_soon {
+    background: #ffffff;
+    border: 1px solid rgba(10, 10, 15, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  .transmissions__coming_soon_title {
     color: #0a0a0f;
   }
 
-  .transmissions__empty_description {
+  .transmissions__coming_soon_description {
     color: #5a5350;
   }
 

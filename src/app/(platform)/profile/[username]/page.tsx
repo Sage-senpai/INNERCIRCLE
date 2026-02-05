@@ -85,7 +85,7 @@ export default function ProfilePage() {
       // Fetch stats
       const [postsResult, satellitesResult, orbitingResult] = await Promise.all([
         supabase.from('posts').select('id', { count: 'exact', head: true }).eq('author_id', user.id),
-        supabase.from('orbits').select('id', { count: 'exact', head: true }).eq('planet_id', user.id),
+        supabase.from('orbits').select('id', { count: 'exact', head: true }).eq('center_id', user.id),
         supabase.from('orbits').select('id', { count: 'exact', head: true }).eq('satellite_id', user.id),
       ]);
 
@@ -152,7 +152,7 @@ export default function ProfilePage() {
       const { error } = await supabase
         .from('orbits')
         .insert({
-          planet_id: profileUser.id,
+          center_id: profileUser.id,
           satellite_id: currentUser.id,
         });
 
@@ -162,7 +162,7 @@ export default function ProfilePage() {
           await supabase
             .from('orbits')
             .delete()
-            .eq('planet_id', profileUser.id)
+            .eq('center_id', profileUser.id)
             .eq('satellite_id', currentUser.id);
 
           setStats(prev => ({ ...prev, satelliteCount: prev.satelliteCount - 1 }));

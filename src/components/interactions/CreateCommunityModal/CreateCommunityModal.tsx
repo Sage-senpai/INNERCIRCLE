@@ -8,7 +8,7 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/Button/Button';
 import { useAuthStore } from '@/store/auth.store';
-import { createCommunity } from '@/lib/supabase/actions';
+import { createCommunity, CommunityAccessType } from '@/lib/supabase/actions';
 import styles from './CreateCommunityModal.module.scss';
 
 interface CreateCommunityModalProps {
@@ -24,7 +24,10 @@ export function CreateCommunityModal({ isOpen, onClose, onSuccess }: CreateCommu
     name: '',
     slug: '',
     description: '',
+    accessType: 'open' as CommunityAccessType,
     tokenAddress: '',
+    minTokenAmount: '',
+    minHoldDurationDays: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,13 +41,25 @@ export function CreateCommunityModal({ isOpen, onClose, onSuccess }: CreateCommu
     e.preventDefault();
     if (!user) return;
 
+    // Validate token-gated requirements
+    if (formData.accessType === 'token_gated' && !formData.tokenAddress.trim()) {
+      setError('Token address is required for token-gated communities');
+      return;
+    }
+
     setIsSubmitting(true);
     setError(null);
 
     try {
       await createCommunity({
-        ...formData,
+        name: formData.name,
+        slug: formData.slug,
+        description: formData.description,
         creatorId: user.id,
+        accessType: formData.accessType,
+        tokenAddress: formData.accessType === 'token_gated' ? formData.tokenAddress : undefined,
+        minTokenAmount: formData.minTokenAmount ? parseFloat(formData.minTokenAmount) : undefined,
+        minHoldDurationDays: formData.minHoldDurationDays ? parseInt(formData.minHoldDurationDays, 10) : undefined,
       });
 
       onSuccess?.();
@@ -53,7 +68,10 @@ export function CreateCommunityModal({ isOpen, onClose, onSuccess }: CreateCommu
         name: '',
         slug: '',
         description: '',
+        accessType: 'open',
         tokenAddress: '',
+        minTokenAmount: '',
+        minHoldDurationDays: '',
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create community');
@@ -138,16 +156,69 @@ export function CreateCommunityModal({ isOpen, onClose, onSuccess }: CreateCommu
               </div>
 
               <div className={styles.modal__field}>
-                <label className={styles.modal__label}>Token Address (Optional)</label>
-                <input
-                  type="text"
-                  className={styles.modal__input}
-                  value={formData.tokenAddress}
-                  onChange={(e) => setFormData({ ...formData, tokenAddress: e.target.value })}
-                  placeholder="For future token-gating (optional)"
-                />
-                <span className={styles.modal__hint}>Token gating coming soon</span>
+                <label className={styles.modal__label}>Access Type</label>
+                <select
+                  className={styles.modal__select}
+                  value={formData.accessType}
+                  onChange={(e) => setFormData({ ...formData, accessType: e.target.value as CommunityAccessType })}
+                >
+                  <option value="open">Open - Anyone can join</option>
+                  <option value="token_gated">Token Gated - Must hold tokens</option>
+                  <option value="invite_only">Invite Only - By invitation</option>
+                </select>
               </div>
+
+              {formData.accessType === 'token_gated' && (
+                <>
+                  <div className={styles.modal__field}>
+                    <label className={styles.modal__label}>Token Address</label>
+                    <input
+                      type="text"
+                      className={styles.modal__input}
+                      value={formData.tokenAddress}
+                      onChange={(e) => setFormData({ ...formData, tokenAddress: e.target.value })}
+                      placeholder="Solana token mint address"
+                      required
+                    />
+                    <span className={styles.modal__hint}>The SPL token users must hold to join</span>
+                  </div>
+
+                  <div className={styles.modal__field}>
+                    <label className={styles.modal__label}>Minimum Token Amount (Optional)</label>
+                    <input
+                      type="number"
+                      className={styles.modal__input}
+                      value={formData.minTokenAmount}
+                      onChange={(e) => setFormData({ ...formData, minTokenAmount: e.target.value })}
+                      placeholder="0"
+                      min="0"
+                      step="any"
+                    />
+                    <span className={styles.modal__hint}>Minimum tokens required (0 = any amount)</span>
+                  </div>
+
+                  <div className={styles.modal__field}>
+                    <label className={styles.modal__label}>Minimum Hold Duration (Optional)</label>
+                    <input
+                      type="number"
+                      className={styles.modal__input}
+                      value={formData.minHoldDurationDays}
+                      onChange={(e) => setFormData({ ...formData, minHoldDurationDays: e.target.value })}
+                      placeholder="0"
+                      min="0"
+                    />
+                    <span className={styles.modal__hint}>Days user must have held tokens (0 = no minimum)</span>
+                  </div>
+                </>
+              )}
+
+              {formData.accessType === 'invite_only' && (
+                <div className={styles.modal__field}>
+                  <span className={styles.modal__hint}>
+                    After creating this community, you can generate invite links from the community settings.
+                  </span>
+                </div>
+              )}
 
               {error && (
                 <div className={styles.modal__error}>

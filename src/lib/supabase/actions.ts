@@ -493,6 +493,8 @@ function checkPostAccess(gates: any[], holdings: any[]): boolean {
 // COMMUNITY ACTIONS
 // ============================================================================
 
+export type CommunityAccessType = 'open' | 'token_gated' | 'invite_only';
+
 export async function createCommunity(community: {
   name: string;
   slug: string;
@@ -501,22 +503,66 @@ export async function createCommunity(community: {
   creatorId: string;
   bannerUrl?: string;
   avatarUrl?: string;
+  accessType?: CommunityAccessType;
+  minTokenAmount?: number;
+  minHoldDurationDays?: number;
 }) {
-  // Communities table columns: name, slug, description, creator_id, token_address, banner_url, avatar_url, member_count
-  // Note: 'chain' column does NOT exist in deployed database
-  const { data, error } = await supabase
+  // Determine access type - default to 'open' if no token address
+  const accessType = community.accessType || (community.tokenAddress ? 'token_gated' : 'open');
+
+  // Validate: token_gated requires tokenAddress
+  if (accessType === 'token_gated' && !community.tokenAddress) {
+    throw new Error('Token address is required for token-gated communities');
+  }
+
+  // Build insert data - start with required fields
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const insertData: Record<string, any> = {
+    name: community.name,
+    slug: community.slug,
+    description: community.description || null,
+    creator_id: community.creatorId,
+    banner_url: community.bannerUrl || null,
+    avatar_url: community.avatarUrl || null,
+  };
+
+  // Add optional gating fields (these may not exist in older schemas)
+  // They will be ignored if columns don't exist after running migration
+  if (community.tokenAddress) {
+    insertData.token_address = community.tokenAddress;
+  }
+  insertData.access_type = accessType;
+  insertData.min_token_amount = community.minTokenAmount || 0;
+  insertData.min_hold_duration_days = community.minHoldDurationDays || 0;
+
+  // Try to create community with all fields first
+  let { data, error } = await supabase
     .from('communities')
-    .insert({
+    .insert(insertData)
+    .select()
+    .single();
+
+  // If error mentions missing columns, try with minimal fields
+  if (error && error.message?.includes('column')) {
+    console.warn('Some columns not found, trying minimal insert:', error.message);
+    const minimalData = {
       name: community.name,
       slug: community.slug,
       description: community.description || null,
       creator_id: community.creatorId,
-      token_address: community.tokenAddress || null,
       banner_url: community.bannerUrl || null,
       avatar_url: community.avatarUrl || null,
-    })
-    .select()
-    .single();
+    };
+
+    const result = await supabase
+      .from('communities')
+      .insert(minimalData)
+      .select()
+      .single();
+
+    data = result.data;
+    error = result.error;
+  }
 
   if (error) {
     console.error('Community creation error:', error);
@@ -525,14 +571,34 @@ export async function createCommunity(community: {
 
   // After creating community, add creator as founding member
   if (data) {
-    const { error: memberError } = await supabase
+    // Try with role field first, fallback to without
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const memberData: Record<string, any> = {
+      community_id: data.id,
+      user_id: community.creatorId,
+    };
+
+    // Try adding optional fields
+    memberData.token_balance = 0;
+    memberData.tier = 'elite';
+    memberData.role = 'admin';
+
+    let { error: memberError } = await supabase
       .from('community_members')
-      .insert({
+      .insert(memberData);
+
+    // If error, try minimal insert
+    if (memberError && memberError.message?.includes('column')) {
+      console.warn('Some member columns not found, trying minimal:', memberError.message);
+      const minimalMemberData = {
         community_id: data.id,
         user_id: community.creatorId,
-        token_balance: 0, // Creator doesn't need tokens to be founder
-        tier: 'elite', // Founder gets elite status
-      });
+      };
+      const result = await supabase
+        .from('community_members')
+        .insert(minimalMemberData);
+      memberError = result.error;
+    }
 
     if (memberError) {
       console.error('Failed to add creator as member:', memberError);
@@ -550,17 +616,37 @@ export async function createCommunity(community: {
 }
 
 export async function joinCommunity(userId: string, communityId: string) {
-  // Community_members table schema: community_id, user_id, token_balance, tier, joined_at, last_verified
-  const { data, error } = await supabase
+  // Try with all fields first, fallback to minimal if columns don't exist
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const memberData: Record<string, any> = {
+    user_id: userId,
+    community_id: communityId,
+    token_balance: 0,
+    tier: 'holder',
+    role: 'member',
+  };
+
+  let { data, error } = await supabase
     .from('community_members')
-    .insert({
-      user_id: userId,
-      community_id: communityId,
-      token_balance: 0, // Will be updated when verified
-      tier: 'holder', // Default tier
-    })
+    .insert(memberData)
     .select()
     .single();
+
+  // If error mentions missing columns, try minimal insert
+  if (error && error.message?.includes('column')) {
+    console.warn('Some columns not found, trying minimal insert:', error.message);
+    const minimalData = {
+      user_id: userId,
+      community_id: communityId,
+    };
+    const result = await supabase
+      .from('community_members')
+      .insert(minimalData)
+      .select()
+      .single();
+    data = result.data;
+    error = result.error;
+  }
 
   if (error) {
     console.error('Join community error:', error);
@@ -863,4 +949,227 @@ export function subscribeToEchoes(postId: string, callback: (payload: any) => vo
       callback
     )
     .subscribe();
+}
+
+// ============================================================================
+// COMMUNITY CHAT ACTIONS
+// ============================================================================
+
+export interface ChatMessage {
+  id: string;
+  thread_id: string;
+  sender_id: string;
+  content: string;
+  created_at: string;
+  sender?: {
+    id: string;
+    username: string;
+    display_name: string | null;
+    avatar_url: string | null;
+  };
+}
+
+export async function getCommunityChat(communityId: string, limit = 50, before?: string) {
+  // First get the chat thread for this community
+  const { data: thread, error: threadError } = await supabase
+    .from('community_chat_threads')
+    .select('id')
+    .eq('community_id', communityId)
+    .single();
+
+  if (threadError) {
+    // Thread doesn't exist, return empty array
+    if (threadError.code === 'PGRST116') {
+      return [];
+    }
+    throw threadError;
+  }
+
+  // Fetch messages with sender info
+  let query = supabase
+    .from('community_messages')
+    .select(`
+      id,
+      thread_id,
+      sender_id,
+      content,
+      created_at,
+      sender:users!sender_id(id, username, display_name, avatar_url)
+    `)
+    .eq('thread_id', thread.id)
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (before) {
+    query = query.lt('created_at', before);
+  }
+
+  const { data, error } = await query;
+  if (error) throw error;
+
+  // Transform data to handle Supabase's array response for joins
+  const messages = (data || []).map((msg) => ({
+    ...msg,
+    sender: Array.isArray(msg.sender) ? msg.sender[0] : msg.sender,
+  })) as ChatMessage[];
+
+  // Reverse to get chronological order
+  return messages.reverse();
+}
+
+export async function sendCommunityMessage(
+  communityId: string,
+  senderId: string,
+  content: string
+) {
+  // Get the chat thread
+  const { data: thread, error: threadError } = await supabase
+    .from('community_chat_threads')
+    .select('id')
+    .eq('community_id', communityId)
+    .single();
+
+  if (threadError) {
+    throw new Error('Chat thread not found for this community');
+  }
+
+  // Insert the message
+  const { data, error } = await supabase
+    .from('community_messages')
+    .insert({
+      thread_id: thread.id,
+      sender_id: senderId,
+      content: content.trim(),
+    })
+    .select(`
+      id,
+      thread_id,
+      sender_id,
+      content,
+      created_at,
+      sender:users!sender_id(id, username, display_name, avatar_url)
+    `)
+    .single();
+
+  if (error) throw error;
+
+  // Transform sender array to single object
+  const message = {
+    ...data,
+    sender: Array.isArray(data.sender) ? data.sender[0] : data.sender,
+  } as ChatMessage;
+
+  return message;
+}
+
+export function subscribeToCommunityChat(
+  communityId: string,
+  threadId: string,
+  callback: (message: ChatMessage) => void
+) {
+  return supabase
+    .channel(`community-chat:${communityId}`)
+    .on('postgres_changes',
+      {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'community_messages',
+        filter: `thread_id=eq.${threadId}`
+      },
+      async (payload) => {
+        // Fetch the complete message with sender info
+        const { data, error } = await supabase
+          .from('community_messages')
+          .select(`
+            id,
+            thread_id,
+            sender_id,
+            content,
+            created_at,
+            sender:users!sender_id(id, username, display_name, avatar_url)
+          `)
+          .eq('id', (payload.new as { id: string }).id)
+          .single();
+
+        if (!error && data) {
+          // Transform sender array to single object
+          const message = {
+            ...data,
+            sender: Array.isArray(data.sender) ? data.sender[0] : data.sender,
+          } as ChatMessage;
+          callback(message);
+        }
+      }
+    )
+    .subscribe();
+}
+
+export async function getCommunityThreadId(communityId: string): Promise<string | null> {
+  const { data, error } = await supabase
+    .from('community_chat_threads')
+    .select('id')
+    .eq('community_id', communityId)
+    .single();
+
+  if (error) return null;
+  return data?.id || null;
+}
+
+export async function getUserCommunitiesWithChat(userId: string) {
+  // Get all communities the user is a member of
+  const { data: memberships, error: memberError } = await supabase
+    .from('community_members')
+    .select(`
+      community:communities(
+        id,
+        slug,
+        name,
+        avatar_url,
+        member_count
+      )
+    `)
+    .eq('user_id', userId);
+
+  if (memberError) throw memberError;
+
+  // Also get communities the user created
+  const { data: created, error: createdError } = await supabase
+    .from('communities')
+    .select('id, slug, name, avatar_url, member_count')
+    .eq('creator_id', userId);
+
+  if (createdError) throw createdError;
+
+  // Combine and deduplicate
+  interface CommunityInfo {
+    id: string;
+    slug: string;
+    name: string;
+    avatar_url: string | null;
+    member_count: number;
+  }
+
+  const memberCommunities: CommunityInfo[] = (memberships || [])
+    .map(m => {
+      // Handle case where community might be an array from Supabase join
+      const comm = m.community as CommunityInfo | CommunityInfo[] | null;
+      if (!comm) return null;
+      if (Array.isArray(comm)) return comm[0] || null;
+      return comm;
+    })
+    .filter((c): c is CommunityInfo => c !== null);
+
+  const createdCommunities: CommunityInfo[] = (created || []).map(c => ({
+    id: c.id,
+    slug: c.slug,
+    name: c.name,
+    avatar_url: c.avatar_url,
+    member_count: c.member_count,
+  }));
+
+  const allCommunities = [...memberCommunities, ...createdCommunities];
+  const uniqueMap = new Map<string, CommunityInfo>();
+  allCommunities.forEach(c => uniqueMap.set(c.id, c));
+
+  return Array.from(uniqueMap.values());
 }

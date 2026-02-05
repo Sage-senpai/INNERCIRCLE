@@ -1,0 +1,1 @@
+export { CommunityChat } from './CommunityChat';
