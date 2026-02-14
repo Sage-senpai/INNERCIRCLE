@@ -16,6 +16,17 @@ interface CommunityTab {
   slug: string;
 }
 
+interface CommunityInfo {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+interface MembershipWithCommunity {
+  community_id: string;
+  communities: CommunityInfo | CommunityInfo[];
+}
+
 export default function FeedPage() {
   const [activeTab, setActiveTab] = useState<string>('home');
   const [communityTabs, setCommunityTabs] = useState<CommunityTab[]>([]);
@@ -49,22 +60,21 @@ export default function FeedPage() {
 
       if (error) throw error;
 
-      const tabs = memberships?.map((m: any) => ({
-        id: m.communities.id,
-        name: m.communities.name,
-        slug: m.communities.slug,
-      })) || [];
+      const tabs = (memberships as MembershipWithCommunity[] | null)?.map((m) => {
+        // Handle both array and single object from Supabase join
+        const community = Array.isArray(m.communities) ? m.communities[0] : m.communities;
+        if (!community) return null;
+        return {
+          id: community.id,
+          name: community.name,
+          slug: community.slug,
+        };
+      }).filter((tab): tab is CommunityTab => tab !== null) || [];
 
       setCommunityTabs(tabs);
     } catch (error) {
       console.error('Failed to load joined communities:', error);
-      // Fallback to mock data for development
-      const mockCommunities: CommunityTab[] = [
-        { id: '1', name: 'BONK', slug: 'bonk-holders' },
-        { id: '3', name: 'DOGE', slug: 'doge-maximalists' },
-        { id: '5', name: 'WIF', slug: 'wif-collective' },
-      ];
-      setCommunityTabs(mockCommunities);
+      setCommunityTabs([]);
     }
   }
 

@@ -27,34 +27,48 @@ export function MobileNav() {
   ];
 
   return (
-    <motion.nav 
+    <motion.nav
       className={styles.mobile_nav}
       initial={{ y: 100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+      transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
     >
-      {navItems.map((item) => {
-        const Icon = item.icon;
-        const isActive = pathname === item.href;
+      <motion.div
+        className={styles.mobile_nav__island}
+        layout
+        transition={{ type: 'spring', stiffness: 400, damping: 35 }}
+      >
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = pathname === item.href || pathname?.startsWith(item.href + '/');
 
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={`${styles.mobile_nav__link} ${isActive ? styles['mobile_nav__link--active'] : ''}`}
-          >
-            <Icon className={styles.mobile_nav__icon} />
-            <span className={styles.mobile_nav__label}>{item.label}</span>
-            {isActive && (
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`${styles.mobile_nav__link} ${isActive ? styles['mobile_nav__link--active'] : ''}`}
+            >
               <motion.div
-                className={styles.mobile_nav__indicator}
-                layoutId="mobileActiveIndicator"
-                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              />
-            )}
-          </Link>
-        );
-      })}
+                layout
+                transition={{ type: 'spring', stiffness: 400, damping: 35 }}
+              >
+                <Icon className={styles.mobile_nav__icon} />
+              </motion.div>
+              {isActive && (
+                <motion.span
+                  className={styles.mobile_nav__label}
+                  initial={{ opacity: 0, width: 0 }}
+                  animate={{ opacity: 1, width: 'auto' }}
+                  exit={{ opacity: 0, width: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {item.label}
+                </motion.span>
+              )}
+            </Link>
+          );
+        })}
+      </motion.div>
     </motion.nav>
   );
 }

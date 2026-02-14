@@ -5,33 +5,77 @@
 
 export interface WalletConnection {
   address: string;
-  chain: 'solana';
+  chain: 'solana' | 'ethereum';
   publicKey?: string;
 }
 
-export type WalletAdapter = 'phantom' | 'solflare';
+export type WalletAdapter = 'phantom' | 'solflare' | 'metamask';
+
+interface SolanaProvider {
+  isPhantom?: boolean;
+  isSolflare?: boolean;
+  providers?: SolanaProvider[];
+  connect: (options?: { onlyIfTrusted?: boolean }) => Promise<{ publicKey: { toString: () => string } }>;
+  disconnect?: () => Promise<void>;
+  publicKey?: { toString: () => string };
+  isConnected?: boolean;
+}
+
+interface EthereumProvider {
+  isMetaMask?: boolean;
+  request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
+  selectedAddress?: string | null;
+}
 
 // Extend Window interface to include wallet objects
 declare global {
   interface Window {
-    solana?: {
-      isPhantom?: boolean;
-      connect: (options?: { onlyIfTrusted?: boolean }) => Promise<{ publicKey: { toString: () => string } }>;
-      disconnect: () => Promise<void>;
-      publicKey?: { toString: () => string };
-      isConnected?: boolean;
+    solana?: SolanaProvider;
+    solflare?: SolanaProvider;
+    phantom?: {
+      solana?: SolanaProvider;
     };
-    solflare?: {
-      isSolflare?: boolean;
-      connect: () => Promise<{ publicKey: { toString: () => string } }>;
-      disconnect: () => Promise<void>;
-      publicKey?: { toString: () => string };
-      isConnected?: boolean;
-    };
+    ethereum?: EthereumProvider;
   }
 }
 
 export class WalletManager {
+  private getPhantomProvider(): SolanaProvider | null {
+    if (typeof window === 'undefined') return null;
+
+    if (window.phantom?.solana?.isPhantom) {
+      return window.phantom.solana;
+    }
+
+    if (window.solana?.isPhantom) {
+      return window.solana;
+    }
+
+    if (Array.isArray(window.solana?.providers)) {
+      return window.solana?.providers?.find((provider) => provider?.isPhantom) || null;
+    }
+
+    return null;
+  }
+
+  private getSolflareProvider(): SolanaProvider | null {
+    if (typeof window === 'undefined') return null;
+
+    if (window.solflare?.isSolflare) {
+      return window.solflare;
+    }
+
+    if (window.solana?.isSolflare) {
+      return window.solana;
+    }
+
+    if (Array.isArray(window.solana?.providers)) {
+      return window.solana?.providers?.find((provider) => provider?.isSolflare) || null;
+    }
+
+    return null;
+  }
+
   /**
    * Main connection method - routes to specific adapter
    */
@@ -41,6 +85,8 @@ export class WalletManager {
         return this.connectPhantom();
       case 'solflare':
         return this.connectSolflare();
+      case 'metamask':
+        return this.connectMetamask();
       default:
         throw new Error(`Unsupported wallet adapter: ${adapter}`);
     }
@@ -56,26 +102,24 @@ export class WalletManager {
         throw new Error('Window object not available');
       }
 
-      if (!window.solana) {
+      const provider = this.getPhantomProvider();
+
+      if (!provider) {
         throw new Error('Phantom wallet is not installed. Please install it from https://phantom.app');
       }
 
-      if (!window.solana.isPhantom) {
-        throw new Error('Detected wallet is not Phantom. Please use Phantom wallet.');
-      }
-
       // Check if already connected
-      if (window.solana.isConnected && window.solana.publicKey) {
+      if (provider.isConnected && provider.publicKey) {
         console.log('Phantom already connected');
         return {
-          address: window.solana.publicKey.toString(),
+          address: provider.publicKey.toString(),
           chain: 'solana',
-          publicKey: window.solana.publicKey.toString(),
+          publicKey: provider.publicKey.toString(),
         };
       }
 
       // Attempt connection with timeout
-      const connectionPromise = window.solana.connect();
+      const connectionPromise = provider.connect({ onlyIfTrusted: false });
       const timeoutPromise = new Promise<never>((_, reject) => {
         setTimeout(() => reject(new Error('Connection timeout. Please try again.')), 30000);
       });
@@ -124,26 +168,24 @@ export class WalletManager {
         throw new Error('Window object not available');
       }
 
-      if (!window.solflare) {
+      const provider = this.getSolflareProvider();
+
+      if (!provider) {
         throw new Error('Solflare wallet is not installed. Please install it from https://solflare.com');
       }
 
-      if (!window.solflare.isSolflare) {
-        throw new Error('Detected wallet is not Solflare. Please use Solflare wallet.');
-      }
-
       // Check if already connected
-      if (window.solflare.isConnected && window.solflare.publicKey) {
+      if (provider.isConnected && provider.publicKey) {
         console.log('Solflare already connected');
         return {
-          address: window.solflare.publicKey.toString(),
+          address: provider.publicKey.toString(),
           chain: 'solana',
-          publicKey: window.solflare.publicKey.toString(),
+          publicKey: provider.publicKey.toString(),
         };
       }
 
       // Attempt connection with timeout
-      const connectionPromise = window.solflare.connect();
+      const connectionPromise = provider.connect();
       const timeoutPromise = new Promise<never>((_, reject) => {
         setTimeout(() => reject(new Error('Connection timeout. Please try again.')), 30000);
       });
@@ -178,20 +220,74 @@ export class WalletManager {
   }
 
   /**
+   * MetaMask Wallet Connection
+   */
+  private async connectMetamask(): Promise<WalletConnection> {
+    try {
+      if (typeof window === 'undefined') {
+        throw new Error('Window object not available');
+      }
+
+      if (!window.ethereum) {
+        throw new Error('MetaMask wallet is not installed. Please install it from https://metamask.io');
+      }
+
+      if (!window.ethereum.isMetaMask) {
+        throw new Error('Detected wallet is not MetaMask. Please use MetaMask wallet.');
+      }
+
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const address = Array.isArray(accounts) ? accounts[0] : null;
+
+      if (!address) {
+        throw new Error('Failed to get wallet address from MetaMask');
+      }
+
+      console.log('MetaMask connected successfully:', address);
+
+      return {
+        address,
+        chain: 'ethereum',
+        publicKey: address,
+      };
+    } catch (error: any) {
+      console.error('MetaMask connection error:', error);
+
+      if (error.code === 4001) {
+        throw new Error('Connection rejected. Please approve the connection in your MetaMask wallet.');
+      }
+
+      if (error.code === -32002) {
+        throw new Error('Connection request already pending. Please check your MetaMask wallet.');
+      }
+
+      throw new Error(error.message || 'Failed to connect to MetaMask wallet. Please try again.');
+    }
+  }
+
+  /**
    * Disconnect from current wallet
    */
   async disconnect(adapter: WalletAdapter): Promise<void> {
     try {
       switch (adapter) {
         case 'phantom':
-          if (window.solana?.disconnect) {
-            await window.solana.disconnect();
+          {
+            const provider = this.getPhantomProvider();
+            if (provider?.disconnect) {
+              await provider.disconnect();
+            }
           }
           break;
         case 'solflare':
-          if (window.solflare?.disconnect) {
-            await window.solflare.disconnect();
+          {
+            const provider = this.getSolflareProvider();
+            if (provider?.disconnect) {
+              await provider.disconnect();
+            }
           }
+          break;
+        case 'metamask':
           break;
       }
       console.log(`Disconnected from ${adapter}`);
@@ -209,9 +305,11 @@ export class WalletManager {
 
     switch (adapter) {
       case 'phantom':
-        return !!(window.solana?.isPhantom);
+        return !!this.getPhantomProvider();
       case 'solflare':
-        return !!(window.solflare?.isSolflare);
+        return !!this.getSolflareProvider();
+      case 'metamask':
+        return !!window.ethereum?.isMetaMask;
       default:
         return false;
     }
@@ -225,9 +323,11 @@ export class WalletManager {
 
     switch (adapter) {
       case 'phantom':
-        return window.solana?.publicKey?.toString() || null;
+        return this.getPhantomProvider()?.publicKey?.toString() || null;
       case 'solflare':
-        return window.solflare?.publicKey?.toString() || null;
+        return this.getSolflareProvider()?.publicKey?.toString() || null;
+      case 'metamask':
+        return window.ethereum?.selectedAddress || null;
       default:
         return null;
     }

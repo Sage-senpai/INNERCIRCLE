@@ -8,11 +8,11 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { WalletManager } from '@/lib/wallets/adapter';
+import { WalletManager, type WalletAdapter } from '@/lib/wallets/adapter';
 import { useAuthStore } from '@/store/auth.store';
 import { getOrCreateUserByWallet, getUserWithLinkedWallets } from '@/lib/supabase/actions';
 import { LockIcon } from '@/components/locke/LockIcon/LockIcon';
-import { PhantomIcon, SolflareIcon } from '@/components/icons';
+import { PhantomIcon, SolflareIcon, MetaMaskIcon } from '@/components/icons';
 import { ThemeToggle } from '@/components/ui/ThemeToggle/ThemeToggle';
 import styles from './page.module.scss';
 
@@ -22,7 +22,7 @@ export default function LandingPage() {
   const [error, setError] = useState<string | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
   const [showWallets, setShowWallets] = useState(false);
-  const [connectingWallet, setConnectingWallet] = useState<string | null>(null);
+  const [connectingWallet, setConnectingWallet] = useState<WalletAdapter | null>(null);
   const walletManager = new WalletManager();
 
   // Redirect if already authenticated
@@ -40,7 +40,7 @@ export default function LandingPage() {
     );
   }
 
-  const handleConnect = async (adapter: 'phantom' | 'solflare') => {
+  const handleConnect = async (adapter: WalletAdapter) => {
     setError(null);
     setIsConnecting(true);
     setConnecting(true);
@@ -49,10 +49,16 @@ export default function LandingPage() {
     try {
       // Check if wallet is installed
       if (!walletManager.isWalletInstalled(adapter)) {
-        const walletName = adapter === 'phantom' ? 'Phantom' : 'Solflare';
+        const walletName = adapter === 'phantom' 
+          ? 'Phantom' 
+          : adapter === 'solflare' 
+            ? 'Solflare' 
+            : 'MetaMask';
         const installUrl = adapter === 'phantom' 
           ? 'https://phantom.app' 
-          : 'https://solflare.com';
+          : adapter === 'solflare'
+            ? 'https://solflare.com'
+            : 'https://metamask.io';
         throw new Error(
           `${walletName} wallet is not installed. Please install it from ${installUrl}`
         );
@@ -175,15 +181,65 @@ export default function LandingPage() {
             are unlocked through on-chain memecoin ownership.
           </p>
 
-          {showWallets ? (
-            <motion.div 
-              className={styles.wallets}
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              transition={{ duration: 0.3 }}
+          
+        </motion.div>
+
+        {/* Scroll indicator */}
+        <motion.div 
+          className={styles.hero__scroll}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1 }}
+        >
+          <span>Scroll to learn more</span>
+          <motion.div
+            animate={{ y: [0, 10, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+          >
+            ↓
+          </motion.div>
+        </motion.div>
+      </section>
+
+      <AnimatePresence>
+        {showWallets && (
+          <motion.div
+            className={styles.walletsOverlay}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => {
+              if (!isConnecting) {
+                setShowWallets(false);
+                setError(null);
+              }
+            }}
+          >
+            <motion.div
+              className={styles.walletsModal}
+              initial={{ opacity: 0, y: 20, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.98 }}
+              transition={{ type: 'spring', stiffness: 160, damping: 20 }}
+              onClick={(event) => event.stopPropagation()}
             >
-              <h3 className={styles.wallets__title}>Choose Your Wallet</h3>
-              
+              <div className={styles.walletsHeader}>
+                <div>
+                  <h3 className={styles.wallets__title}>Connect Wallet</h3>
+                  <p className={styles.wallets__subtitle}>Choose a wallet to continue</p>
+                </div>
+                <button
+                  className={styles.walletsClose}
+                  onClick={() => {
+                    setShowWallets(false);
+                    setError(null);
+                  }}
+                  disabled={isConnecting}
+                >
+                  Close
+                </button>
+              </div>
+
               <div className={styles.wallets__options}>
                 <motion.button
                   className={`${styles.wallet} ${styles['wallet--primary']}`}
@@ -219,12 +275,27 @@ export default function LandingPage() {
                   )}
                 </motion.button>
 
-                {/* Polkadot removed - Solana only */}
+                <motion.button
+                  className={`${styles.wallet} ${styles['wallet--ethereum']}`}
+                  onClick={() => handleConnect('metamask')}
+                  disabled={isConnecting}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <MetaMaskIcon />
+                  <span>MetaMask</span>
+                  {connectingWallet === 'metamask' && (
+                    <span className={styles.wallet__badge}>Connecting...</span>
+                  )}
+                </motion.button>
               </div>
 
               <AnimatePresence>
                 {error && (
-                  <motion.div 
+                  <motion.div
                     className={styles.wallets__error}
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -244,37 +315,10 @@ export default function LandingPage() {
                   <p>Connecting to wallet...</p>
                 </motion.div>
               )}
-
-              <button 
-                className={styles.wallets__back}
-                onClick={() => {
-                  setShowWallets(false);
-                  setError(null);
-                }}
-                disabled={isConnecting}
-              >
-                ← Back
-              </button>
             </motion.div>
-          ) : null}
-        </motion.div>
-
-        {/* Scroll indicator */}
-        <motion.div 
-          className={styles.hero__scroll}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-        >
-          <span>Scroll to learn more</span>
-          <motion.div
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-          >
-            ↓
           </motion.div>
-        </motion.div>
-      </section>
+        )}
+      </AnimatePresence>
 
       {/* Features Section */}
       <section className={styles.features}>
@@ -422,3 +466,4 @@ export default function LandingPage() {
     </div>
   );
 }
+

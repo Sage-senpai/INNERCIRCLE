@@ -371,6 +371,181 @@ export async function createEcho(echo: {
   return data;
 }
 
+// ============================================================================
+// ECHO (COMMENT) ACTIONS
+// ============================================================================
+
+export interface Echo {
+  id: string;
+  post_id: string;
+  author_id: string;
+  parent_echo_id: string | null;
+  content: string;
+  created_at: string;
+  author: {
+    id: string;
+    username: string;
+    display_name: string | null;
+    avatar_url: string | null;
+  };
+  like_count: number;
+  reply_count: number;
+  has_liked?: boolean;
+  replies?: Echo[];
+}
+
+export async function getPostEchoes(postId: string, userId?: string): Promise<Echo[]> {
+  // Get top-level echoes (no parent)
+  const { data: echoes, error } = await supabase
+    .from('echoes')
+    .select(`
+      id,
+      post_id,
+      author_id,
+      parent_echo_id,
+      content,
+      created_at,
+      author:users!author_id(id, username, display_name, avatar_url)
+    `)
+    .eq('post_id', postId)
+    .is('parent_echo_id', null)
+    .order('created_at', { ascending: true });
+
+  if (error) throw error;
+
+  // Get echo likes counts
+  const echoIds = (echoes || []).map(e => e.id);
+  const { data: likeCounts } = await supabase
+    .from('echo_likes')
+    .select('echo_id')
+    .in('echo_id', echoIds);
+
+  // Get reply counts
+  const { data: replyCounts } = await supabase
+    .from('echoes')
+    .select('parent_echo_id')
+    .in('parent_echo_id', echoIds);
+
+  // Get user's likes if userId provided
+  let userLikes: string[] = [];
+  if (userId) {
+    const { data: likes } = await supabase
+      .from('echo_likes')
+      .select('echo_id')
+      .eq('user_id', userId)
+      .in('echo_id', echoIds);
+    userLikes = (likes || []).map(l => l.echo_id);
+  }
+
+  // Transform the data
+  return (echoes || []).map(echo => ({
+    ...echo,
+    author: Array.isArray(echo.author) ? echo.author[0] : echo.author,
+    like_count: (likeCounts || []).filter(l => l.echo_id === echo.id).length,
+    reply_count: (replyCounts || []).filter(r => r.parent_echo_id === echo.id).length,
+    has_liked: userLikes.includes(echo.id),
+  })) as Echo[];
+}
+
+export async function getEchoReplies(echoId: string, userId?: string): Promise<Echo[]> {
+  const { data: replies, error } = await supabase
+    .from('echoes')
+    .select(`
+      id,
+      post_id,
+      author_id,
+      parent_echo_id,
+      content,
+      created_at,
+      author:users!author_id(id, username, display_name, avatar_url)
+    `)
+    .eq('parent_echo_id', echoId)
+    .order('created_at', { ascending: true });
+
+  if (error) throw error;
+
+  const replyIds = (replies || []).map(r => r.id);
+
+  // Get likes for replies
+  const { data: likeCounts } = await supabase
+    .from('echo_likes')
+    .select('echo_id')
+    .in('echo_id', replyIds);
+
+  // Get user's likes
+  let userLikes: string[] = [];
+  if (userId) {
+    const { data: likes } = await supabase
+      .from('echo_likes')
+      .select('echo_id')
+      .eq('user_id', userId)
+      .in('echo_id', replyIds);
+    userLikes = (likes || []).map(l => l.echo_id);
+  }
+
+  return (replies || []).map(reply => ({
+    ...reply,
+    author: Array.isArray(reply.author) ? reply.author[0] : reply.author,
+    like_count: (likeCounts || []).filter(l => l.echo_id === reply.id).length,
+    reply_count: 0,
+    has_liked: userLikes.includes(reply.id),
+  })) as Echo[];
+}
+
+export async function createEchoReply(echo: {
+  postId: string;
+  parentEchoId: string;
+  authorId: string;
+  content: string;
+}) {
+  const { data, error } = await supabase
+    .from('echoes')
+    .insert({
+      post_id: echo.postId,
+      parent_echo_id: echo.parentEchoId,
+      author_id: echo.authorId,
+      content: echo.content,
+    })
+    .select(`
+      *,
+      author:users!author_id(id, username, display_name, avatar_url)
+    `)
+    .single();
+
+  if (error) throw error;
+  return {
+    ...data,
+    author: Array.isArray(data.author) ? data.author[0] : data.author,
+    like_count: 0,
+    reply_count: 0,
+    has_liked: false,
+  } as Echo;
+}
+
+export async function likeEcho(userId: string, echoId: string) {
+  const { error } = await supabase
+    .from('echo_likes')
+    .insert({
+      user_id: userId,
+      echo_id: echoId,
+    });
+
+  if (error) {
+    // Check if already liked (unique constraint violation)
+    if (error.code === '23505') {
+      // Unlike
+      await supabase
+        .from('echo_likes')
+        .delete()
+        .eq('user_id', userId)
+        .eq('echo_id', echoId);
+      return { liked: false };
+    }
+    throw error;
+  }
+  return { liked: true };
+}
+
 export async function relayPost(userId: string, postId: string, quoteContent?: string) {
   const { data, error } = await supabase
     .from('relays')
@@ -1022,15 +1197,26 @@ export async function sendCommunityMessage(
   senderId: string,
   content: string
 ) {
-  // Get the chat thread
-  const { data: thread, error: threadError } = await supabase
+  // Get the chat thread, or create one if it doesn't exist
+  let { data: thread, error: threadError } = await supabase
     .from('community_chat_threads')
     .select('id')
     .eq('community_id', communityId)
     .single();
 
-  if (threadError) {
-    throw new Error('Chat thread not found for this community');
+  // If thread doesn't exist, create it
+  if (threadError || !thread) {
+    const { data: newThread, error: createError } = await supabase
+      .from('community_chat_threads')
+      .insert({ community_id: communityId })
+      .select('id')
+      .single();
+
+    if (createError) {
+      console.error('Failed to create chat thread:', createError);
+      throw new Error('Failed to create chat thread for this community');
+    }
+    thread = newThread;
   }
 
   // Insert the message
@@ -1105,13 +1291,27 @@ export function subscribeToCommunityChat(
 }
 
 export async function getCommunityThreadId(communityId: string): Promise<string | null> {
-  const { data, error } = await supabase
+  let { data, error } = await supabase
     .from('community_chat_threads')
     .select('id')
     .eq('community_id', communityId)
     .single();
 
-  if (error) return null;
+  // If thread doesn't exist, create it
+  if (error || !data) {
+    const { data: newThread, error: createError } = await supabase
+      .from('community_chat_threads')
+      .insert({ community_id: communityId })
+      .select('id')
+      .single();
+
+    if (createError) {
+      console.error('Failed to create chat thread:', createError);
+      return null;
+    }
+    return newThread?.id || null;
+  }
+
   return data?.id || null;
 }
 

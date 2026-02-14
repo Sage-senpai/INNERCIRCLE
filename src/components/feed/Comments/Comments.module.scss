@@ -1,0 +1,390 @@
+// File: src/components/feed/Comments/Comments.module.scss
+// Facebook-style comments with likes and replies
+// ============================================================================
+
+@use '../../../styles/abstracts' as *;
+
+.comments {
+  padding: $spacing-md $spacing-lg;
+  border-top: 1px solid $color-border;
+  overflow: hidden;
+
+  @include responsive(mobile) {
+    padding: $spacing-sm $spacing-md;
+  }
+}
+
+// ============================================================================
+// COMMENT COMPOSER
+// ============================================================================
+
+.comments__composer {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+
+  @include responsive(mobile) {
+    gap: $spacing-xs;
+    margin-bottom: $spacing-sm;
+  }
+}
+
+.comments__input_wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: rgba($color-frozen-water, 0.05);
+  border-radius: $radius-full;
+  padding: 0 $spacing-sm;
+  @include transition(background, box-shadow);
+
+  &:focus-within {
+    background: rgba($color-frozen-water, 0.08);
+    box-shadow: 0 0 0 2px rgba($color-medium-jungle, 0.1);
+  }
+}
+
+.comments__input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: $spacing-sm;
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  font-family: $font-family-primary;
+
+  &::placeholder {
+    color: $color-text-secondary;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  @include responsive(mobile) {
+    padding: $spacing-xs $spacing-sm;
+    font-size: $font-size-xs;
+  }
+}
+
+.comments__send {
+  @include flex-center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  color: $color-medium-jungle;
+  cursor: pointer;
+  border-radius: $radius-full;
+  @include transition(background, transform);
+
+  &:hover {
+    background: rgba($color-medium-jungle, 0.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// ============================================================================
+// COMMENTS LIST
+// ============================================================================
+
+.comments__list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+
+  @include responsive(mobile) {
+    gap: $spacing-sm;
+  }
+}
+
+.comments__loading,
+.comments__empty {
+  text-align: center;
+  color: $color-text-secondary;
+  font-size: $font-size-sm;
+  padding: $spacing-md;
+}
+
+// ============================================================================
+// SINGLE COMMENT
+// ============================================================================
+
+.comment {
+  display: flex;
+  gap: $spacing-sm;
+  align-items: flex-start;
+
+  @include responsive(mobile) {
+    gap: $spacing-xs;
+  }
+}
+
+.comment__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.comment__bubble {
+  display: inline-block;
+  background: rgba($color-frozen-water, 0.08);
+  border-radius: $radius-lg;
+  padding: $spacing-sm $spacing-md;
+  max-width: 100%;
+
+  @include responsive(mobile) {
+    padding: $spacing-xs $spacing-sm;
+    border-radius: $radius-md;
+  }
+}
+
+.comment__author {
+  display: block;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: 2px;
+
+  @include responsive(mobile) {
+    font-size: $font-size-xs;
+  }
+}
+
+.comment__text {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  line-height: $line-height-normal;
+  margin: 0;
+  word-wrap: break-word;
+
+  @include responsive(mobile) {
+    font-size: $font-size-xs;
+  }
+}
+
+.comment__actions {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  margin-top: $spacing-xs;
+  padding-left: $spacing-sm;
+
+  @include responsive(mobile) {
+    gap: $spacing-sm;
+    padding-left: $spacing-xs;
+  }
+}
+
+.comment__action {
+  background: transparent;
+  border: none;
+  color: $color-text-secondary;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  padding: 0;
+  @include transition(color);
+
+  &:hover {
+    color: $color-text-primary;
+    text-decoration: underline;
+  }
+
+  &--active {
+    color: $color-medium-jungle;
+
+    &:hover {
+      color: $color-medium-jungle;
+    }
+  }
+}
+
+.comment__time {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+}
+
+.comment__likes {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+// ============================================================================
+// REPLY COMPOSER
+// ============================================================================
+
+.comment__reply_composer {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  margin-top: $spacing-sm;
+  padding-left: $spacing-xs;
+
+  .comments__input_wrapper {
+    background: rgba($color-frozen-water, 0.04);
+  }
+
+  .comments__input {
+    font-size: $font-size-xs;
+    padding: $spacing-xs $spacing-sm;
+  }
+}
+
+// ============================================================================
+// VIEW REPLIES BUTTON
+// ============================================================================
+
+.comment__view_replies {
+  background: transparent;
+  border: none;
+  color: $color-text-secondary;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  padding: 0;
+  margin-top: $spacing-xs;
+  margin-left: $spacing-sm;
+  @include transition(color);
+
+  &:hover {
+    color: $color-text-primary;
+  }
+}
+
+// ============================================================================
+// REPLIES
+// ============================================================================
+
+.comment__replies {
+  margin-top: $spacing-sm;
+  margin-left: $spacing-xl;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  border-left: 2px solid rgba($color-frozen-water, 0.1);
+  padding-left: $spacing-sm;
+
+  @include responsive(mobile) {
+    margin-left: $spacing-lg;
+    gap: $spacing-xs;
+  }
+}
+
+.reply {
+  display: flex;
+  gap: $spacing-xs;
+  align-items: flex-start;
+
+  .comment__bubble {
+    background: rgba($color-frozen-water, 0.05);
+    padding: $spacing-xs $spacing-sm;
+  }
+
+  .comment__author {
+    font-size: $font-size-xs;
+  }
+
+  .comment__text {
+    font-size: $font-size-xs;
+  }
+}
+
+// ============================================================================
+// LIGHT MODE OVERRIDES
+// ============================================================================
+
+[data-theme='light'] {
+  .comments {
+    border-top-color: rgba(10, 10, 15, 0.08);
+  }
+
+  .comments__input_wrapper {
+    background: #f5f5f5;
+
+    &:focus-within {
+      background: #ffffff;
+      box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.15);
+    }
+  }
+
+  .comments__input {
+    color: #0a0a0f;
+
+    &::placeholder {
+      color: #9a9590;
+    }
+  }
+
+  .comments__send {
+    color: #16a34a;
+
+    &:hover {
+      background: rgba(22, 163, 74, 0.1);
+    }
+  }
+
+  .comment__bubble {
+    background: #f0f2f5;
+  }
+
+  .comment__author {
+    color: #0a0a0f;
+  }
+
+  .comment__text {
+    color: #1a1a1f;
+  }
+
+  .comment__action {
+    color: #5a5350;
+
+    &:hover {
+      color: #0a0a0f;
+    }
+
+    &--active {
+      color: #16a34a;
+
+      &:hover {
+        color: #16a34a;
+      }
+    }
+  }
+
+  .comment__time,
+  .comment__likes {
+    color: #5a5350;
+  }
+
+  .comment__view_replies {
+    color: #5a5350;
+
+    &:hover {
+      color: #0a0a0f;
+    }
+  }
+
+  .comment__replies {
+    border-left-color: rgba(10, 10, 15, 0.1);
+  }
+
+  .reply .comment__bubble {
+    background: #f5f5f5;
+  }
+
+  .comment__reply_composer .comments__input_wrapper {
+    background: #fafafa;
+  }
+}

@@ -11,7 +11,7 @@ import type { GateRule } from '@/lib/locke/types';
 import { Avatar } from '@/components/ui/Avatar/Avatar';
 import { SignalIcon, EchoIcon, RelayIcon } from '@/components/icons';
 import { signalPost, relayPost } from '@/lib/supabase/actions';
-import { EchoComposer } from '@/components/interactions/EchoComposer/EchoComposer';
+import { Comments } from '@/components/feed/Comments';
 import styles from './Post.module.scss';
 
 interface PostGate {
@@ -115,7 +115,8 @@ export function Post({ post }: PostProps) {
   const { user } = useAuthStore();
   const [isSignaled, setIsSignaled] = useState(post.hasSignaled || false);
   const [signalCount, setSignalCount] = useState(post.signalCount);
-  const [showEchoComposer, setShowEchoComposer] = useState(false);
+  const [echoCount, setEchoCount] = useState(post.echoCount);
+  const [showComments, setShowComments] = useState(false);
   const [isRelaying, setIsRelaying] = useState(false);
 
   // Parse content for embedded images
@@ -207,18 +208,18 @@ export function Post({ post }: PostProps) {
           {signalCount > 0 && <span>{signalCount}</span>}
         </motion.button>
 
-        <motion.button 
-          className={styles.post__action}
-          onClick={() => setShowEchoComposer(!showEchoComposer)}
-          aria-label="Echo"
+        <motion.button
+          className={`${styles.post__action} ${showComments ? styles['post__action--active'] : ''}`}
+          onClick={() => setShowComments(!showComments)}
+          aria-label="Comments"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
         >
           <EchoIcon />
-          {post.echoCount > 0 && <span>{post.echoCount}</span>}
+          {echoCount > 0 && <span>{echoCount}</span>}
         </motion.button>
 
-        <motion.button 
+        <motion.button
           className={styles.post__action}
           onClick={handleRelay}
           aria-label="Relay"
@@ -231,12 +232,11 @@ export function Post({ post }: PostProps) {
         </motion.button>
       </div>
 
-      {showEchoComposer && user && (
-        <EchoComposer
-          postId={post.id}
-          onClose={() => setShowEchoComposer(false)}
-        />
-      )}
+      <Comments
+        postId={post.id}
+        isExpanded={showComments}
+        onToggle={() => setShowComments(!showComments)}
+      />
     </motion.div>
   );
 

@@ -113,6 +113,10 @@ export function SolflareIcon() {
   return <span>☀️</span>;
 }
 
+export function MetaMaskIcon() {
+  return <span>🦊</span>;
+}
+
 export function PolkadotIcon() {
   return <span>●</span>;
 }

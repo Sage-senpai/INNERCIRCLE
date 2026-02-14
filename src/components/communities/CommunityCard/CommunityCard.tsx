@@ -12,21 +12,35 @@ interface CommunityCardProps {
     id: string;
     slug: string;
     name: string;
-    description: string;
-    tokenAddress: string;
-    chain: string;
-    memberCount: number;
-    postCount: number;
+    description?: string | null;
+    // Support both camelCase and snake_case
+    tokenAddress?: string | null;
+    token_address?: string | null;
+    chain?: string | null;
+    memberCount?: number;
+    member_count?: number;
+    postCount?: number;
+    post_count?: number;
     avatarUrl?: string | null;
-    isMember: boolean;
+    avatar_url?: string | null;
+    access_type?: string;
+    isMember?: boolean;
     tier?: string | null;
   };
 }
 
 export function CommunityCard({ community }: CommunityCardProps) {
+  // Normalize properties to handle both camelCase and snake_case
+  const avatarUrl = community.avatarUrl ?? community.avatar_url;
+  const tokenAddress = community.tokenAddress ?? community.token_address;
+  const memberCount = community.memberCount ?? community.member_count ?? 0;
+  const postCount = community.postCount ?? community.post_count ?? 0;
+  const accessType = community.access_type ?? 'token_gated';
+  const isOpenCommunity = accessType === 'open';
+
   return (
     <Link href={`/communities/${community.slug}`}>
-      <motion.div 
+      <motion.div
         className={styles.card}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -39,13 +53,13 @@ export function CommunityCard({ community }: CommunityCardProps) {
             transition={{ type: 'spring', stiffness: 300 }}
           >
             <Avatar
-              src={community.avatarUrl}
+              src={avatarUrl}
               alt={community.name}
               size="lg"
             />
           </motion.div>
           {community.isMember && community.tier && (
-            <motion.div 
+            <motion.div
               className={styles.card__badge}
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -58,18 +72,18 @@ export function CommunityCard({ community }: CommunityCardProps) {
 
         <div className={styles.card__body}>
           <h3 className={styles.card__title}>{community.name}</h3>
-          <p className={styles.card__description}>{community.description}</p>
+          <p className={styles.card__description}>{community.description || 'No description'}</p>
 
           <div className={styles.card__stats}>
             <div className={styles.card__stat}>
               <span className={styles.card__stat_value}>
-                {formatNumber(community.memberCount)}
+                {formatNumber(memberCount)}
               </span>
               <span className={styles.card__stat_label}>Members</span>
             </div>
             <div className={styles.card__stat}>
               <span className={styles.card__stat_value}>
-                {formatNumber(community.postCount)}
+                {formatNumber(postCount)}
               </span>
               <span className={styles.card__stat_label}>Broadcasts</span>
             </div>
@@ -77,20 +91,28 @@ export function CommunityCard({ community }: CommunityCardProps) {
         </div>
 
         <div className={styles.card__footer}>
-          <div className={styles.card__token}>
-            <span className={styles.card__token_label}>Token:</span>
-            <span className={styles.card__token_address}>
-              {community.tokenAddress.slice(0, 6)}...{community.tokenAddress.slice(-4)}
-            </span>
-          </div>
-          
+          {tokenAddress ? (
+            <div className={styles.card__token}>
+              <span className={styles.card__token_label}>Token:</span>
+              <span className={styles.card__token_address}>
+                {tokenAddress.slice(0, 6)}...{tokenAddress.slice(-4)}
+              </span>
+            </div>
+          ) : (
+            <div className={styles.card__token}>
+              <span className={styles.card__token_label}>
+                {isOpenCommunity ? '🌐 Open Community' : '🔒 Invite Only'}
+              </span>
+            </div>
+          )}
+
           {community.isMember ? (
             <Button variant="unlocked" size="sm">
               Joined
             </Button>
           ) : (
             <Button variant="locked" size="sm">
-              View Access
+              {isOpenCommunity ? 'Join' : 'View Access'}
             </Button>
           )}
         </div>

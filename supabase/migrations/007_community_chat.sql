@@ -32,10 +32,14 @@ CREATE INDEX IF NOT EXISTS idx_community_chat_threads_community
 
 -- ============================================================================
 -- AUTO-CREATE CHAT THREAD FOR NEW COMMUNITIES
+-- Uses SECURITY DEFINER to bypass RLS when creating threads via trigger
 -- ============================================================================
 
 CREATE OR REPLACE FUNCTION create_community_chat_thread()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER
+SECURITY DEFINER
+SET search_path = public
+AS $$
 BEGIN
   INSERT INTO community_chat_threads (community_id)
   VALUES (NEW.id)
@@ -59,7 +63,7 @@ CREATE TRIGGER on_community_created
 
 INSERT INTO community_chat_threads (community_id)
 SELECT id FROM communities
-WHERE id NOT IN (SELECT community_id FROM community_chat_threads)
+WHERE id NOT IN (SELECT community_id FROM community_chat_threads WHERE community_id IS NOT NULL)
 ON CONFLICT (community_id) DO NOTHING;
 
 -- ============================================================================
@@ -69,7 +73,15 @@ ON CONFLICT (community_id) DO NOTHING;
 ALTER TABLE community_chat_threads ENABLE ROW LEVEL SECURITY;
 ALTER TABLE community_messages ENABLE ROW LEVEL SECURITY;
 
--- Chat threads: Viewable by community members
+-- Drop existing policies if they exist (to allow re-running)
+DROP POLICY IF EXISTS "Community members can view chat threads" ON community_chat_threads;
+DROP POLICY IF EXISTS "Community creators can create chat threads" ON community_chat_threads;
+DROP POLICY IF EXISTS "Community members can view messages" ON community_messages;
+DROP POLICY IF EXISTS "Community members can send messages" ON community_messages;
+DROP POLICY IF EXISTS "Users can update own messages" ON community_messages;
+DROP POLICY IF EXISTS "Users can delete own messages" ON community_messages;
+
+-- Chat threads: Viewable by community members and creators
 CREATE POLICY "Community members can view chat threads"
   ON community_chat_threads FOR SELECT
   USING (
@@ -79,6 +91,17 @@ CREATE POLICY "Community members can view chat threads"
       AND community_members.user_id = auth.uid()
     )
     OR
+    EXISTS (
+      SELECT 1 FROM communities
+      WHERE communities.id = community_chat_threads.community_id
+      AND communities.creator_id = auth.uid()
+    )
+  );
+
+-- Chat threads: Allow community creators to insert (backup for trigger)
+CREATE POLICY "Community creators can create chat threads"
+  ON community_chat_threads FOR INSERT
+  WITH CHECK (
     EXISTS (
       SELECT 1 FROM communities
       WHERE communities.id = community_chat_threads.community_id

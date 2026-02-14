@@ -3,100 +3,92 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PageHeader } from '@/components/ui/PageHeader/PageHeader';
 import { CommunityCard } from '@/components/communities/CommunityCard/CommunityCard';
 import { Button } from '@/components/ui/Button/Button';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner/LoadingSpinner';
 import { CreateCommunityModal } from '@/components/interactions/CreateCommunityModal/CreateCommunityModal';
+import { supabase } from '@/lib/supabase/client';
+import { useAuthStore } from '@/store/auth.store';
 import styles from './page.module.scss';
 
+interface CommunityData {
+  id: string;
+  slug: string;
+  name: string;
+  description: string | null;
+  token_address: string | null;
+  chain: string | null;
+  member_count: number;
+  post_count: number;
+  avatar_url: string | null;
+  access_type: string;
+  isMember?: boolean;
+  tier?: string | null;
+}
+
 export default function CommunitiesPage() {
-  const [communities, setCommunities] = useState<any[]>([]);
+  const { user } = useAuthStore();
+  const [communities, setCommunities] = useState<CommunityData[]>([]);
   const [filter, setFilter] = useState<'all' | 'joined' | 'available'>('all');
   const [isLoading, setIsLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
 
+  const loadCommunities = useCallback(async () => {
+    setIsLoading(true);
+
+    try {
+      // Fetch all communities from Supabase
+      const { data: communitiesData, error: communitiesError } = await supabase
+        .from('communities')
+        .select('*')
+        .order('member_count', { ascending: false });
+
+      if (communitiesError) throw communitiesError;
+
+      // Fetch user's memberships if logged in
+      let membershipSet = new Set<string>();
+      if (user) {
+        const { data: memberships, error: membershipsError } = await supabase
+          .from('community_members')
+          .select('community_id')
+          .eq('user_id', user.id);
+
+        if (!membershipsError && memberships) {
+          membershipSet = new Set(memberships.map(m => m.community_id));
+        }
+      }
+
+      // Map data to expected format
+      const formattedCommunities: CommunityData[] = (communitiesData || []).map(c => ({
+        id: c.id,
+        slug: c.slug,
+        name: c.name,
+        description: c.description,
+        token_address: c.token_address,
+        chain: c.chain,
+        member_count: c.member_count || 0,
+        post_count: c.post_count || 0,
+        avatar_url: c.avatar_url,
+        access_type: c.access_type || 'open',
+        isMember: membershipSet.has(c.id),
+        tier: null,
+      }));
+
+      setCommunities(formattedCommunities);
+    } catch (error) {
+      console.error('Failed to load communities:', error);
+      setCommunities([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user]);
+
   useEffect(() => {
     loadCommunities();
-  }, [filter]);
-
-  async function loadCommunities() {
-    setIsLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    const mockCommunities = [
-      {
-        id: '1',
-        slug: 'bonk-holders',
-        name: 'BONK Holders',
-        description: 'Official community for BONK token holders. Join the pack and stay updated on the latest BONK developments.',
-        tokenAddress: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263',
-        chain: 'solana',
-        memberCount: 15420,
-        postCount: 3240,
-        avatarUrl: null,
-        isMember: true,
-        tier: 'whale',
-      },
-      {
-        id: '2',
-        slug: 'pepe-elites',
-        name: 'PEPE Elites',
-        description: 'For the most dedicated PEPE holders. Exclusive content and alpha only.',
-        tokenAddress: '0x6982508145454Ce325dDbE47a25d4ec3d2311933',
-        chain: 'ethereum',
-        memberCount: 8932,
-        postCount: 1876,
-        avatarUrl: null,
-        isMember: false,
-        tier: null,
-      },
-      {
-        id: '3',
-        slug: 'doge-maximalists',
-        name: 'DOGE Maximalists',
-        description: 'Much wow, such community. The original meme coin community on InnerCircle.',
-        tokenAddress: 'DOGE123456789',
-        chain: 'solana',
-        memberCount: 42069,
-        postCount: 12000,
-        avatarUrl: null,
-        isMember: true,
-        tier: 'holder',
-      },
-      {
-        id: '4',
-        slug: 'shib-army',
-        name: 'SHIB Army',
-        description: 'The Shiba Inu community hub. Strategy, memes, and everything SHIB.',
-        tokenAddress: 'SHIB987654321',
-        chain: 'solana',
-        memberCount: 23456,
-        postCount: 5670,
-        avatarUrl: null,
-        isMember: false,
-        tier: null,
-      },
-      {
-        id: '5',
-        slug: 'wif-collective',
-        name: 'WIF Collective',
-        description: 'Dog wif hat holders unite. Exclusive broadcasts and community events.',
-        tokenAddress: 'WIF1234567890',
-        chain: 'solana',
-        memberCount: 11234,
-        postCount: 2890,
-        avatarUrl: null,
-        isMember: true,
-        tier: 'elite',
-      },
-    ];
-
-    setCommunities(mockCommunities);
-    setIsLoading(false);
-  }
+  }, [loadCommunities]);
 
   const filteredCommunities = communities.filter(c => {
     if (filter === 'joined') return c.isMember;

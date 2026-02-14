@@ -5,19 +5,25 @@
 
 .composer {
   @include glass-surface(0.05);
-  border-radius: $radius-lg;
+  border-radius: $radius-xl;
   padding: $spacing-lg;
   @include transition(background, border-color, box-shadow);
-  
+  margin-bottom: $spacing-lg;
+
+  @include responsive(tablet) {
+    padding: $spacing-md;
+  }
+
   @include responsive(mobile) {
     padding: $spacing-md;
-    border-radius: $radius-md;
+    border-radius: $radius-lg;
+    margin-bottom: $spacing-md;
   }
-  
+
   &--focused {
-    background: rgba($color-frozen-water, 0.08);
-    border-color: $color-border-hover;
-    box-shadow: $shadow-md;
+    background: rgba($color-frozen-water, 0.06);
+    border-color: $color-medium-jungle;
+    box-shadow: 0 0 0 3px rgba($color-medium-jungle, 0.1), $shadow-lg;
   }
 }
 
@@ -30,7 +36,7 @@
   color: $color-text-secondary;
   padding: $spacing-xl;
   font-size: $font-size-base;
-  
+
   @include responsive(mobile) {
     padding: $spacing-lg;
     font-size: $font-size-sm;
@@ -46,7 +52,7 @@
   align-items: center;
   gap: $spacing-md;
   margin-bottom: $spacing-md;
-  
+
   @include responsive(mobile) {
     gap: $spacing-sm;
     margin-bottom: $spacing-sm;
@@ -63,7 +69,7 @@
   font-weight: $font-weight-semibold;
   color: $color-text-primary;
   @include truncate;
-  
+
   @include responsive(mobile) {
     font-size: $font-size-xs;
   }
@@ -74,32 +80,36 @@
 // ============================================================================
 
 .composer__input {
-  @include transition(background, border-color, height);
+  @include transition(background, border-color, height, box-shadow);
   width: 100%;
   background: rgba($color-frozen-water, 0.03);
-  border: 1px solid $color-border;
-  border-radius: $radius-md;
-  padding: $spacing-md;
+  border: 1px solid transparent;
+  border-radius: $radius-lg;
+  padding: $spacing-md $spacing-lg;
   color: $color-text-primary;
   font-size: $font-size-base;
-  line-height: $line-height-normal;
+  line-height: 1.6;
   resize: none;
   font-family: $font-family-primary;
-  
+  min-height: 56px;
+
   @include responsive(mobile) {
-    padding: $spacing-sm;
+    padding: $spacing-sm $spacing-md;
     font-size: $font-size-sm;
+    border-radius: $radius-md;
+    min-height: 48px;
   }
-  
+
   &::placeholder {
     color: $color-text-secondary;
+    opacity: 0.8;
   }
-  
+
   &:focus {
     outline: none;
     background: rgba($color-frozen-water, 0.05);
-    border-color: $color-border-focus;
-    box-shadow: 0 0 0 3px rgba($color-medium-jungle, 0.1);
+    border-color: rgba($color-medium-jungle, 0.3);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
   }
 }
 
@@ -112,12 +122,14 @@
   align-items: center;
   margin-top: $spacing-md;
   padding-top: $spacing-md;
-  border-top: 1px solid $color-border;
-  
+  border-top: 1px solid rgba($color-frozen-water, 0.1);
+
   @include responsive(mobile) {
     flex-direction: column;
     align-items: stretch;
     gap: $spacing-sm;
+    padding-top: $spacing-sm;
+    margin-top: $spacing-sm;
   }
 }
 
@@ -125,12 +137,11 @@
   display: flex;
   align-items: center;
   gap: $spacing-lg;
-  
+
   @include responsive(mobile) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: $spacing-sm;
+    justify-content: space-between;
     width: 100%;
+    gap: $spacing-md;
   }
 }
 
@@ -139,30 +150,35 @@
   align-items: center;
   gap: $spacing-xs;
   font-size: $font-size-sm;
-  color: $color-text-primary;
+  color: $color-text-secondary;
   cursor: pointer;
-  @include transition(color);
-  
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $radius-md;
+  @include transition(color, background);
+
   @include responsive(mobile) {
     font-size: $font-size-xs;
+    padding: $spacing-xs;
   }
-  
+
   &:hover {
     color: $color-medium-jungle;
+    background: rgba($color-medium-jungle, 0.08);
   }
-  
-  input[type="checkbox"] {
+
+  input[type='checkbox'] {
     width: 18px;
     height: 18px;
     cursor: pointer;
     accent-color: $color-medium-jungle;
-    
+    border-radius: $radius-sm;
+
     @include responsive(mobile) {
       width: 16px;
       height: 16px;
     }
   }
-  
+
   span {
     user-select: none;
   }
@@ -172,7 +188,7 @@
   display: flex;
   gap: $spacing-md;
   align-items: center;
-  
+
   @include responsive(mobile) {
     width: 100%;
     justify-content: space-between;
@@ -184,13 +200,18 @@
   color: $color-text-secondary;
   font-family: $font-family-mono;
   font-weight: $font-weight-medium;
-  
+  padding: $spacing-xs $spacing-sm;
+  background: rgba($color-frozen-water, 0.05);
+  border-radius: $radius-full;
+
   &--warning {
     color: $color-warning;
+    background: rgba($color-warning, 0.1);
   }
-  
+
   &--error {
     color: $color-error;
+    background: rgba($color-error, 0.1);
     font-weight: $font-weight-bold;
   }
 }
@@ -204,7 +225,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: $spacing-sm;
-  
+
   @include responsive(mobile) {
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   }
@@ -213,10 +234,10 @@
 .composer__media_item {
   position: relative;
   aspect-ratio: 1;
-  border-radius: $radius-md;
+  border-radius: $radius-lg;
   overflow: hidden;
   @include glass-surface(0.05);
-  
+
   img {
     width: 100%;
     height: 100%;
@@ -231,16 +252,16 @@
   width: 24px;
   height: 24px;
   @include flex-center;
-  background: rgba($color-night-bordeaux, 0.9);
+  background: rgba(0, 0, 0, 0.7);
   border-radius: $radius-full;
-  color: $color-text-primary;
+  color: #ffffff;
   font-size: $font-size-sm;
   cursor: pointer;
   @include transition(transform, background);
   border: none;
 
   &:hover {
-    background: $color-night-bordeaux;
+    background: rgba(239, 68, 68, 0.9);
     transform: scale(1.1);
   }
 
@@ -256,13 +277,13 @@
 [data-theme='light'] {
   .composer {
     background: #ffffff;
-    border: 1px solid rgba(10, 10, 15, 0.12);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(10, 10, 15, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
 
     &--focused {
       background: #ffffff;
       border-color: #16a34a;
-      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1), 0 2px 8px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1), 0 4px 12px rgba(0, 0, 0, 0.08);
     }
   }
 
@@ -275,8 +296,8 @@
   }
 
   .composer__input {
-    background: #fafafa;
-    border-color: rgba(10, 10, 15, 0.12);
+    background: #f5f5f5;
+    border-color: transparent;
     color: #0a0a0f;
 
     &::placeholder {
@@ -285,8 +306,8 @@
 
     &:focus {
       background: #ffffff;
-      border-color: #16a34a;
-      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+      border-color: rgba(22, 163, 74, 0.3);
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
     }
   }
 
@@ -295,15 +316,27 @@
   }
 
   .composer__option {
-    color: #0a0a0f;
+    color: #5a5350;
 
     &:hover {
       color: #16a34a;
+      background: rgba(22, 163, 74, 0.08);
     }
   }
 
   .composer__char_count {
     color: #5a5350;
+    background: rgba(10, 10, 15, 0.05);
+
+    &--warning {
+      color: #d97706;
+      background: rgba(217, 119, 6, 0.1);
+    }
+
+    &--error {
+      color: #dc2626;
+      background: rgba(220, 38, 38, 0.1);
+    }
   }
 
   .composer__media_item {
@@ -312,7 +345,7 @@
   }
 
   .composer__media_remove {
-    background: rgba(239, 68, 68, 0.9);
+    background: rgba(0, 0, 0, 0.6);
     color: #ffffff;
 
     &:hover {
