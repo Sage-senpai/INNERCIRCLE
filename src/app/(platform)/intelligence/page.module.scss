@@ -683,6 +683,33 @@
   }
 }
 
+.leaderboard__avatar_placeholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba($color-medium-jungle, 0.15);
+  border: 1px solid rgba($color-medium-jungle, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  color: $color-medium-jungle;
+  flex-shrink: 0;
+}
+
+.leaderboard__badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: $font-weight-medium;
+  background: rgba($color-medium-jungle, 0.15);
+  color: $color-medium-jungle;
+  vertical-align: middle;
+}
+
 // ============================================================================
 // LIGHT MODE OVERRIDES (Consolidated)
 // ============================================================================

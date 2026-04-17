@@ -1,11 +1,11 @@
 // File: src/app/(auth)/onboarding/page.tsx
 // ============================================================================
-// FIXED: Better error handling and user creation
+// Single-step onboarding: username input + inline feature tour
 // ============================================================================
 
 'use client';
 
-import { useState, Suspense, useEffect } from 'react';
+import { useState, Suspense, useEffect, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '@/store/auth.store';
@@ -15,30 +15,39 @@ import { supabase } from '@/lib/supabase/client';
 import { getUserByWallet, getUserWithLinkedWallets } from '@/lib/supabase/actions';
 import styles from './page.module.scss';
 
+const FEATURE_PILLS = [
+  {
+    icon: '\u{1F512}',
+    label: 'Token-Gated Access',
+    description: 'Content protected by on-chain ownership',
+  },
+  {
+    icon: '\u{1F465}',
+    label: 'Token Communities',
+    description: 'Groups formed around shared holdings',
+  },
+  {
+    icon: '\u{1F4C8}',
+    label: 'Influence Rankings',
+    description: 'Leaderboards driven by capital & contribution',
+  },
+];
+
 function OnboardingContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { setUser } = useAuthStore();
-  
-  const [currentStep, setCurrentStep] = useState(0);
+
   const [username, setUsername] = useState('');
   const [isCompleting, setIsCompleting] = useState(false);
   const [isCheckingUser, setIsCheckingUser] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showWelcome, setShowWelcome] = useState(false);
 
   const walletAddress = searchParams.get('wallet');
   const chain = searchParams.get('chain');
 
-  useEffect(() => {
-    if (!walletAddress) {
-      console.error('No wallet address provided');
-      router.push('/connect');
-      return;
-    }
-    checkExistingUser();
-  }, [walletAddress]);
-
-  async function checkExistingUser() {
+  const checkExistingUser = useCallback(async () => {
     if (!walletAddress) {
       setIsCheckingUser(false);
       return;
@@ -85,65 +94,19 @@ function OnboardingContent() {
     } finally {
       setIsCheckingUser(false);
     }
-  }
+  }, [walletAddress, router, setUser]);
 
-  const STEPS = [
-    {
-      title: 'Choose Your Handle',
-      description: 'Your public identity on InnerCircle. This handle is permanently linked to your wallet.',
-      hint: 'Handles are unique and immutable. Choose carefully.',
-    },
-    {
-      title: 'How Access Works',
-      description: 'Content on InnerCircle is protected by on-chain ownership.',
-      bullets: [
-        'Posts can be restricted by token ownership',
-        'Access is verified directly on-chain',
-        'Permissions update automatically as holdings change',
-      ],
-      footer: 'Your wallet is your key.',
-    },
-    {
-      title: 'Communities Are Token-Native',
-      description: 'Communities form around tokens, narratives, and shared incentives.',
-      bullets: [
-        'Communities are created around specific tokens',
-        'Entry tiers are determined by holdings or criteria',
-        'Higher tiers unlock deeper access and visibility',
-      ],
-    },
-    {
-      title: 'Influence Is Measurable',
-      description: 'Your position reflects both capital and contribution.',
-      bullets: [
-        'Global and community-specific leaderboards',
-        'Rankings consider holdings and activity',
-        'Influence unlocks reach, visibility, and privileges',
-      ],
-      footer: 'Influence is earned, not claimed.',
-    },
-  ];
-
-  const handleNext = () => {
-    if (currentStep < STEPS.length - 1) {
-      setCurrentStep(prev => prev + 1);
-    } else {
-      completeOnboarding();
+  useEffect(() => {
+    if (!walletAddress) {
+      console.error('No wallet address provided');
+      router.push('/connect');
+      return;
     }
-  };
+    checkExistingUser();
+  }, [walletAddress, router, checkExistingUser]);
 
-  const handleBack = () => {
-    if (currentStep > 0) {
-      setCurrentStep(prev => prev - 1);
-    }
-  };
-
-  const handleSkip = () => {
-    completeOnboarding();
-  };
-
-  const completeOnboarding = async () => {
-    if (currentStep === 0 && !username.trim()) {
+  const completeOnboarding = useCallback(async () => {
+    if (!username.trim()) {
       setError('Please enter a username');
       return;
     }
@@ -174,7 +137,6 @@ function OnboardingContent() {
 
       if (existingUsername) {
         setError('Username already taken. Please choose another.');
-        setCurrentStep(0);
         setIsCompleting(false);
         return;
       }
@@ -216,7 +178,9 @@ function OnboardingContent() {
           linkedWallets: userData.linkedWallets,
         });
 
-        router.push('/feed');
+        // Show welcome animation then redirect
+        setShowWelcome(true);
+        setTimeout(() => router.push('/feed'), 1600);
         return;
       }
 
@@ -239,7 +203,6 @@ function OnboardingContent() {
         if (insertError.code === '23505') {
           if (insertError.message.includes('username')) {
             setError('Username already taken. Please choose another.');
-            setCurrentStep(0);
           } else if (insertError.message.includes('wallet_address')) {
             setError('Wallet already registered. Redirecting...');
             setTimeout(() => router.push('/feed'), 2000);
@@ -286,19 +249,22 @@ function OnboardingContent() {
         }],
       });
 
-      router.push('/feed');
+      // Show welcome animation then redirect
+      setShowWelcome(true);
+      setTimeout(() => router.push('/feed'), 1600);
     } catch (error) {
       console.error('Onboarding failed:', error);
       setError(error instanceof Error ? error.message : 'Unknown error occurred');
     } finally {
       setIsCompleting(false);
     }
-  };
+  }, [username, walletAddress, chain, router, setUser]);
 
+  // Loading state while checking existing user
   if (isCheckingUser) {
     return (
       <div className={styles.onboarding}>
-        <motion.div 
+        <motion.div
           className={styles.checking}
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -315,145 +281,175 @@ function OnboardingContent() {
     );
   }
 
-  const step = STEPS[currentStep];
+  // Welcome animation after successful onboarding
+  if (showWelcome) {
+    return (
+      <div className={styles.onboarding}>
+        <motion.div
+          className={styles.welcome}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, type: 'spring', stiffness: 120, damping: 14 }}
+        >
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: 'spring', stiffness: 200, damping: 12 }}
+          >
+            <LockIcon locked={false} className={styles.welcome__icon} />
+          </motion.div>
+          <motion.h1
+            className={styles.welcome__title}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            Welcome, {username}
+          </motion.h1>
+          <motion.p
+            className={styles.welcome__subtitle}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.7 }}
+          >
+            Entering InnerCircle...
+          </motion.p>
+          <motion.div
+            className={styles.welcome__bar}
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ delay: 0.9, duration: 0.6, ease: 'easeInOut' }}
+          />
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.onboarding}>
-      <div className={styles.progress}>
-        {STEPS.map((_, i) => (
-          <div
-            key={i}
-            className={`${styles.progressDot} ${i <= currentStep ? styles.active : ''}`}
-          />
-        ))}
-      </div>
-
-      <motion.div className={styles.cardWrapper} layout>
-        <AnimatePresence mode="wait">
+      <motion.div
+        className={styles.card}
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, type: 'spring', stiffness: 100, damping: 20 }}
+      >
+        <div className={styles.cardContent}>
+          {/* Header */}
           <motion.div
-            key={currentStep}
-            className={styles.card}
-            initial={{ opacity: 0, rotateY: 60, scale: 0.95 }}
-            animate={{ opacity: 1, rotateY: 0, scale: 1 }}
-            exit={{ opacity: 0, rotateY: -60, scale: 0.95 }}
-            transition={{ duration: 0.6, type: 'spring', stiffness: 100, damping: 20 }}
+            className={styles.brandMark}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.1, type: 'spring', stiffness: 200 }}
           >
-            <div className={styles.cardContent}>
-              <motion.div 
-                className={styles.iconWrapper}
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-              >
-                {currentStep === 1 && <LockIcon locked className={styles.lockIcon} />}
-                {currentStep === 0 && <span className={styles.stepIcon}>👤</span>}
-                {currentStep === 2 && <span className={styles.stepIcon}>👥</span>}
-                {currentStep === 3 && <span className={styles.stepIcon}>🏆</span>}
-              </motion.div>
+            <LockIcon locked={false} className={styles.brandMark__icon} />
+          </motion.div>
 
-              <motion.h1 
-                className={styles.title}
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.3 }}
-              >
-                {step.title}
-              </motion.h1>
+          <motion.h1
+            className={styles.title}
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            Choose Your Handle
+          </motion.h1>
 
-              <motion.p 
-                className={styles.description}
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.4 }}
-              >
-                {step.description}
-              </motion.p>
+          <motion.p
+            className={styles.description}
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            Your permanent on-chain identity on InnerCircle.
+          </motion.p>
 
-              {currentStep === 0 && (
-                <motion.div 
-                  className={styles.inputWrapper}
-                  initial={{ opacity: 0, y: 30 }}
+          {/* Username input */}
+          <motion.div
+            className={styles.inputWrapper}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <div className={styles.inputField}>
+              <span className={styles.inputField__prefix}>@</span>
+              <input
+                type="text"
+                placeholder="your_handle"
+                value={username}
+                onChange={(e) => {
+                  setUsername(e.target.value.replace(/\s/g, '').toLowerCase());
+                  setError(null);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && username.trim()) {
+                    completeOnboarding();
+                  }
+                }}
+                className={styles.usernameInput}
+                autoFocus
+              />
+            </div>
+
+            <AnimatePresence>
+              {error && (
+                <motion.p
+                  className={styles.error}
+                  initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 }}
+                  exit={{ opacity: 0, y: -10 }}
                 >
-                  <input
-                    type="text"
-                    placeholder="your_handle"
-                    value={username}
-                    onChange={(e) => {
-                      setUsername(e.target.value.replace(/\s/g, '').toLowerCase());
-                      setError(null);
-                    }}
-                    className={styles.usernameInput}
-                    autoFocus
-                  />
-                  <p className={styles.hint}>{step.hint}</p>
-                  {error && (
-                    <motion.p 
-                      className={styles.error}
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                    >
-                      {error}
-                    </motion.p>
-                  )}
-                </motion.div>
-              )}
-
-              {step.bullets && (
-                <motion.ul 
-                  className={styles.bullets}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.5 }}
-                >
-                  {step.bullets.map((bullet, i) => (
-                    <motion.li 
-                      key={i}
-                      initial={{ opacity: 0, x: -30 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.6 + i * 0.1 }}
-                    >
-                      {bullet}
-                    </motion.li>
-                  ))}
-                </motion.ul>
-              )}
-
-              {step.footer && (
-                <motion.p 
-                  className={styles.footerText}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.8 }}
-                >
-                  {step.footer}
+                  {error}
                 </motion.p>
               )}
+            </AnimatePresence>
+          </motion.div>
+
+          {/* Enter button */}
+          <motion.div
+            className={styles.submitWrapper}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            <Button
+              variant="primary"
+              size="lg"
+              onClick={completeOnboarding}
+              isLoading={isCompleting}
+              disabled={!username.trim()}
+              className={styles.submitButton}
+            >
+              Enter InnerCircle
+            </Button>
+          </motion.div>
+
+          {/* Feature tour pills */}
+          <motion.div
+            className={styles.tourSection}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.7 }}
+          >
+            <p className={styles.tourSection__label}>Here&apos;s what you&apos;ll find</p>
+            <div className={styles.pillGrid}>
+              {FEATURE_PILLS.map((pill, i) => (
+                <motion.div
+                  key={pill.label}
+                  className={styles.pill}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.8 + i * 0.12 }}
+                >
+                  <span className={styles.pill__icon}>{pill.icon}</span>
+                  <div className={styles.pill__text}>
+                    <span className={styles.pill__label}>{pill.label}</span>
+                    <span className={styles.pill__description}>{pill.description}</span>
+                  </div>
+                </motion.div>
+              ))}
             </div>
           </motion.div>
-        </AnimatePresence>
-      </motion.div>
-
-      <div className={styles.actions}>
-        <Button variant="ghost" onClick={handleBack} disabled={currentStep === 0}>
-          Back
-        </Button>
-
-        <div className={styles.actionsRight}>
-          <Button variant="ghost" onClick={handleSkip}>
-            Skip
-          </Button>
-          <Button
-            variant="primary"
-            onClick={handleNext}
-            isLoading={isCompleting}
-            disabled={currentStep === 0 && !username.trim()}
-          >
-            {currentStep === STEPS.length - 1 ? 'Complete' : 'Next'}
-          </Button>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

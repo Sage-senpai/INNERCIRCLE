@@ -9,6 +9,7 @@ import { PageHeader } from '@/components/ui/PageHeader/PageHeader';
 import { CommunityCard } from '@/components/communities/CommunityCard/CommunityCard';
 import { Button } from '@/components/ui/Button/Button';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner/LoadingSpinner';
+import { EmptyState } from '@/components/ui/EmptyState/EmptyState';
 import { CreateCommunityModal } from '@/components/interactions/CreateCommunityModal/CreateCommunityModal';
 import { supabase } from '@/lib/supabase/client';
 import { useAuthStore } from '@/store/auth.store';
@@ -161,13 +162,15 @@ export default function CommunitiesPage() {
         )}
 
         {!isLoading && filteredCommunities.length === 0 && (
-          <motion.div 
-            className={styles.communities__empty}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
-            <p>No communities found</p>
-          </motion.div>
+          <EmptyState
+            icon="🏘️"
+            title="No communities found"
+            description="Create a token-gated community or join an existing one."
+            action={{
+              label: 'Create Community',
+              onClick: () => setShowCreateModal(true),
+            }}
+          />
         )}
       </div>
 

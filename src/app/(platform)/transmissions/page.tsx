@@ -3,7 +3,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PageHeader } from '@/components/ui/PageHeader/PageHeader';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner/LoadingSpinner';
@@ -13,6 +13,8 @@ import { LockIcon } from '@/components/locke/LockIcon/LockIcon';
 import { useAuthStore } from '@/store/auth.store';
 import { getUserCommunitiesWithChat } from '@/lib/supabase/actions';
 import styles from './page.module.scss';
+
+const DM_WAITLIST_KEY = 'innercircle-dm-waitlist';
 
 interface CommunityWithChat {
   id: string;
@@ -30,6 +32,24 @@ export default function TransmissionsPage() {
   const [communities, setCommunities] = useState<CommunityWithChat[]>([]);
   const [selectedCommunity, setSelectedCommunity] = useState<CommunityWithChat | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [waitlistEmail, setWaitlistEmail] = useState('');
+  const [waitlistSubmitted, setWaitlistSubmitted] = useState(false);
+
+  // Check if user already joined the waitlist
+  useEffect(() => {
+    const stored = localStorage.getItem(DM_WAITLIST_KEY);
+    if (stored) {
+      setWaitlistSubmitted(true);
+    }
+  }, []);
+
+  const handleWaitlistSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const trimmed = waitlistEmail.trim();
+    if (!trimmed) return;
+    localStorage.setItem(DM_WAITLIST_KEY, trimmed);
+    setWaitlistSubmitted(true);
+  };
 
   useEffect(() => {
     async function loadCommunities() {
@@ -195,6 +215,40 @@ export default function TransmissionsPage() {
                   Send secure, private messages directly to other wallet holders.
                   Messages can be gated by token ownership, ensuring only verified community members can reach you.
                 </p>
+
+                {waitlistSubmitted ? (
+                  <motion.div
+                    className={styles.transmissions__waitlist_success}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <span className={styles.transmissions__waitlist_success_icon}>✓</span>
+                    <p>You&apos;re on the list! We&apos;ll notify you when DMs launch.</p>
+                  </motion.div>
+                ) : (
+                  <form
+                    className={styles.transmissions__waitlist_form}
+                    onSubmit={handleWaitlistSubmit}
+                  >
+                    <input
+                      type="email"
+                      className={styles.transmissions__waitlist_input}
+                      placeholder="Enter your email address"
+                      value={waitlistEmail}
+                      onChange={(e) => setWaitlistEmail(e.target.value)}
+                      required
+                    />
+                    <motion.button
+                      type="submit"
+                      className={styles.transmissions__waitlist_button}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      Join Waitlist
+                    </motion.button>
+                  </form>
+                )}
 
                 <div className={styles.transmissions__features}>
                   <motion.div

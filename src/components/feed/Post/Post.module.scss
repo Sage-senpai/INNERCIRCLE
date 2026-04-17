@@ -5,7 +5,8 @@
 
 .post {
   @include glass-surface(0.05);
-  border-radius: $radius-xl;
+  border-radius: $radius-2xl;
+  border-left: 2px solid rgba($color-medium-jungle, 0.15);
   overflow: hidden;
   @include transition(background, border-color, transform, box-shadow);
   margin-bottom: $spacing-md;
@@ -19,7 +20,7 @@
   &:hover {
     background: rgba($color-frozen-water, 0.06);
     border-color: $color-border-hover;
-    box-shadow: $shadow-lg;
+    box-shadow: $shadow-lg, inset 0 1px 0 rgba($color-frozen-water, 0.06);
     transform: translateY(-1px);
 
     [data-theme='light'] & {
@@ -79,7 +80,7 @@
   font-size: $font-size-base;
   color: $color-text-primary;
   @include truncate;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
 
   [data-theme='light'] & {
     color: #0a0a0f;
@@ -110,6 +111,7 @@
   font-size: $font-size-sm;
   color: $color-text-secondary;
   white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 
   [data-theme='light'] & {
     color: #5a5350;
@@ -138,7 +140,7 @@
 
 .post__text {
   font-size: $font-size-base;
-  line-height: 1.65;
+  line-height: 1.7;
   color: $color-text-primary;
   white-space: pre-wrap;
   word-break: break-word;

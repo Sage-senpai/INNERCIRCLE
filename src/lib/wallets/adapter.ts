@@ -17,6 +17,7 @@ interface SolanaProvider {
   providers?: SolanaProvider[];
   connect: (options?: { onlyIfTrusted?: boolean }) => Promise<{ publicKey: { toString: () => string } }>;
   disconnect?: () => Promise<void>;
+  signMessage?: (message: Uint8Array, encoding?: string) => Promise<{ signature: Uint8Array }>;
   publicKey?: { toString: () => string };
   isConnected?: boolean;
 }
@@ -263,6 +264,30 @@ export class WalletManager {
 
       throw new Error(error.message || 'Failed to connect to MetaMask wallet. Please try again.');
     }
+  }
+
+  /**
+   * Sign a message with the connected wallet (for SIWS verification)
+   */
+  async signMessage(adapter: WalletAdapter, message: string): Promise<string> {
+    const encodedMessage = new TextEncoder().encode(message);
+
+    if (adapter === 'phantom' || adapter === 'solflare') {
+      const provider =
+        adapter === 'phantom'
+          ? this.getPhantomProvider()
+          : this.getSolflareProvider();
+
+      if (!provider?.signMessage) {
+        throw new Error(`${adapter} does not support message signing`);
+      }
+
+      const { signature } = await provider.signMessage(encodedMessage, 'utf8');
+      // Return as base64 for transport
+      return Buffer.from(signature).toString('base64');
+    }
+
+    throw new Error(`Message signing not supported for ${adapter}`);
   }
 
   /**

@@ -1,0 +1,162 @@
+// File: src/components/ui/EmptyState/EmptyState.module.scss
+// ============================================================================
+
+@use '../../../styles/abstracts' as *;
+
+// ============================================================================
+// EMPTY STATE - Premium empty state component
+// ============================================================================
+
+.emptyState {
+  @include flex-column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: $spacing-3xl;
+  gap: $spacing-lg;
+  border-radius: $radius-2xl;
+
+  // Glass surface with subtle gradient
+  background: linear-gradient(
+    135deg,
+    rgba($color-frozen-water, 0.06),
+    rgba($color-frozen-water, 0.02)
+  );
+  backdrop-filter: $blur-glass;
+  -webkit-backdrop-filter: $blur-glass;
+  border: 1px solid $color-border;
+
+  @include responsive(mobile) {
+    padding: $spacing-2xl $spacing-lg;
+    gap: $spacing-md;
+  }
+}
+
+// ============================================================================
+// VARIANT: MINIMAL
+// ============================================================================
+
+.emptyState--minimal {
+  background: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: none;
+}
+
+// ============================================================================
+// ICON
+// ============================================================================
+
+.emptyState__icon {
+  font-size: 4rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 96px;
+  height: 96px;
+  border-radius: $radius-full;
+  background: rgba($color-frozen-water, 0.04);
+  position: relative;
+  animation: iconPulseGlow 3s ease-in-out infinite;
+
+  @include responsive(mobile) {
+    font-size: 3rem;
+    width: 80px;
+    height: 80px;
+  }
+}
+
+@keyframes iconPulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba($color-medium-jungle, 0.08),
+                0 0 40px rgba($color-medium-jungle, 0.04);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba($color-medium-jungle, 0.16),
+                0 0 60px rgba($color-medium-jungle, 0.08);
+  }
+}
+
+// ============================================================================
+// TEXT CONTENT
+// ============================================================================
+
+.emptyState__content {
+  @include flex-column;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.emptyState__title {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  line-height: $line-height-tight;
+  margin: 0;
+
+  @include responsive(mobile) {
+    font-size: $font-size-lg;
+  }
+}
+
+.emptyState__description {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: $line-height-normal;
+  max-width: 320px;
+  margin: 0;
+
+  @include responsive(mobile) {
+    font-size: $font-size-xs;
+    max-width: 280px;
+  }
+}
+
+// ============================================================================
+// ACTION
+// ============================================================================
+
+.emptyState__action {
+  margin-top: $spacing-sm;
+}
+
+// ============================================================================
+// LIGHT MODE OVERRIDES
+// ============================================================================
+
+[data-theme='light'] {
+  .emptyState {
+    background: linear-gradient(
+      135deg,
+      rgba(10, 10, 15, 0.03),
+      rgba(10, 10, 15, 0.01)
+    );
+    border-color: rgba(10, 10, 15, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  .emptyState__icon {
+    background: rgba(10, 10, 15, 0.04);
+    animation: iconPulseGlowLight 3s ease-in-out infinite;
+  }
+
+  .emptyState__title {
+    color: #0a0a0f;
+  }
+
+  .emptyState__description {
+    color: #5a5350;
+  }
+}
+
+@keyframes iconPulseGlowLight {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba($color-medium-jungle, 0.06),
+                0 0 40px rgba($color-medium-jungle, 0.03);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba($color-medium-jungle, 0.12),
+                0 0 60px rgba($color-medium-jungle, 0.06);
+  }
+}

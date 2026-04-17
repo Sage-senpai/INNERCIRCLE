@@ -5,6 +5,7 @@
 
 import { create } from 'zustand';
 import { tokenMetricsClient, type TokenMetrics, type DexScreenerPair } from '@/lib/token-metrics/client';
+import { bagsAPI, type TokenLaunchFeedItem } from '@/lib/bags-api/client';
 import type { Chain } from '@/lib/locke/types';
 
 // Bags-launched tokens with known addresses for reliable data
@@ -85,10 +86,15 @@ interface IntelligenceState {
   activityLeaderboard: TokenActivityScore[];
   leaderboardLoading: boolean;
 
+  // Bags Token Launch Feed
+  tokenLaunchFeed: TokenLaunchFeedItem[];
+  tokenLaunchFeedLoading: boolean;
+
   // Actions
   fetchTokenMetrics: (tokenAddress: string, chain: Chain) => Promise<void>;
   fetchCommunityAnalytics: (communityId: string, tokenAddress: string, chain: Chain) => Promise<void>;
   fetchActivityLeaderboard: (tokenAddress: string, chain: Chain, limit?: number) => Promise<void>;
+  fetchTokenLaunchFeed: () => Promise<void>;
   clearCache: () => void;
 }
 
@@ -104,6 +110,9 @@ export const useIntelligenceStore = create<IntelligenceState>((set, get) => ({
   
   activityLeaderboard: [],
   leaderboardLoading: false,
+
+  tokenLaunchFeed: [],
+  tokenLaunchFeedLoading: false,
   
   fetchTokenMetrics: async (tokenAddress: string, chain: Chain) => {
     const cacheKey = `${chain}:${tokenAddress}`;
@@ -252,12 +261,28 @@ export const useIntelligenceStore = create<IntelligenceState>((set, get) => ({
     }
   },
   
+  fetchTokenLaunchFeed: async () => {
+    set({ tokenLaunchFeedLoading: true });
+
+    try {
+      const feed = await bagsAPI.getTokenLaunchFeed();
+      set({
+        tokenLaunchFeed: feed,
+        tokenLaunchFeedLoading: false,
+      });
+    } catch (error) {
+      console.error('Failed to fetch token launch feed:', error);
+      set({ tokenLaunchFeedLoading: false });
+    }
+  },
+
   clearCache: () => {
     set({
       tokenMetricsCache: new Map(),
       communityAnalytics: new Map(),
       selectedTokenMetrics: null,
-      activityLeaderboard: []
+      activityLeaderboard: [],
+      tokenLaunchFeed: [],
     });
   }
 }));

@@ -3,7 +3,7 @@
 -- ============================================================================
 
 -- Add parent_echo_id column to echoes table for threaded replies
-DO $
+DO $$
 BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM information_schema.columns
@@ -12,7 +12,7 @@ BEGIN
     ALTER TABLE echoes ADD COLUMN parent_echo_id UUID REFERENCES echoes(id) ON DELETE CASCADE;
     CREATE INDEX idx_echoes_parent ON echoes(parent_echo_id) WHERE parent_echo_id IS NOT NULL;
   END IF;
-END $;
+END $$;
 
 -- Create echo_likes table
 CREATE TABLE IF NOT EXISTS echo_likes (

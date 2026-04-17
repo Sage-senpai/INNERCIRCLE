@@ -164,11 +164,11 @@ CREATE TABLE relays (
 -- Orbits (follows)
 CREATE TABLE orbits (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  planet_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  center_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   satellite_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   created_at TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE(planet_id, satellite_id),
-  CHECK (planet_id != satellite_id)
+  UNIQUE(center_id, satellite_id),
+  CHECK (center_id != satellite_id)
 );
 
 -- Transmission threads (DM conversations)
@@ -221,7 +221,7 @@ CREATE INDEX idx_echoes_post ON echoes(post_id);
 CREATE INDEX idx_signals_post ON signals(post_id);
 CREATE INDEX idx_signals_user ON signals(user_id);
 CREATE INDEX idx_relays_post ON relays(post_id);
-CREATE INDEX idx_orbits_planet ON orbits(planet_id);
+CREATE INDEX idx_orbits_center ON orbits(center_id);
 CREATE INDEX idx_orbits_satellite ON orbits(satellite_id);
 CREATE INDEX idx_transmissions_thread ON transmissions(thread_id);
 CREATE INDEX idx_notifications_user ON notifications(user_id);
@@ -457,7 +457,7 @@ RETURNS TRIGGER AS $$
 BEGIN
   INSERT INTO notifications (user_id, type, title, message, link, actor_id)
   VALUES (
-    NEW.planet_id,
+    NEW.center_id,
     'follow',
     'New Follower',
     (SELECT username FROM users WHERE id = NEW.satellite_id) || ' started following you',

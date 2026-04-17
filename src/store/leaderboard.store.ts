@@ -130,97 +130,67 @@ export const useLeaderboardStore = create<LeaderboardState>((set, get) => ({
     try {
       const periodStart = getPeriodStartDate(period);
 
-      // Fetch users with their engagement metrics
-      let query = supabase
-        .from('users')
-        .select(`
-          id,
-          username,
-          display_name,
-          avatar_url,
-          wallet_address,
-          created_at
-        `)
-        .limit(100);
+      // Use single aggregated RPC call instead of N+1 queries
+      const { data, error: rpcError } = await supabase.rpc(
+        'get_engagement_leaderboard',
+        {
+          p_period_start: periodStart.toISOString(),
+          p_limit: 100,
+        }
+      );
 
-      const { data: users, error: usersError } = await query;
-
-      if (usersError) throw usersError;
-      if (!users || users.length === 0) {
+      if (rpcError) throw rpcError;
+      if (!data || data.length === 0) {
         set({ entries: [], topThree: [], isLoading: false, lastUpdated: new Date() });
         return;
       }
 
-      // Fetch engagement metrics for each user based on the selected metric and period
-      const entriesWithMetrics: LeaderboardEntry[] = await Promise.all(
-        users.map(async (user, index) => {
-          let metrics: LeaderboardEntry['metrics'] = {};
-
-          // Fetch post counts
-          const { count: postCount } = await supabase
-            .from('posts')
-            .select('*', { count: 'exact', head: true })
-            .eq('author_id', user.id)
-            .gte('created_at', periodStart.toISOString());
-
-          // Fetch signal counts (signals given)
-          const { count: signalCount } = await supabase
-            .from('signals')
-            .select('*', { count: 'exact', head: true })
-            .eq('user_id', user.id)
-            .gte('created_at', periodStart.toISOString());
-
-          // Fetch echo counts
-          const { count: echoCount } = await supabase
-            .from('echoes')
-            .select('*', { count: 'exact', head: true })
-            .eq('user_id', user.id)
-            .gte('created_at', periodStart.toISOString());
-
-          // Fetch relay counts
-          const { count: relayCount } = await supabase
-            .from('relays')
-            .select('*', { count: 'exact', head: true })
-            .eq('user_id', user.id)
-            .gte('created_at', periodStart.toISOString());
-
-          metrics = {
-            postCount: postCount || 0,
-            signalCount: signalCount || 0,
-            echoCount: echoCount || 0,
-            relayCount: relayCount || 0,
-            holdingsValue: 0, // Would need wallet integration
-            tradingVolume: 0, // Would need trading history
+      const entriesWithMetrics: LeaderboardEntry[] = data.map(
+        (row: {
+          user_id: string;
+          username: string;
+          display_name: string | null;
+          avatar_url: string | null;
+          wallet_address: string;
+          post_count: number;
+          signal_count: number;
+          echo_count: number;
+          relay_count: number;
+          engagement_score: number;
+        }, index: number) => {
+          const metrics: LeaderboardEntry['metrics'] = {
+            postCount: row.post_count,
+            signalCount: row.signal_count,
+            echoCount: row.echo_count,
+            relayCount: row.relay_count,
+            holdingsValue: 0,
+            tradingVolume: 0,
           };
 
           const entry: LeaderboardEntry = {
             rank: index + 1,
             user: {
-              id: user.id,
-              username: user.username,
-              displayName: user.display_name || undefined,
-              avatarUrl: user.avatar_url || undefined,
-              walletAddress: user.wallet_address,
+              id: row.user_id,
+              username: row.username,
+              displayName: row.display_name || undefined,
+              avatarUrl: row.avatar_url || undefined,
+              walletAddress: row.wallet_address,
             },
-            score: 0, // Calculated after
+            score: 0,
             change: 0,
             metrics,
-            lastActive: user.created_at,
+            lastActive: new Date().toISOString(),
           };
 
           entry.score = calculateScore(entry, metric);
           return entry;
-        })
+        }
       );
 
-      // Sort by score descending
+      // Re-sort by calculated score (matters when metric != 'engagement')
       entriesWithMetrics.sort((a, b) => b.score - a.score);
-
-      // Assign ranks after sorting
       entriesWithMetrics.forEach((entry, index) => {
         entry.rank = index + 1;
-        // Calculate change (would need previous rankings stored)
-        entry.change = Math.floor(Math.random() * 10) - 5; // Placeholder
       });
 
       const topThree = entriesWithMetrics.slice(0, 3);

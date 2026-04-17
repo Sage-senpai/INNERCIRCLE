@@ -154,6 +154,18 @@
   }
 }
 
+.gated__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+  justify-content: center;
+  margin-bottom: $spacing-lg;
+
+  @include responsive(mobile) {
+    margin-bottom: $spacing-md;
+  }
+}
+
 // ============================================================================
 // LIGHT MODE OVERRIDES
 // ============================================================================

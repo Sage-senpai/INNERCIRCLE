@@ -260,8 +260,9 @@ export class TokenMetricsClient {
   // ==========================================================================
 
   /**
-   * Get token price from Jupiter
-   * Endpoint: /price/v2?ids={tokenAddress}
+   * Get token price from Jupiter with a 3s timeout.
+   * Jupiter's price API can be slow/unavailable — treat it as an enhancement only.
+   * Falls back gracefully so DexScreener data is always used first.
    */
   async getJupiterPrice(tokenAddress: string): Promise<JupiterPriceData | null> {
     const cacheKey = `jup-price-${tokenAddress}`;
@@ -270,15 +271,22 @@ export class TokenMetricsClient {
 
     try {
       const url = `${JUPITER_PRICE_API}?ids=${tokenAddress}&showExtraInfo=true`;
-      const response = await this.fetchWithProxy<{ data: { [key: string]: JupiterPriceData } }>(url);
 
-      const priceData = response.data?.[tokenAddress];
+      // Race against a 3s timeout — Jupiter is enhancement only
+      const result = await Promise.race<{ data: { [key: string]: JupiterPriceData } } | null>([
+        this.fetchWithProxy<{ data: { [key: string]: JupiterPriceData } }>(url),
+        new Promise<null>((resolve) => setTimeout(() => resolve(null), 3000)),
+      ]);
+
+      if (!result) return null;
+
+      const priceData = result.data?.[tokenAddress];
       if (priceData) {
         this.setCache(cacheKey, priceData);
       }
       return priceData || null;
-    } catch (error) {
-      console.error('Jupiter price fetch failed:', error);
+    } catch {
+      // Jupiter failure is not an error — DexScreener handles it
       return null;
     }
   }

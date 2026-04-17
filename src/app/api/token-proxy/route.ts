@@ -42,16 +42,18 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 7000);
+
   try {
     const response = await fetch(targetUrl, {
       headers: {
         'Accept': 'application/json',
         'User-Agent': 'InnerCircle/1.0',
       },
-      next: {
-        revalidate: 60, // Cache for 60 seconds
-      },
+      signal: controller.signal,
     });
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       return NextResponse.json(
@@ -68,7 +70,16 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
+    clearTimeout(timeoutId);
     console.error('Token proxy error:', error);
+
+    if (error instanceof Error && error.name === 'AbortError') {
+      return NextResponse.json(
+        { error: 'Upstream API timed out', source: parsedUrl.host },
+        { status: 504 }
+      );
+    }
+
     return NextResponse.json(
       { error: 'Failed to fetch from upstream API' },
       { status: 502 }

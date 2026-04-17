@@ -17,6 +17,7 @@
 .tabs {
   @include glass-surface(0.05);
   background: black;
+  backdrop-filter: blur(20px);
   position: sticky;
   top: $header-height;
   z-index: $z-sticky - 1;
@@ -84,6 +85,7 @@
 .tab__label {
   font-size: $font-size-sm;
   font-weight: $font-weight-semibold;
+  font-variant-numeric: tabular-nums;
   
   @include responsive(mobile) {
     font-size: $font-size-xs;
@@ -96,7 +98,7 @@
   left: 50%;
   transform: translateX(-50%);
   width: 60%;
-  height: 3px;
+  height: 2px;
   background: $color-medium-jungle;
   border-radius: $radius-full;
   box-shadow: $shadow-glow-green;

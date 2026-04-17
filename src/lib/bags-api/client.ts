@@ -5,6 +5,7 @@
 // ============================================================================
 
 import { Chain } from '../locke/types';
+import { getAllSPLTokenBalances, getSPLTokenBalance } from '../solana/token-verification';
 
 // ============================================================================
 // API CONFIGURATION - Official Bags Public API V2
@@ -157,6 +158,31 @@ export interface TokenClaimStats {
   isCreator: boolean;
 }
 
+export interface TokenLaunchFeedItem {
+  tokenMint: string;
+  name: string;
+  symbol: string;
+  description?: string;
+  image?: string;
+  creator?: string;
+  createdAt?: string;
+  marketCap?: number;
+  lifetimeFees?: number;
+  // Pool-level data (from /bags/pools fallback)
+  virtualPool?: string;
+  isMigrated?: boolean;
+  holderCount?: number;
+  liquidity?: number;
+}
+
+export interface BagsPool {
+  tokenMint: string;
+  virtualPool: string;
+  isMigrated: boolean;
+  holderCount?: number;
+  liquidity?: number;
+}
+
 // ============================================================================
 // ERROR TYPES
 // ============================================================================
@@ -187,7 +213,7 @@ export class BagsAPI {
     // Use official API V2 base URL, remove any trailing slashes
     const envURL = process.env.NEXT_PUBLIC_BAGS_API_URL || BAGS_PUBLIC_API_V2;
     this.baseURL = envURL.replace(/\/+$/, '');
-    this.apiKey = apiKey || process.env.NEXT_PUBLIC_BAGS_API_KEY || '';
+    this.apiKey = apiKey || process.env.BAGS_API_KEY || process.env.NEXT_PUBLIC_BAGS_API_KEY || '';
     // Use proxy for browser requests to avoid CORS
     this.useProxy = typeof window !== 'undefined';
 
@@ -265,10 +291,6 @@ export class BagsAPI {
         endpoint
       );
     }
-  }
-
-  private getCacheKey(key: string): string {
-    return key;
   }
 
   private getCache<T>(key: string): T | null {
@@ -457,14 +479,144 @@ export class BagsAPI {
   }
 
   // ==========================================================================
-  // HOLDINGS API (Note: Bags API doesn't provide wallet holdings)
-  // These methods return empty/placeholder data
-  // For real holdings, integrate with Solana RPC or Helius
+  // TOKEN LAUNCH FEED & POOLS (Official SDK Endpoints)
   // ==========================================================================
 
   /**
-   * Get wallet holdings
-   * Note: Bags API doesn't provide this - returns empty for compatibility
+   * Get recent token launches from Bags.
+   * Tries /token-launch/feed first; falls back to /bags/pools if that endpoint
+   * is unavailable or returns an unexpected shape.
+   */
+  async getTokenLaunchFeed(): Promise<TokenLaunchFeedItem[]> {
+    const cacheKey = 'token-launch-feed';
+    const cached = this.getCache<TokenLaunchFeedItem[]>(cacheKey);
+    if (cached) return cached;
+
+    // --- Try the dedicated feed endpoint ---
+    try {
+      const raw = await this.request<unknown>('/token-launch/feed');
+
+      // Normalise: the endpoint may return array directly, or wrapped in data/response
+      let items: unknown[] = [];
+      if (Array.isArray(raw)) {
+        items = raw;
+      } else if (raw && typeof raw === 'object') {
+        const r = raw as Record<string, unknown>;
+        if (Array.isArray(r.data)) items = r.data;
+        else if (Array.isArray(r.response)) items = r.response;
+        else if (Array.isArray(r.launches)) items = r.launches;
+        else if (Array.isArray(r.tokens)) items = r.tokens;
+      }
+
+      if (items.length > 0) {
+        const feed: TokenLaunchFeedItem[] = items
+          .map((item: unknown) => {
+            const i = item as Record<string, unknown>;
+            const creatorRaw = i.creator;
+            const creator =
+              creatorRaw && typeof creatorRaw === 'object'
+                ? String((creatorRaw as Record<string, unknown>).wallet || '')
+                : creatorRaw
+                ? String(creatorRaw)
+                : undefined;
+
+            return {
+              tokenMint: String(i.tokenMint || i.mint || i.address || ''),
+              name: String(i.name || i.tokenName || ''),
+              symbol: String(i.symbol || i.tokenSymbol || '—'),
+              description: i.description ? String(i.description) : undefined,
+              image:
+                i.image || i.imageUrl || i.logoUri
+                  ? String(i.image ?? i.imageUrl ?? i.logoUri)
+                  : undefined,
+              creator,
+              createdAt: i.createdAt ? String(i.createdAt) : undefined,
+              marketCap: typeof i.marketCap === 'number' ? i.marketCap : undefined,
+              lifetimeFees: typeof i.lifetimeFees === 'number' ? i.lifetimeFees : undefined,
+            };
+          })
+          .filter((item) => item.tokenMint.length > 0);
+
+        this.setCache(cacheKey, feed);
+        return feed;
+      }
+    } catch {
+      // Fall through to pools fallback
+    }
+
+    // --- Fallback: derive feed from /bags/pools ---
+    return this.getTokenLaunchFeedFromPools();
+  }
+
+  private async getTokenLaunchFeedFromPools(): Promise<TokenLaunchFeedItem[]> {
+    try {
+      const pools = await this.getBagsPools();
+      const feed: TokenLaunchFeedItem[] = pools.slice(0, 50).map((pool) => ({
+        tokenMint: pool.tokenMint,
+        name: `${pool.tokenMint.slice(0, 6)}…${pool.tokenMint.slice(-4)}`,
+        symbol: pool.isMigrated ? 'GRADUATED' : 'LIVE',
+        description: pool.isMigrated
+          ? 'Graduated — trading on open market'
+          : 'Active bonding curve on Bags',
+        virtualPool: pool.virtualPool,
+        isMigrated: pool.isMigrated,
+        holderCount: pool.holderCount,
+        liquidity: pool.liquidity,
+      }));
+      return feed;
+    } catch {
+      return [];
+    }
+  }
+
+  /**
+   * Get all Bags bonding curve pools
+   */
+  async getBagsPools(): Promise<BagsPool[]> {
+    const cacheKey = 'bags-pools';
+    const cached = this.getCache<BagsPool[]>(cacheKey);
+    if (cached) return cached;
+
+    try {
+      const response = await this.request<BagsPool[]>('/bags/pools');
+      const pools = Array.isArray(response) ? response : [];
+      this.setCache(cacheKey, pools);
+      return pools;
+    } catch (error) {
+      console.error('Failed to get Bags pools:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Get pool for a specific token mint
+   */
+  async getBagsPool(tokenMint: string): Promise<BagsPool | null> {
+    const cacheKey = `bags-pool-${tokenMint}`;
+    const cached = this.getCache<BagsPool>(cacheKey);
+    if (cached) return cached;
+
+    try {
+      const response = await this.request<BagsPool>(
+        `/bags/pool/${tokenMint}`
+      );
+      this.setCache(cacheKey, response);
+      return response;
+    } catch (error) {
+      if (error instanceof BagsAPIError && (error.statusCode === 400 || error.statusCode === 404)) {
+        return null;
+      }
+      console.error('Failed to get Bags pool:', error);
+      return null;
+    }
+  }
+
+  // ==========================================================================
+  // HOLDINGS API (via Solana RPC - getParsedTokenAccountsByOwner)
+  // ==========================================================================
+
+  /**
+   * Get wallet holdings via Solana RPC
    */
   async getHoldings(
     walletAddress: string,
@@ -478,18 +630,40 @@ export class BagsAPI {
       if (cached) return cached;
     }
 
-    // Bags API doesn't have holdings endpoint
-    // Return empty response for compatibility
-    const emptyResponse: BagsHoldingsResponse = {
-      wallet_address: walletAddress,
-      chain,
-      holdings: [],
-      total_value_usd: 0,
-      fetched_at: new Date().toISOString(),
-    };
+    try {
+      const tokenBalances = await getAllSPLTokenBalances(walletAddress);
 
-    this.setCache(cacheKey, emptyResponse);
-    return emptyResponse;
+      const holdings: BagsHolding[] = tokenBalances.map((t) => ({
+        token_address: t.tokenAddress,
+        token_symbol: '',
+        token_name: '',
+        balance: t.uiAmount,
+        balance_usd: 0,
+        chain,
+        decimals: t.decimals,
+        last_updated: new Date().toISOString(),
+      }));
+
+      const response: BagsHoldingsResponse = {
+        wallet_address: walletAddress,
+        chain,
+        holdings,
+        total_value_usd: 0,
+        fetched_at: new Date().toISOString(),
+      };
+
+      this.setCache(cacheKey, response);
+      return response;
+    } catch (error) {
+      console.error('Failed to fetch holdings via Solana RPC:', error);
+      return {
+        wallet_address: walletAddress,
+        chain,
+        holdings: [],
+        total_value_usd: 0,
+        fetched_at: new Date().toISOString(),
+      };
+    }
   }
 
   /**
@@ -580,15 +754,18 @@ export class BagsAPI {
   // ==========================================================================
 
   async verifyOwnership(
-    _walletAddress: string,
-    _tokenAddress: string,
+    walletAddress: string,
+    tokenAddress: string,
     _chain: Chain,
-    _minimumBalance?: number
+    minimumBalance?: number
   ): Promise<boolean> {
-    // Without holdings data, we can't verify ownership
-    // For real implementation, use Solana RPC token accounts
-    console.warn('Token ownership verification requires Solana RPC integration');
-    return true; // Placeholder - allow access
+    try {
+      const balance = await getSPLTokenBalance(walletAddress, tokenAddress);
+      return balance >= (minimumBalance ?? 0);
+    } catch (error) {
+      console.error('Token ownership verification failed:', error);
+      return false;
+    }
   }
 
   async getTokenHolding(

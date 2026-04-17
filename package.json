@@ -25,6 +25,7 @@
     "react-dom": "19.2.3",
     "recharts": "^3.6.0",
     "sass": "^1.97.1",
+    "tweetnacl": "^1.0.3",
     "zustand": "^5.0.9"
   },
   "devDependencies": {

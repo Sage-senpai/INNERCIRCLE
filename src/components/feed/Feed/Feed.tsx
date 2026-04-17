@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Post } from '../Post/Post';
 import { PostComposer } from '../PostComposer/PostComposer';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner/LoadingSpinner';
+import { EmptyState } from '@/components/ui/EmptyState/EmptyState';
 import { FloatingActionButton } from '@/components/navigation/FloatingActionButton/FloatingActionButton';
 import { supabase } from '@/lib/supabase/client';
 import { fetchPosts, createPost, createPostWithGating } from '@/lib/supabase/actions';
@@ -350,6 +351,24 @@ export function Feed({ type = 'home', communityId, authorId }: FeedProps) {
           >
             <p>You&apos;ve reached the end</p>
           </motion.div>
+        )}
+
+        {!isLoading && posts.length === 0 && (
+          <EmptyState
+            icon="📡"
+            title="No broadcasts yet"
+            description="Be the first to post in this feed. Share your alpha."
+            action={
+              type === 'home' && composerRef.current
+                ? {
+                    label: 'Create Post',
+                    onClick: () => {
+                      composerRef.current?.scrollIntoView({ behavior: 'smooth' });
+                    },
+                  }
+                : undefined
+            }
+          />
         )}
       </div>
 

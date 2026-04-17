@@ -14,9 +14,11 @@ import { Avatar } from '@/components/ui/Avatar/Avatar';
 import { useIntelligenceStore, SUPPORTED_TOKENS, TokenActivityScore } from '@/store/intelligence.store';
 import { TrendUpIcon, TrendDownIcon } from '@/components/icons';
 import type { TokenMetrics } from '@/lib/token-metrics/client';
+import type { TokenLaunchFeedItem } from '@/lib/bags-api/client';
+import { CreatorFeeDashboard } from '@/components/communities/CreatorFeeDashboard/CreatorFeeDashboard';
 import styles from './page.module.scss';
 
-type Tab = 'token-metrics' | 'community-activity' | 'activity-leaderboard';
+type Tab = 'token-metrics' | 'bags-launches' | 'creator-fees' | 'community-activity' | 'activity-leaderboard';
 
 export default function IntelligencePage() {
   const [activeTab, setActiveTab] = useState<Tab>('token-metrics');
@@ -28,8 +30,11 @@ export default function IntelligencePage() {
     tokenMetricsLoading,
     activityLeaderboard,
     leaderboardLoading,
+    tokenLaunchFeed,
+    tokenLaunchFeedLoading,
     fetchTokenMetrics,
     fetchActivityLeaderboard,
+    fetchTokenLaunchFeed,
   } = useIntelligenceStore();
 
   const handleTokenSelect = useCallback(async (address: string, chain: 'solana') => {
@@ -58,7 +63,7 @@ export default function IntelligencePage() {
     <>
       <PageHeader
         title="Market Intelligence"
-        subtitle="Real-time token analytics powered by DexScreener + Jupiter"
+        subtitle="Real-time token analytics powered by DexScreener + Bags API"
       />
 
       <div className={styles.intelligence}>
@@ -78,6 +83,18 @@ export default function IntelligencePage() {
               onClick={() => setActiveTab('token-metrics')}
             >
               Token Metrics
+            </Button>
+            <Button
+              variant={activeTab === 'bags-launches' ? 'primary' : 'ghost'}
+              onClick={() => setActiveTab('bags-launches')}
+            >
+              Bags Launches
+            </Button>
+            <Button
+              variant={activeTab === 'creator-fees' ? 'primary' : 'ghost'}
+              onClick={() => setActiveTab('creator-fees')}
+            >
+              Creator Fees
             </Button>
             <Button
               variant={activeTab === 'community-activity' ? 'primary' : 'ghost'}
@@ -124,6 +141,8 @@ export default function IntelligencePage() {
           <div className={styles.section__header}>
             <h2 className={styles.section__title}>
               {activeTab === 'token-metrics' && 'Token Metrics'}
+              {activeTab === 'bags-launches' && 'Recently Launched on Bags'}
+              {activeTab === 'creator-fees' && 'Creator Fee Revenue'}
               {activeTab === 'community-activity' && 'Community Activity'}
               {activeTab === 'activity-leaderboard' && 'Activity Leaderboard'}
             </h2>
@@ -141,6 +160,39 @@ export default function IntelligencePage() {
                     metrics={selectedTokenMetrics}
                     loading={tokenMetricsLoading}
                   />
+                </motion.div>
+              )}
+
+              {activeTab === 'bags-launches' && (
+                <motion.div
+                  key="bags-launches"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                >
+                  <BagsLaunchFeedView
+                    feed={tokenLaunchFeed}
+                    loading={tokenLaunchFeedLoading}
+                    onLoad={fetchTokenLaunchFeed}
+                  />
+                </motion.div>
+              )}
+
+              {activeTab === 'creator-fees' && (
+                <motion.div
+                  key="creator-fees"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                >
+                  {selectedToken ? (
+                    <CreatorFeeDashboard tokenMint={selectedToken} />
+                  ) : (
+                    <div className={styles.view__empty}>
+                      <span className={styles.view__empty_icon}>💰</span>
+                      <p>Select a Bags token to view creator fee revenue</p>
+                    </div>
+                  )}
                 </motion.div>
               )}
 
@@ -321,6 +373,122 @@ function ActivityLeaderboardView({
             <div className={styles.leaderboard__score}>
               <div className={styles.leaderboard__score_value}>{Math.floor(entry.totalScore).toLocaleString()}</div>
               <div className={styles.leaderboard__score_label}>score</div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// BAGS LAUNCH FEED VIEW
+function BagsLaunchFeedView({
+  feed,
+  loading,
+  onLoad,
+}: {
+  feed: TokenLaunchFeedItem[];
+  loading: boolean;
+  onLoad: () => void;
+}) {
+  useEffect(() => {
+    if (feed.length === 0 && !loading) {
+      onLoad();
+    }
+  }, [feed.length, loading, onLoad]);
+
+  if (loading) {
+    return (
+      <div className={styles.view__loading}>
+        <LoadingSpinner size="lg" variant="lock" />
+        <p>Loading Bags token launches...</p>
+      </div>
+    );
+  }
+
+  if (!feed || feed.length === 0) {
+    return (
+      <div className={styles.view__empty}>
+        <span className={styles.view__empty_icon}>🚀</span>
+        <h3>No Recent Launches</h3>
+        <p>Check back soon for new tokens launched on Bags</p>
+        <Button variant="ghost" onClick={onLoad}>Refresh</Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.leaderboard}>
+      <div className={styles.leaderboard__header}>
+        <h3>Recently Launched on Bags</h3>
+        <p>New tokens launched via the Bags platform</p>
+      </div>
+
+      <div className={styles.leaderboard__divider} />
+
+      <div className={styles.leaderboard__list}>
+        {feed.map((item, index) => (
+          <motion.div
+            key={item.tokenMint || index}
+            className={styles.leaderboard__entry}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: index * 0.03 }}
+          >
+            <div className={styles.leaderboard__rank}>
+              {index < 3 ? ['🥇', '🥈', '🥉'][index] : `#${index + 1}`}
+            </div>
+            {item.image ? (
+              <Avatar src={item.image} alt={item.symbol || item.name} size="md" />
+            ) : (
+              <div className={styles.leaderboard__avatar_placeholder}>
+                {(item.symbol || '?')[0]}
+              </div>
+            )}
+            <div className={styles.leaderboard__user}>
+              <div className={styles.leaderboard__username}>
+                {item.symbol && item.symbol !== 'LIVE' && item.symbol !== 'GRADUATED'
+                  ? item.symbol
+                  : `${item.tokenMint.slice(0, 6)}…${item.tokenMint.slice(-4)}`}
+                {item.isMigrated !== undefined && (
+                  <span className={styles.leaderboard__badge}>
+                    {item.isMigrated ? '✓ Graduated' : '⚡ Live'}
+                  </span>
+                )}
+              </div>
+              <div className={styles.leaderboard__stats}>
+                {item.name && item.name !== item.symbol ? item.name : item.description || ''}
+              </div>
+              {item.creator && (
+                <div className={styles.leaderboard__volume}>
+                  Creator: {item.creator.slice(0, 4)}…{item.creator.slice(-4)}
+                </div>
+              )}
+              {item.holderCount !== undefined && (
+                <div className={styles.leaderboard__volume}>
+                  Holders: {item.holderCount.toLocaleString()}
+                </div>
+              )}
+            </div>
+            <div className={styles.leaderboard__score}>
+              {item.marketCap !== undefined && item.marketCap > 0 ? (
+                <>
+                  <div className={styles.leaderboard__score_value}>{formatNumber(item.marketCap)}</div>
+                  <div className={styles.leaderboard__score_label}>mkt cap</div>
+                </>
+              ) : item.liquidity !== undefined && item.liquidity > 0 ? (
+                <>
+                  <div className={styles.leaderboard__score_value}>{formatNumber(item.liquidity)}</div>
+                  <div className={styles.leaderboard__score_label}>liquidity</div>
+                </>
+              ) : (
+                <>
+                  <div className={styles.leaderboard__score_value}>
+                    {item.tokenMint.slice(0, 4)}…{item.tokenMint.slice(-4)}
+                  </div>
+                  <div className={styles.leaderboard__score_label}>mint</div>
+                </>
+              )}
             </div>
           </motion.div>
         ))}

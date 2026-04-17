@@ -364,6 +364,98 @@
 }
 
 // ============================================================================
+// WAITLIST FORM
+// ============================================================================
+
+.transmissions__waitlist_form {
+  display: flex;
+  gap: $spacing-sm;
+  max-width: 480px;
+  margin: 0 auto $spacing-3xl;
+
+  @include responsive(mobile) {
+    flex-direction: column;
+    margin-bottom: $spacing-2xl;
+  }
+}
+
+.transmissions__waitlist_input {
+  flex: 1;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $radius-md;
+  border: 1px solid rgba($color-frozen-water, 0.2);
+  background: rgba($color-frozen-water, 0.05);
+  color: $color-text-primary;
+  font-size: $font-size-sm;
+  outline: none;
+  @include transition(border-color, background);
+
+  &::placeholder {
+    color: $color-text-secondary;
+  }
+
+  &:focus {
+    border-color: $color-medium-jungle;
+    background: rgba($color-frozen-water, 0.08);
+  }
+}
+
+.transmissions__waitlist_button {
+  padding: $spacing-sm $spacing-xl;
+  border-radius: $radius-md;
+  border: none;
+  background: $color-medium-jungle;
+  color: #fff;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  white-space: nowrap;
+  @include transition(background);
+
+  &:hover {
+    background: darken($color-medium-jungle, 5%);
+  }
+}
+
+.transmissions__waitlist_success {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  max-width: 480px;
+  margin: 0 auto $spacing-3xl;
+  padding: $spacing-md $spacing-lg;
+  border-radius: $radius-md;
+  background: rgba($color-medium-jungle, 0.1);
+  border: 1px solid rgba($color-medium-jungle, 0.3);
+
+  p {
+    margin: 0;
+    color: $color-medium-jungle;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+  }
+
+  @include responsive(mobile) {
+    margin-bottom: $spacing-2xl;
+  }
+}
+
+.transmissions__waitlist_success_icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: $color-medium-jungle;
+  color: #fff;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  flex-shrink: 0;
+}
+
+// ============================================================================
 // LIGHT MODE OVERRIDES
 // ============================================================================
 
@@ -477,5 +569,41 @@
 
   .transmissions__feature_description {
     color: #5a5350;
+  }
+
+  .transmissions__waitlist_input {
+    background: #ffffff;
+    border-color: rgba(10, 10, 15, 0.15);
+    color: #0a0a0f;
+
+    &::placeholder {
+      color: #5a5350;
+    }
+
+    &:focus {
+      border-color: #16a34a;
+      background: #ffffff;
+    }
+  }
+
+  .transmissions__waitlist_button {
+    background: #16a34a;
+
+    &:hover {
+      background: darken(#16a34a, 5%);
+    }
+  }
+
+  .transmissions__waitlist_success {
+    background: rgba(22, 163, 74, 0.08);
+    border-color: rgba(22, 163, 74, 0.25);
+
+    p {
+      color: #16a34a;
+    }
+  }
+
+  .transmissions__waitlist_success_icon {
+    background: #16a34a;
   }
 }

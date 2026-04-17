@@ -6,7 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 const BAGS_API_BASE = (process.env.NEXT_PUBLIC_BAGS_API_URL || 'https://public-api-v2.bags.fm/api/v1').replace(/\/+$/, '');
-const BAGS_API_KEY = process.env.NEXT_PUBLIC_BAGS_API_KEY || '';
+const BAGS_API_KEY = process.env.BAGS_API_KEY || process.env.NEXT_PUBLIC_BAGS_API_KEY || '';
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -45,7 +45,14 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    return NextResponse.json(data);
+    // Cache stable endpoints (creators, lifetime fees, pools) for 5 minutes
+    const cacheablePatterns = ['/token-launch/creator', '/token-launch/lifetime-fees', '/bags/pool', '/bags/pools'];
+    const isCacheable = cacheablePatterns.some(p => normalizedEndpoint.includes(p));
+    const headers: Record<string, string> = isCacheable
+      ? { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=60' }
+      : {};
+
+    return NextResponse.json(data, { headers });
   } catch (error) {
     console.error('Bags API proxy error:', error);
     return NextResponse.json(

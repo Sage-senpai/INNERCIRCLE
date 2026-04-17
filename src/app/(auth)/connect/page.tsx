@@ -12,7 +12,7 @@ import { WalletManager, type WalletAdapter } from '@/lib/wallets/adapter';
 import { useAuthStore } from '@/store/auth.store';
 import { getOrCreateUserByWallet, getUserWithLinkedWallets } from '@/lib/supabase/actions';
 import { LockIcon } from '@/components/locke/LockIcon/LockIcon';
-import { PhantomIcon, SolflareIcon, MetaMaskIcon } from '@/components/icons';
+import { PhantomIcon, SolflareIcon } from '@/components/icons';
 import { ThemeToggle } from '@/components/ui/ThemeToggle/ThemeToggle';
 import styles from './page.module.scss';
 
@@ -69,6 +69,38 @@ export default function LandingPage() {
       // Connect wallet
       const connection = await walletManager.connect(adapter);
       console.log('Wallet connected:', connection.address);
+
+      // Verify wallet ownership via message signing (Solana wallets only)
+      if (connection.chain === 'solana') {
+        try {
+          const nonceRes = await fetch('/api/auth/verify-wallet');
+          const { nonce, message } = await nonceRes.json();
+
+          const signature = await walletManager.signMessage(adapter, message);
+
+          const verifyRes = await fetch('/api/auth/verify-wallet', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              walletAddress: connection.address,
+              nonce,
+              signature,
+            }),
+          });
+
+          const verifyData = await verifyRes.json();
+          if (!verifyData.verified) {
+            throw new Error(verifyData.error || 'Wallet verification failed');
+          }
+          console.log('Wallet ownership verified');
+        } catch (sigError: any) {
+          // User rejected the signature request
+          if (sigError?.code === 4001 || sigError?.message?.includes('User rejected')) {
+            throw new Error('Signature rejected. Please sign the message to verify wallet ownership.');
+          }
+          throw sigError;
+        }
+      }
 
       // Use multi-wallet system to get or create user
       const result = await getOrCreateUserByWallet(connection.address);
@@ -275,22 +307,6 @@ export default function LandingPage() {
                   )}
                 </motion.button>
 
-                <motion.button
-                  className={`${styles.wallet} ${styles['wallet--ethereum']}`}
-                  onClick={() => handleConnect('metamask')}
-                  disabled={isConnecting}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3 }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <MetaMaskIcon />
-                  <span>MetaMask</span>
-                  {connectingWallet === 'metamask' && (
-                    <span className={styles.wallet__badge}>Connecting...</span>
-                  )}
-                </motion.button>
               </div>
 
               <AnimatePresence>

@@ -3,12 +3,14 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '@/store/auth.store';
 import { useLockeStore } from '@/store/locke.store';
 import { GateRule, GateEvaluation } from '@/lib/locke/types';
+import { lockeEngine } from '@/lib/locke/engine';
 import { LockIcon } from '../LockIcon/LockIcon';
+import { GateBadge } from '../GateBadge/GateBadge';
 import { Button } from '@/components/ui/Button/Button';
 import styles from './GatedContent.module.scss';
 
@@ -21,16 +23,12 @@ interface GatedContentProps {
 
 export function GatedContent({ rules, children, teaser, onUnlock }: GatedContentProps) {
   const { user } = useAuthStore();
-  const { context } = useLockeStore();
+  const { context, refreshContext } = useLockeStore();
   const [evaluation, setEvaluation] = useState<GateEvaluation | null>(null);
   const [isEvaluating, setIsEvaluating] = useState(true);
   const [isUnlocking, setIsUnlocking] = useState(false);
 
-  useEffect(() => {
-    evaluateAccess();
-  }, [rules, context]);
-
-  async function evaluateAccess() {
+  const evaluateAccess = useCallback(async () => {
     if (!context || !user) {
       setEvaluation({ granted: false, reason: 'Connect wallet to view' });
       setIsEvaluating(false);
@@ -38,30 +36,34 @@ export function GatedContent({ rules, children, teaser, onUnlock }: GatedContent
     }
 
     setIsEvaluating(true);
-    
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    const mockEvaluation: GateEvaluation = {
-      granted: false,
-      reason: 'Insufficient token balance',
-      missingRequirements: [
-        'Hold at least 1,000 MEME tokens',
-        'Achieve whale tier status'
-      ],
-      userBalance: 500,
-      requiredBalance: 1000
-    };
 
-    setEvaluation(mockEvaluation);
-    setIsEvaluating(false);
+    try {
+      const result = await lockeEngine.evaluateRules(rules, context);
+      setEvaluation(result);
 
-    if (mockEvaluation.granted && onUnlock) {
-      onUnlock();
+      if (result.granted && onUnlock) {
+        onUnlock();
+      }
+    } catch (error) {
+      console.error('Gate evaluation failed:', error);
+      setEvaluation({
+        granted: false,
+        reason: 'Failed to verify access. Try refreshing.',
+      });
+    } finally {
+      setIsEvaluating(false);
     }
-  }
+  }, [rules, context, user, onUnlock]);
+
+  useEffect(() => {
+    evaluateAccess();
+  }, [evaluateAccess]);
 
   const handleRefresh = async () => {
     setIsUnlocking(true);
+    if (user?.walletAddress) {
+      await refreshContext(user.walletAddress, 'solana');
+    }
     await evaluateAccess();
     setIsUnlocking(false);
   };
@@ -154,13 +156,33 @@ export function GatedContent({ rules, children, teaser, onUnlock }: GatedContent
             </motion.div>
           )}
           
+          {/* Token gate badges with "Get Token" CTA */}
+          {rules.filter(r => r.tokenAddress).length > 0 && (
+            <motion.div
+              className={styles.gated__badges}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.45 }}
+            >
+              {rules.filter(r => r.tokenAddress).map((rule) => (
+                <GateBadge
+                  key={rule.id}
+                  tokenAddress={rule.tokenAddress!}
+                  requiredBalance={rule.minimumBalance}
+                  userBalance={evaluation?.userBalance}
+                  chain={rule.chain}
+                />
+              ))}
+            </motion.div>
+          )}
+
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
           >
-            <Button 
-              variant="locked" 
+            <Button
+              variant="locked"
               onClick={handleRefresh}
               isLoading={isUnlocking}
             >
