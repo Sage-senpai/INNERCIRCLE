@@ -157,7 +157,7 @@ export class TokenMetricsClient {
 
     if (!response.ok) {
       throw new TokenMetricsError(
-        `API request failed: ${response.statusText}`,
+        `API request failed: ${response.status} ${response.statusText}`,
         response.status
       );
     }
@@ -203,17 +203,22 @@ export class TokenMetricsClient {
     if (cached) return cached;
 
     try {
-      // Use the correct DexScreener endpoint for token data
       const url = `${DEXSCREENER_API}/tokens/v1/${chainId}/${tokenAddress}`;
       const response = await this.fetchWithProxy<DexScreenerPair[] | { pairs?: DexScreenerPair[] }>(url);
-
-      // DexScreener returns array directly for this endpoint
       const pairs = Array.isArray(response) ? response : (response.pairs || []);
       this.setCache(cacheKey, pairs);
       return pairs;
     } catch (error) {
-      console.error('DexScreener pairs fetch failed:', error);
-      // Try alternative endpoint
+      // If it was a timeout (504) don't fire a second request — it will also be slow.
+      // Only try the legacy endpoint on non-timeout failures (e.g. 404, network error).
+      const isTimeout =
+        error instanceof Error &&
+        (error.message.includes('504') || error.message.includes('timed out'));
+
+      if (isTimeout) {
+        return [];
+      }
+
       try {
         const altUrl = `${DEXSCREENER_API}/latest/dex/tokens/${tokenAddress}`;
         const altResponse = await this.fetchWithProxy<{ pairs?: DexScreenerPair[] }>(altUrl);

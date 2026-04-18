@@ -52,6 +52,8 @@ export async function GET(request: NextRequest) {
         'User-Agent': 'InnerCircle/1.0',
       },
       signal: controller.signal,
+      // Cache successful responses in Next.js data cache — avoids cold hits on repeat requests
+      next: { revalidate: 60 },
     });
     clearTimeout(timeoutId);
 
@@ -71,15 +73,17 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     clearTimeout(timeoutId);
-    console.error('Token proxy error:', error);
 
     if (error instanceof Error && error.name === 'AbortError') {
+      // Expected — upstream was too slow. Log at warn level, not error.
+      console.warn(`Token proxy timeout: ${parsedUrl.host} did not respond within 7s`);
       return NextResponse.json(
         { error: 'Upstream API timed out', source: parsedUrl.host },
         { status: 504 }
       );
     }
 
+    console.error('Token proxy error:', error);
     return NextResponse.json(
       { error: 'Failed to fetch from upstream API' },
       { status: 502 }
