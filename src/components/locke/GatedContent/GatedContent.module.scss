@@ -116,12 +116,12 @@
 }
 
 .gated__requirements_title {
-  font-weight: $font-weight-semibold;
-  color: $color-text-primary;
+  font-weight: $font-weight-bold;
+  color: $color-text-muted;
   margin-bottom: $spacing-sm;
-  font-size: $font-size-sm;
+  font-size: 0.6875rem;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.08em;
   
   @include responsive(mobile) {
     font-size: $font-size-xs;

@@ -140,9 +140,9 @@
   justify-content: center;
   width: 40px;
   height: 40px;
-  border-radius: 50%;
+  border-radius: $radius-md;
   color: rgba(255, 255, 255, 0.6);
-  transition: all 0.2s ease;
+  transition: background 0.15s ease, color 0.15s ease;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -169,15 +169,10 @@
   &:hover {
     background: rgba(255, 255, 255, 0.1);
     color: #ffffff;
-    transform: scale(1.05);
 
     [data-theme='light'] & {
       background: rgba(10, 10, 15, 0.08);
       color: #0a0a0f;
     }
-  }
-
-  &:active {
-    transform: scale(0.95);
   }
 }

@@ -24,8 +24,8 @@
 // ============================================================================
 
 .section {
-  @include glass-surface(0.03);
-  border-radius: $radius-lg;
+  background: rgba($color-frozen-water, 0.04);
+  border-radius: $radius-xl;
   padding: $spacing-xl;
   border: 1px solid $color-border;
 
@@ -57,8 +57,8 @@
 }
 
 .section__title {
-  font-size: $font-size-xl;
-  font-weight: $font-weight-bold;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
   color: $color-text-primary;
   margin: 0;
 
@@ -115,22 +115,20 @@
 }
 
 .selector__token {
-  @include glass-surface(0.05);
+  background: rgba($color-frozen-water, 0.05);
+  border: 1px solid $color-border;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: $spacing-xs;
   padding: $spacing-lg $spacing-md;
   border-radius: $radius-md;
-  border: 1px solid transparent;
-  @include transition(background, border-color, transform, box-shadow);
+  @include transition-fast(background, border-color, box-shadow);
   cursor: pointer;
 
   &:hover {
     background: rgba($color-frozen-water, 0.08);
-    border-color: rgba($color-frozen-water, 0.2);
-    transform: translateY(-2px);
-    box-shadow: $shadow-md;
+    border-color: $color-border-hover;
   }
 
   &--active {
@@ -425,18 +423,18 @@
 // ============================================================================
 
 .metric_card {
-  @include glass-surface(0.05);
+  background: rgba($color-frozen-water, 0.04);
+  border: 1px solid $color-border;
   display: flex;
   align-items: center;
   gap: $spacing-md;
   padding: $spacing-lg;
   border-radius: $radius-md;
-  border: 1px solid transparent;
-  @include transition(background, transform, border-color);
+  @include transition-fast(background, border-color);
 
   &:hover {
     background: rgba($color-frozen-water, 0.08);
-    transform: translateY(-2px);
+    border-color: $color-border-hover;
   }
 
   &--up {
@@ -468,10 +466,10 @@
 }
 
 .metric_card__label {
-  font-size: $font-size-xs;
-  color: $color-text-secondary;
+  font-size: 0.6875rem;
+  color: $color-text-muted;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.08em;
   margin-bottom: 4px;
 
   [data-theme='light'] & {
@@ -557,14 +555,14 @@
 }
 
 .leaderboard__entry {
-  @include glass-surface(0.03);
+  background: rgba($color-frozen-water, 0.04);
+  border: 1px solid $color-border;
   display: flex;
   align-items: center;
   gap: $spacing-md;
   padding: $spacing-md $spacing-lg;
   border-radius: $radius-md;
-  border: 1px solid transparent;
-  @include transition(background, transform, border-color);
+  @include transition-fast(background, border-color);
 
   @include responsive(mobile) {
     padding: $spacing-sm $spacing-md;
@@ -573,7 +571,7 @@
 
   &:hover {
     background: rgba($color-frozen-water, 0.08);
-    transform: translateX(4px);
+    border-color: $color-border-hover;
   }
 
   &--top1 {

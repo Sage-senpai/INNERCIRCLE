@@ -65,8 +65,9 @@
 }
 
 .feed__empty {
-  @include glass-surface(0.05);
-  border-radius: $radius-lg;
+  background: rgba($color-frozen-water, 0.04);
+  border: 1px solid $color-border;
+  border-radius: $radius-xl;
   padding: $spacing-4xl;
   text-align: center;
   @include flex-column;

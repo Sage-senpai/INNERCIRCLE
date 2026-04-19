@@ -18,8 +18,9 @@
 // ============================================================================
 
 .settings__section {
-  @include glass-surface(0.05);
-  border-radius: $radius-lg;
+  background: rgba($color-frozen-water, 0.04);
+  border: 1px solid $color-border;
+  border-radius: $radius-xl;
   padding: $spacing-xl;
   margin-bottom: $spacing-lg;
   
@@ -35,8 +36,8 @@
 }
 
 .settings__section_title {
-  font-size: $font-size-xl;
-  font-weight: $font-weight-bold;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
   color: $color-text-primary;
   margin-bottom: $spacing-lg;
   padding-bottom: $spacing-md;
@@ -67,16 +68,12 @@
 
 .settings__label {
   display: block;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-semibold;
-  color: $color-text-secondary;
+  font-size: 0.6875rem;
+  font-weight: $font-weight-bold;
+  color: $color-text-muted;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.08em;
   margin-bottom: $spacing-sm;
-  
-  @include responsive(mobile) {
-    font-size: $font-size-xs;
-  }
 }
 
 .settings__value {
@@ -152,11 +149,11 @@
   border: 1px solid $color-border;
   color: $color-medium-jungle;
   padding: $spacing-xs $spacing-md;
-  border-radius: $radius-sm;
+  border-radius: $radius-md;
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
   cursor: pointer;
-  @include transition(all);
+  @include transition-fast(background, border-color);
 
   &:hover {
     background: rgba($color-medium-jungle, 0.1);

@@ -88,19 +88,12 @@ export function Sidebar() {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: (sectionIdx * 0.1) + (itemIdx * 0.05) }}
                     >
-                      <Link 
+                      <Link
                         href={item.href}
                         className={`${styles.sidebar__link} ${isActive ? styles['sidebar__link--active'] : ''}`}
                       >
                         <Icon className={styles.sidebar__icon} />
                         <span className={styles.sidebar__label}>{item.label}</span>
-                        {isActive && (
-                          <motion.div 
-                            className={styles.sidebar__indicator}
-                            layoutId="activeIndicator"
-                            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                          />
-                        )}
                       </Link>
                     </motion.li>
                   );
@@ -121,8 +114,11 @@ export function Sidebar() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              <div className={styles.sidebar__user_avatar}>
-                {user.username.charAt(0).toUpperCase()}
+              <div className={styles.sidebar__user_avatar_wrap}>
+                <div className={styles.sidebar__user_avatar}>
+                  {user.username.charAt(0).toUpperCase()}
+                </div>
+                <span className={styles.sidebar__user_status} aria-hidden="true" />
               </div>
               <div className={styles.sidebar__user_info}>
                 <div className={styles.sidebar__user_name}>@{user.username}</div>

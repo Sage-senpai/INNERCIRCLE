@@ -2,7 +2,7 @@
 @use '../../../styles/abstracts' as *;
 
 .badge {
-  @include glass-surface(0.06);
+  background: rgba($color-frozen-water, 0.05);
   border: 1px solid rgba($color-locked, 0.3);
   border-radius: $radius-md;
   padding: $spacing-sm $spacing-md;

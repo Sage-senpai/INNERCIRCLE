@@ -9,8 +9,9 @@
   height: 100%;
   min-height: 400px;
   max-height: calc(100vh - 200px);
-  @include glass-surface(0.05);
-  border-radius: $radius-lg;
+  background: rgba($color-frozen-water, 0.04);
+  border: 1px solid $color-border;
+  border-radius: $radius-xl;
   overflow: hidden;
 
   @include responsive(mobile) {
@@ -33,7 +34,7 @@
 }
 
 .chat__title {
-  font-size: $font-size-lg;
+  font-size: $font-size-base;
   font-weight: $font-weight-semibold;
   color: $color-text-primary;
   margin: 0;
@@ -90,13 +91,13 @@
   margin: $spacing-md 0;
 
   span {
-    font-size: $font-size-xs;
-    color: $color-text-secondary;
-    background: rgba($color-frozen-water, 0.1);
+    font-size: 0.6875rem;
+    color: $color-text-muted;
+    background: rgba($color-frozen-water, 0.08);
     padding: $spacing-xs $spacing-sm;
     border-radius: $radius-full;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.08em;
   }
 }
 

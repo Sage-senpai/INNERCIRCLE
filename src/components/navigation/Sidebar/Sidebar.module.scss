@@ -107,16 +107,17 @@
 }
 
 .sidebar__section_title {
-  font-size: $font-size-xs;
+  font-size: 0.6875rem;        // 11px — Discord's channel category size
   font-weight: $font-weight-bold;
-  color: $color-text-secondary;
+  color: $color-text-muted;
   text-transform: uppercase;
-  letter-spacing: 1.2px;
-  padding: 0 $spacing-lg;
-  margin-bottom: $spacing-sm;
+  letter-spacing: 0.08em;
+  padding: 0 calc(#{$spacing-lg} + 2px);  // align with inset link text
+  margin-bottom: 2px;
+  cursor: default;
 
   [data-theme='light'] & {
-    color: #5a5350;
+    color: rgba(10, 10, 15, 0.45);
   }
 }
 
@@ -125,24 +126,28 @@
 }
 
 // ============================================================================
-// SIDEBAR LINKS
+// SIDEBAR LINKS — Discord-style pill nav
+// Items are inset from sidebar edges with rounded pill hover/active states.
+// No horizontal translateX shift — background fills in-place instead.
 // ============================================================================
 
 .sidebar__link {
-  @include transition(background, color, transform);
+  @include transition-fast(background, color, box-shadow);
   display: flex;
   align-items: center;
-  gap: $spacing-md;
-  padding: $spacing-xs $spacing-lg;
-  min-height: 44px;
+  gap: $spacing-sm;
+  padding: 7px $spacing-md;
+  margin: 1px $spacing-sm;
+  min-height: 40px;
+  border-radius: $radius-md;
   color: $color-text-secondary;
   position: relative;
   font-weight: $font-weight-medium;
-  font-size: $font-size-base;
+  font-size: $font-size-sm;
   cursor: pointer;
   border: none;
   background: transparent;
-  width: 100%;
+  width: calc(100% - #{$spacing-md});
   text-align: left;
 
   [data-theme='light'] & {
@@ -150,44 +155,56 @@
   }
 
   &:hover {
-    background: rgba($color-frozen-water, 0.05);
+    background: rgba($color-frozen-water, 0.08);
     color: $color-text-primary;
-    transform: translateX(2px);
 
     [data-theme='light'] & {
-      background: rgba(10, 10, 15, 0.05);
+      background: rgba(10, 10, 15, 0.06);
       color: #0a0a0f;
     }
   }
-  
+
+  &:active {
+    background: rgba($color-frozen-water, 0.12);
+  }
+
+  // Active state: filled pill + left notch indicator
   &--active {
     color: $color-medium-jungle;
-    background: rgba($color-medium-jungle, 0.1);
+    background: rgba($color-medium-jungle, 0.12);
     font-weight: $font-weight-semibold;
-    
+
     &::before {
       content: '';
       position: absolute;
-      left: 0;
-      top: 0;
-      width: 3px;
-      height: 100%;
+      left: -$spacing-sm;          // sits on sidebar edge
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 60%;
       background: $color-medium-jungle;
       border-radius: 0 $radius-sm $radius-sm 0;
       box-shadow: $shadow-glow-green;
     }
-    
-    &:hover {
-      transform: translateX(0);
+
+    [data-theme='light'] & {
+      background: rgba(22, 163, 74, 0.1);
     }
   }
+
+  @include focus-ring;
 }
 
 .sidebar__icon {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   flex-shrink: 0;
   color: currentColor;
+  opacity: 0.9;
+
+  .sidebar__link--active & {
+    opacity: 1;
+  }
 }
 
 .sidebar__label {
@@ -225,32 +242,27 @@
   gap: $spacing-md;
   padding: $spacing-sm $spacing-lg;
   margin: 0 $spacing-lg $spacing-md;
-  @include glass-surface(0.05);
+  background: rgba($color-frozen-water, 0.04);
   border-radius: $radius-lg;
-  @include transition(background, transform);
+  @include transition-fast(background, border-color);
   cursor: pointer;
-  background: transparent;
   border: 1px solid $color-border;
   width: calc(100% - #{$spacing-xl});
   text-align: left;
 
   [data-theme='light'] & {
+    background: #ffffff;
     border-color: rgba(10, 10, 15, 0.1);
   }
 
   &:hover {
-    background: rgba($color-medium-jungle, 0.05);
-    border-color: $color-border-hover;
-    transform: translateX(2px);
+    background: rgba($color-medium-jungle, 0.07);
+    border-color: rgba($color-medium-jungle, 0.25);
 
     [data-theme='light'] & {
-      background: rgba(10, 10, 15, 0.05);
-      border-color: rgba(10, 10, 15, 0.15);
+      background: rgba(22, 163, 74, 0.05);
+      border-color: rgba(22, 163, 74, 0.2);
     }
-  }
-
-  &:active {
-    transform: translateX(0) scale(0.98);
   }
 }
 
@@ -297,7 +309,7 @@
 .sidebar__user_indicator {
   color: $color-text-secondary;
   font-size: $font-size-base;
-  @include transition(transform);
+  @include transition-fast(transform);
 
   [data-theme='light'] & {
     color: #5a5350;
@@ -305,5 +317,26 @@
 
   .sidebar__user:hover & {
     transform: translateX(2px);
+  }
+}
+
+// Online status dot — sits at bottom-right of avatar (Discord-style)
+.sidebar__user_avatar_wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.sidebar__user_status {
+  position: absolute;
+  bottom: 1px;
+  right: 1px;
+  width: 10px;
+  height: 10px;
+  border-radius: $radius-full;
+  background: $color-medium-jungle;
+  border: 2px solid black;
+
+  [data-theme='light'] & {
+    border-color: #ffffff;
   }
 }

@@ -2,9 +2,9 @@
 @use '../../../styles/abstracts' as *;
 
 .dashboard {
-  @include glass-surface(0.04);
-  border: 1px solid rgba($color-border, 0.15);
-  border-radius: $radius-lg;
+  background: rgba($color-frozen-water, 0.04);
+  border: 1px solid $color-border;
+  border-radius: $radius-xl;
   padding: $spacing-xl;
 
   @include responsive(mobile) {
@@ -29,8 +29,8 @@
 }
 
 .dashboard__title {
-  font-size: $font-size-lg;
-  font-weight: $font-weight-bold;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
   color: $color-text-primary;
   margin-bottom: $spacing-xs;
 }
@@ -63,10 +63,10 @@
 }
 
 .dashboard__metric_label {
-  font-size: $font-size-xs;
-  color: $color-text-secondary;
+  font-size: 0.6875rem;
+  color: $color-text-muted;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.08em;
 }
 
 .dashboard__metric_value {
@@ -85,12 +85,12 @@
 }
 
 .dashboard__section_title {
-  font-size: $font-size-sm;
-  font-weight: $font-weight-semibold;
-  color: $color-text-primary;
+  font-size: 0.6875rem;
+  font-weight: $font-weight-bold;
+  color: $color-text-muted;
   margin-bottom: $spacing-sm;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.08em;
 }
 
 .dashboard__creators {

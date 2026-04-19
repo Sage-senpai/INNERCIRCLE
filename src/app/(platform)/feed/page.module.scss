@@ -32,76 +32,73 @@
 
 .tabs__scroll {
   display: flex;
-  gap: $spacing-xs;
-  padding: $spacing-sm $spacing-lg;
+  gap: 0;                     // tabs are flush; spacing comes from their own padding
+  padding: 0 $spacing-md;
   min-width: max-content;
-  
+
   @include responsive(mobile) {
-    padding: $spacing-xs $spacing-md;
+    padding: 0 $spacing-sm;
   }
 }
 
+// Discord/Geneva-style tab: no background fill on active.
+// Active state uses a bottom border bar instead of a pill background.
 .tab {
   position: relative;
   display: flex;
   align-items: center;
   gap: $spacing-xs;
-  padding: $spacing-sm $spacing-lg;
-  border-radius: $radius-lg;
-  color: $color-text-secondary;
+  padding: $spacing-sm $spacing-md;
+  border-radius: 0;
+  color: $color-text-muted;
   font-weight: $font-weight-medium;
-  font-size: $font-size-base;
+  font-size: $font-size-sm;
   white-space: nowrap;
-  @include transition(background, color);
+  @include transition-fast(color, border-color);
   cursor: pointer;
   border: none;
+  border-bottom: 2px solid transparent;
   background: transparent;
-  
+
   @include responsive(mobile) {
-    padding: $spacing-xs $spacing-md;
-    font-size: $font-size-sm;
+    padding: $spacing-xs $spacing-sm;
+    font-size: $font-size-xs;
   }
-  
+
   &:hover {
-    background: rgba($color-frozen-water, 0.05);
     color: $color-text-primary;
   }
-  
+
   &--active {
     color: $color-medium-jungle;
-    background: rgba($color-medium-jungle, 0.1);
+    font-weight: $font-weight-semibold;
+    border-bottom-color: $color-medium-jungle;
   }
 }
 
 .tab__icon {
-  font-size: $font-size-lg;
+  font-size: $font-size-base;
   line-height: 1;
-  
+
   @include responsive(mobile) {
-    font-size: $font-size-base;
+    font-size: $font-size-sm;
   }
 }
 
 .tab__label {
   font-size: $font-size-sm;
-  font-weight: $font-weight-semibold;
+  font-weight: inherit;
   font-variant-numeric: tabular-nums;
-  
+
   @include responsive(mobile) {
     font-size: $font-size-xs;
   }
 }
 
+// .tab__indicator is no longer needed — active state uses border-bottom directly.
+// Kept as a no-op in case JSX still renders it, but invisible.
 .tab__indicator {
-  position: absolute;
-  bottom: -$spacing-sm;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60%;
-  height: 2px;
-  background: $color-medium-jungle;
-  border-radius: $radius-full;
-  box-shadow: $shadow-glow-green;
+  display: none;
 }
 
 // ============================================================================
@@ -131,11 +128,15 @@
 
 .tab {
   [data-theme='light'] & {
-    color: #5a5350;
+    color: rgba(10, 10, 15, 0.45);
 
     &:hover {
-      background: rgba(10, 10, 15, 0.05);
       color: #0a0a0f;
+    }
+
+    &--active {
+      color: #16a34a;
+      border-bottom-color: #16a34a;
     }
   }
 }

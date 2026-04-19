@@ -1,13 +1,14 @@
 // File: src/components/leaderboards/LeaderboardEntry/LeaderboardEntry.module.scss
 @use '../../../styles/abstracts' as *;
 .entry {
-  @include glass-surface(0.05);
+  background: rgba($color-frozen-water, 0.04);
+  border: 1px solid $color-border;
   display: flex;
   align-items: center;
   gap: $spacing-lg;
   padding: $spacing-lg;
   border-radius: $radius-xl;
-  @include transition-all;
+  @include transition-fast(background, border-color, box-shadow, transform);
   cursor: pointer;
   position: relative;
   

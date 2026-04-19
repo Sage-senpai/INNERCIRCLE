@@ -39,8 +39,9 @@
 // ============================================================================
 
 .profile__header {
-  @include glass-surface(0.05);
-  border-radius: $radius-lg;
+  background: rgba($color-frozen-water, 0.04);
+  border: 1px solid $color-border;
+  border-radius: $radius-xl;
   padding: $spacing-xl;
   margin-bottom: $spacing-xl;
   @include flex-column;
@@ -169,12 +170,13 @@
 // ============================================================================
 
 .profile__stats {
-  @include glass-surface(0.05);
+  background: rgba($color-frozen-water, 0.04);
+  border: 1px solid $color-border;
   display: flex;
   justify-content: center;
   gap: $spacing-3xl;
   padding: $spacing-xl;
-  border-radius: $radius-lg;
+  border-radius: $radius-xl;
   margin-bottom: $spacing-xl;
   
   @include responsive(mobile) {
@@ -202,10 +204,10 @@
 }
 
 .profile__stat_label {
-  font-size: $font-size-sm;
-  color: $color-text-secondary;
+  font-size: 0.6875rem;
+  color: $color-text-muted;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.08em;
   
   @include responsive(mobile) {
     font-size: $font-size-xs;
@@ -217,8 +219,9 @@
 // ============================================================================
 
 .profile__content {
-  @include glass-surface(0.05);
-  border-radius: $radius-lg;
+  background: rgba($color-frozen-water, 0.04);
+  border: 1px solid $color-border;
+  border-radius: $radius-xl;
   padding: $spacing-xl;
   
   @include responsive(mobile) {
@@ -227,8 +230,8 @@
 }
 
 .profile__content_title {
-  font-size: $font-size-xl;
-  font-weight: $font-weight-bold;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
   color: $color-text-primary;
   margin-bottom: $spacing-lg;
   
@@ -239,8 +242,9 @@
 }
 
 .profile__empty {
-  @include glass-surface(0.05);
-  border-radius: $radius-lg;
+  background: rgba($color-frozen-water, 0.04);
+  border: 1px solid $color-border;
+  border-radius: $radius-xl;
   padding: $spacing-3xl;
   text-align: center;
   color: $color-text-secondary;

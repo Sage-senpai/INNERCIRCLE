@@ -59,14 +59,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  border-radius: 8px;
   font-size: 1.5rem;
   color: rgba(255, 255, 255, 0.6);
   background: transparent;
   border: none;
   cursor: pointer;
-  transition: all 0.2s ease;
-  
+  transition: background 0.15s ease, color 0.15s ease;
+
   &:hover {
     background: rgba(255, 255, 255, 0.1);
     color: #ffffff;
@@ -90,11 +90,11 @@
 }
 
 .modal__label {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #ffffff;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.08em;
 }
 
 .modal__input,

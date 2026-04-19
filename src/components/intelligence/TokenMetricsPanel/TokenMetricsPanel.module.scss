@@ -4,8 +4,9 @@
 @use '../../../styles/abstracts' as *;
 
 .panel {
-  @include glass-surface(0.05);
-  border-radius: $radius-lg;
+  background: rgba($color-frozen-water, 0.04);
+  border: 1px solid $color-border;
+  border-radius: $radius-xl;
   padding: $spacing-xl;
   
   @include responsive(mobile) {
@@ -149,22 +150,23 @@
 }
 
 .metric {
-  @include glass-surface(0.03);
+  background: rgba($color-frozen-water, 0.04);
+  border: 1px solid $color-border;
   display: flex;
   align-items: center;
   gap: $spacing-md;
   padding: $spacing-lg;
   border-radius: $radius-md;
-  @include transition(background, transform);
-  
+  @include transition-fast(background, border-color);
+
   @include responsive(mobile) {
     padding: $spacing-md;
     gap: $spacing-sm;
   }
-  
+
   &:hover {
     background: rgba($color-frozen-water, 0.08);
-    transform: translateY(-2px);
+    border-color: $color-border-hover;
   }
 }
 
@@ -183,10 +185,10 @@
 }
 
 .metric__label {
-  font-size: $font-size-xs;
-  color: $color-text-secondary;
+  font-size: 0.6875rem;
+  color: $color-text-muted;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.08em;
   margin-bottom: 4px;
 }
 

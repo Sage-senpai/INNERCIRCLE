@@ -3,7 +3,6 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Avatar } from '@/components/ui/Avatar/Avatar';
 import { Button } from '@/components/ui/Button/Button';
 import styles from './CommunityCard.module.scss';
 
@@ -48,30 +47,31 @@ export function CommunityCard({ community }: CommunityCardProps) {
         transition={{ duration: 0.3 }}
       >
         <div className={styles.card__header}>
-          <motion.div
-            whileHover={{ scale: 1.1, rotate: 5 }}
-            transition={{ type: 'spring', stiffness: 300 }}
-          >
-            <Avatar
-              src={avatarUrl}
-              alt={community.name}
-              size="lg"
-            />
-          </motion.div>
-          {community.isMember && community.tier && (
-            <motion.div
-              className={styles.card__badge}
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: 'spring', stiffness: 300, delay: 0.2 }}
-            >
-              {community.tier.toUpperCase()}
-            </motion.div>
-          )}
+          {/* Server icon — Discord-style square with rounded corners */}
+          <div className={styles.card__server_icon}>
+            {avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={avatarUrl} alt={community.name} />
+            ) : (
+              <span>{community.name.charAt(0).toUpperCase()}</span>
+            )}
+          </div>
+          <div className={styles.card__header_meta}>
+            <h3 className={styles.card__title} title={community.name}>{community.name}</h3>
+            {community.isMember && community.tier && (
+              <motion.div
+                className={styles.card__badge}
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', stiffness: 300, delay: 0.2 }}
+              >
+                {community.tier.toUpperCase()}
+              </motion.div>
+            )}
+          </div>
         </div>
 
         <div className={styles.card__body}>
-          <h3 className={styles.card__title}>{community.name}</h3>
           <p className={styles.card__description}>{community.description || 'No description'}</p>
 
           <div className={styles.card__stats}>

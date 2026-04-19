@@ -131,24 +131,24 @@
 }
 
 .search__result {
-  @include glass-surface(0.05);
-  @include transition(background, border-color, transform);
+  background: rgba($color-frozen-water, 0.04);
+  border: 1px solid $color-border;
+  @include transition-fast(background, border-color);
   display: flex;
   align-items: center;
   gap: $spacing-md;
   padding: $spacing-md $spacing-lg;
-  border-radius: $radius-md;
+  border-radius: $radius-lg;
   cursor: pointer;
-  
+
   @include responsive(mobile) {
     gap: $spacing-sm;
     padding: $spacing-sm $spacing-md;
   }
-  
+
   &:hover {
     background: rgba($color-frozen-water, 0.08);
     border-color: $color-border-hover;
-    transform: translateX(4px);
   }
 }
 
@@ -202,8 +202,9 @@
 
 .search__prompt,
 .search__empty {
-  @include glass-surface(0.05);
-  border-radius: $radius-lg;
+  background: rgba($color-frozen-water, 0.04);
+  border: 1px solid $color-border;
+  border-radius: $radius-xl;
   padding: $spacing-3xl;
   text-align: center;
   color: $color-text-secondary;

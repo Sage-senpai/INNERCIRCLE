@@ -4,56 +4,107 @@
 @use '../../../styles/abstracts' as *;
 
 .card {
-  @include glass-surface(0.05);
-  @include transition(background, border-color, transform, box-shadow);
-  border-radius: $radius-lg;
+  background: rgba($color-frozen-water, 0.04);
+  border: 1px solid $color-border;
+  @include transition-fast(background, border-color, box-shadow);
+  border-radius: $radius-xl;
   padding: $spacing-lg;
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  min-height: 280px;
-  
+  min-height: 240px;
+
   @include responsive(mobile) {
     padding: $spacing-md;
-    min-height: 240px;
+    min-height: 200px;
   }
-  
+
   &:hover {
-    background: rgba($color-frozen-water, 0.08);
+    background: rgba($color-frozen-water, 0.07);
     border-color: $color-border-hover;
-    box-shadow: $shadow-lg;
-    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
   }
 }
 
 // ============================================================================
-// CARD HEADER
+// CARD HEADER — Discord server-icon style
 // ============================================================================
 
 .card__header {
-  @include flex-between;
-  align-items: flex-start;
-  margin-bottom: $spacing-lg;
-  
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  margin-bottom: $spacing-md;
+
   @include responsive(mobile) {
-    margin-bottom: $spacing-md;
+    margin-bottom: $spacing-sm;
+    gap: $spacing-sm;
   }
+}
+
+// Square icon with rounded corners — Discord server icon aesthetic
+.card__server_icon {
+  width: 48px;
+  height: 48px;
+  border-radius: $radius-md;           // square + rounded, not circular
+  background: rgba($color-medium-jungle, 0.15);
+  border: 1px solid rgba($color-medium-jungle, 0.2);
+  flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  @include transition-fast(border-radius, background);
+
+  // Hover: Discord "pill morph" — icon rounds out on hover
+  .card:hover & {
+    border-radius: $radius-lg;
+    background: rgba($color-medium-jungle, 0.22);
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  span {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    color: $color-medium-jungle;
+    line-height: 1;
+  }
+
+  @include responsive(mobile) {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+// Name + badge stacked beside the server icon
+.card__header_meta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .card__badge {
   @include badge($color-medium-jungle);
   font-size: $font-size-xs;
-  
+  align-self: flex-start;
+
   @include responsive(mobile) {
     font-size: 0.625rem;
     padding: 2px $spacing-xs;
   }
-  
+
   &--whale {
     background: rgba(#3b82f6, 0.2);
     color: #3b82f6;
   }
-  
+
   &--elite {
     background: rgba(#ffd700, 0.2);
     color: #ffd700;
@@ -66,22 +117,26 @@
 
 .card__body {
   flex: 1;
-  margin-bottom: $spacing-lg;
-  
+  margin-bottom: $spacing-md;
+
   @include responsive(mobile) {
-    margin-bottom: $spacing-md;
+    margin-bottom: $spacing-sm;
   }
 }
 
+// Title lives in card__header_meta (beside the server icon)
 .card__title {
-  font-size: $font-size-xl;
-  font-weight: $font-weight-bold;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
   color: $color-text-primary;
-  margin-bottom: $spacing-sm;
   @include line-clamp(1);
-  
+
+  [data-theme='light'] & {
+    color: #0a0a0f;
+  }
+
   @include responsive(mobile) {
-    font-size: $font-size-lg;
+    font-size: $font-size-sm;
   }
 }
 
@@ -175,13 +230,26 @@
 [data-theme='light'] {
   .card {
     background: #ffffff;
-    border: 1px solid rgba(10, 10, 15, 0.12);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    border-color: rgba(10, 10, 15, 0.09);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 
     &:hover {
       background: #fafafa;
-      border-color: rgba(10, 10, 15, 0.18);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.06);
+      border-color: rgba(10, 10, 15, 0.15);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+  }
+
+  .card__server_icon {
+    background: rgba(22, 163, 74, 0.1);
+    border-color: rgba(22, 163, 74, 0.2);
+
+    .card:hover & {
+      background: rgba(22, 163, 74, 0.18);
+    }
+
+    span {
+      color: #16a34a;
     }
   }
 
@@ -202,7 +270,7 @@
   }
 
   .card__footer {
-    border-top-color: rgba(10, 10, 15, 0.1);
+    border-top-color: rgba(10, 10, 15, 0.08);
   }
 
   .card__token_label {

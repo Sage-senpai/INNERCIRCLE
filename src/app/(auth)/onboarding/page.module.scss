@@ -98,17 +98,17 @@
 .card {
   width: 100%;
   max-width: 520px;
-  background: $color-surface;
+  background: rgba($color-frozen-water, 0.04);
   backdrop-filter: $blur-glass;
   -webkit-backdrop-filter: $blur-glass;
-  border-radius: $radius-2xl;
-  padding: $spacing-3xl $spacing-2xl;
+  border-radius: $radius-xl;
+  padding: $spacing-2xl $spacing-xl;
   box-shadow: $shadow-xl;
   border: 1px solid $color-border;
 
   @include responsive(mobile) {
-    padding: $spacing-2xl $spacing-xl;
-    border-radius: $radius-xl;
+    padding: $spacing-xl $spacing-lg;
+    border-radius: $radius-lg;
   }
 }
 
@@ -170,9 +170,9 @@
   align-items: center;
   background: $color-surface-hover;
   border: 1px solid $color-border;
-  border-radius: $radius-xl;
+  border-radius: $radius-lg;
   overflow: hidden;
-  @include transition(border-color, box-shadow);
+  @include transition-fast(border-color, box-shadow);
 
   &:focus-within {
     border-color: $color-medium-jungle;
@@ -243,12 +243,12 @@
 }
 
 .tourSection__label {
-  font-size: $font-size-xs;
-  font-weight: $font-weight-semibold;
+  font-size: 0.6875rem;      // 11px — Discord category style
+  font-weight: $font-weight-bold;
   color: $color-text-muted;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
-  margin-bottom: $spacing-lg;
+  letter-spacing: 0.08em;
+  margin-bottom: $spacing-md;
 }
 
 .pillGrid {
@@ -261,15 +261,15 @@
   display: flex;
   align-items: center;
   gap: $spacing-md;
-  padding: $spacing-md $spacing-lg;
-  background: $color-surface-hover;
-  border-radius: $radius-lg;
+  padding: $spacing-sm $spacing-md;
+  background: rgba($color-frozen-water, 0.05);
+  border-radius: $radius-md;
   border: 1px solid transparent;
-  @include transition(border-color, background);
+  @include transition-fast(border-color, background);
 
   &:hover {
-    border-color: $color-border-hover;
-    background: $color-surface-active;
+    border-color: $color-border;
+    background: rgba($color-frozen-water, 0.08);
   }
 }
 

@@ -149,22 +149,21 @@
   gap: 0.875rem;
   padding: 1.25rem;
   border-radius: 12px;
-  transition: all 0.2s ease;
-  
+  transition: background 0.15s ease, border-color 0.15s ease;
+
   @media (max-width: 768px) {
     gap: 0.75rem;
     padding: 1rem;
   }
-  
+
   &:hover {
     background: rgba(255, 255, 255, 0.08);
-    transform: translateX(4px);
   }
-  
+
   &--highlight {
     background: rgba(74, 222, 128, 0.1);
     border: 1px solid rgba(74, 222, 128, 0.2);
-    
+
     &:hover {
       background: rgba(74, 222, 128, 0.15);
     }

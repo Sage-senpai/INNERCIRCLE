@@ -18,9 +18,9 @@
 // ============================================================================
 
 .admin__denied {
-  @include glass-surface(0.05);
+  background: rgba($color-frozen-water, 0.04);
   border: 1px solid rgba($color-night-bordeaux, 0.3);
-  border-radius: $radius-lg;
+  border-radius: $radius-xl;
   padding: $spacing-3xl;
   text-align: center;
   @include flex-column;
@@ -76,8 +76,9 @@
 // ============================================================================
 
 .admin__content {
-  @include glass-surface(0.05);
-  border-radius: $radius-lg;
+  background: rgba($color-frozen-water, 0.04);
+  border: 1px solid $color-border;
+  border-radius: $radius-xl;
   padding: $spacing-xl;
   min-height: 500px;
   
@@ -97,8 +98,8 @@
 }
 
 .admin__panel_title {
-  font-size: $font-size-2xl;
-  font-weight: $font-weight-bold;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
   color: $color-text-primary;
   margin-bottom: $spacing-sm;
   
@@ -120,8 +121,9 @@
 }
 
 .admin__panel_placeholder {
-  @include glass-surface(0.03);
-  border-radius: $radius-md;
+  background: rgba($color-frozen-water, 0.03);
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
   padding: $spacing-3xl;
   text-align: center;
   @include flex-column;
@@ -161,8 +163,9 @@
 .admin__table {
   width: 100%;
   border-collapse: collapse;
-  @include glass-surface(0.03);
-  border-radius: $radius-md;
+  background: rgba($color-frozen-water, 0.03);
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
   overflow: hidden;
 }
 
@@ -197,11 +200,11 @@
 
 .admin__table_header_cell {
   padding: $spacing-md $spacing-lg;
-  font-size: $font-size-xs;
+  font-size: 0.6875rem;
   font-weight: $font-weight-bold;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: $color-text-secondary;
+  letter-spacing: 0.08em;
+  color: $color-text-muted;
   text-align: left;
   
   @include responsive(mobile) {
@@ -227,18 +230,18 @@
 
 .admin__action_button {
   padding: $spacing-xs $spacing-sm;
-  border-radius: $radius-sm;
+  border-radius: $radius-md;
   font-size: $font-size-xs;
   font-weight: $font-weight-medium;
-  @include transition(background, transform);
+  @include transition-fast(background, border-color);
   background: rgba($color-frozen-water, 0.05);
   color: $color-text-primary;
   border: 1px solid $color-border;
   cursor: pointer;
-  
+
   &:hover {
     background: rgba($color-frozen-water, 0.1);
-    transform: translateY(-1px);
+    border-color: $color-border-hover;
   }
   
   &--danger {
@@ -280,9 +283,10 @@
 }
 
 .admin__stat_card {
-  @include glass-surface(0.05);
+  background: rgba($color-frozen-water, 0.04);
+  border: 1px solid $color-border;
   padding: $spacing-lg;
-  border-radius: $radius-lg;
+  border-radius: $radius-xl;
   @include flex-column;
   gap: $spacing-sm;
   
@@ -292,11 +296,11 @@
 }
 
 .admin__stat_label {
-  font-size: $font-size-xs;
-  font-weight: $font-weight-semibold;
-  color: $color-text-secondary;
+  font-size: 0.6875rem;
+  font-weight: $font-weight-bold;
+  color: $color-text-muted;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.08em;
 }
 
 .admin__stat_value {
@@ -356,7 +360,8 @@
 }
 
 .admin__search_input {
-  @include glass-surface(0.05);
+  background: rgba($color-frozen-water, 0.05);
+  border: 1px solid $color-border;
   width: 100%;
   padding: $spacing-sm $spacing-md $spacing-sm 40px;
   border-radius: $radius-md;

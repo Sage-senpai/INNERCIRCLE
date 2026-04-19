@@ -3,36 +3,37 @@
 
 @use '../../../styles/abstracts' as *;
 
+// Geneva-inspired: flatter card, tighter, no left-border accent.
+// Hover is a gentle background lift without aggressive translation.
 .post {
-  @include glass-surface(0.05);
-  border-radius: $radius-2xl;
-  border-left: 2px solid rgba($color-medium-jungle, 0.15);
+  background: rgba($color-frozen-water, 0.04);
+  border: 1px solid $color-border;
+  border-radius: $radius-xl;           // 16px — still soft, not pill-like
   overflow: hidden;
-  @include transition(background, border-color, transform, box-shadow);
-  margin-bottom: $spacing-md;
+  @include transition-fast(background, border-color, box-shadow);
+  margin-bottom: $spacing-sm;
 
   [data-theme='light'] & {
     background: #ffffff;
-    border: 1px solid rgba(10, 10, 15, 0.1);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+    border-color: rgba(10, 10, 15, 0.08);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   }
 
   &:hover {
-    background: rgba($color-frozen-water, 0.06);
+    background: rgba($color-frozen-water, 0.07);
     border-color: $color-border-hover;
-    box-shadow: $shadow-lg, inset 0 1px 0 rgba($color-frozen-water, 0.06);
-    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
 
     [data-theme='light'] & {
       background: #fafafa;
-      border-color: rgba(10, 10, 15, 0.15);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+      border-color: rgba(10, 10, 15, 0.13);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.07);
     }
   }
 
   @include responsive(mobile) {
     border-radius: $radius-lg;
-    margin-bottom: $spacing-sm;
+    margin-bottom: $spacing-xs;
   }
 }
 
@@ -41,11 +42,7 @@
 // ============================================================================
 
 .post__content {
-  padding: $spacing-xl $spacing-lg;
-
-  @include responsive(tablet) {
-    padding: $spacing-lg;
-  }
+  padding: $spacing-lg;               // 16px all sides — was 32px top/bottom
 
   @include responsive(mobile) {
     padding: $spacing-md;
@@ -56,11 +53,7 @@
   display: flex;
   align-items: center;
   gap: $spacing-md;
-  margin-bottom: $spacing-lg;
-
-  @include responsive(tablet) {
-    margin-bottom: $spacing-md;
-  }
+  margin-bottom: $spacing-md;
 
   @include responsive(mobile) {
     gap: $spacing-sm;
@@ -272,28 +265,23 @@
 .post__actions {
   display: flex;
   justify-content: flex-start;
-  gap: $spacing-lg;
-  padding-top: $spacing-lg;
+  gap: $spacing-sm;
+  padding-top: $spacing-md;
   border-top: 1px solid $color-border;
   margin: 0 -#{$spacing-lg};
-  padding-left: $spacing-lg;
-  padding-right: $spacing-lg;
+  padding-left: $spacing-md;
+  padding-right: $spacing-md;
 
   [data-theme='light'] & {
-    border-top-color: rgba(10, 10, 15, 0.08);
-  }
-
-  @include responsive(tablet) {
-    gap: $spacing-md;
-    padding-top: $spacing-md;
+    border-top-color: rgba(10, 10, 15, 0.07);
   }
 
   @include responsive(mobile) {
     margin: 0 -#{$spacing-md};
-    padding-left: $spacing-md;
-    padding-right: $spacing-md;
+    padding-left: $spacing-sm;
+    padding-right: $spacing-sm;
     padding-top: $spacing-sm;
-    gap: $spacing-sm;
+    gap: $spacing-xs;
     justify-content: space-around;
   }
 }
