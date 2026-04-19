@@ -7,21 +7,21 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifySolanaSignature, buildSignInMessage } from '@/lib/wallets/verify';
 
 // Nonce store - in production, use Redis or DB
-const nonceStore = new Map<string, { nonce: string; expiresAt: number }>();
+const nonceStore = new Map<string, { nonce: string; message: string; expiresAt: number }>();
 
 export async function GET() {
   // Generate a nonce for the client to sign
   const nonce = crypto.randomUUID();
   const expiresAt = Date.now() + 5 * 60 * 1000; // 5 minutes
 
-  nonceStore.set(nonce, { nonce, expiresAt });
+  // Build the message once and store it — timestamp must be identical at verify time
+  const message = buildSignInMessage(nonce);
+  nonceStore.set(nonce, { nonce, message, expiresAt });
 
   // Clean expired nonces
   for (const [key, entry] of nonceStore) {
     if (entry.expiresAt < Date.now()) nonceStore.delete(key);
   }
-
-  const message = buildSignInMessage(nonce);
 
   return NextResponse.json({ nonce, message });
 }
@@ -47,12 +47,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Capture the stored message before consuming the nonce
+    const storedMessage = nonceEntry.message;
+
     // Consume the nonce (one-time use)
     nonceStore.delete(nonce);
 
-    // Reconstruct the message and verify signature
-    const message = buildSignInMessage(nonce);
-    const isValid = await verifySolanaSignature(walletAddress, message, signature);
+    // Verify against the exact message the client signed
+    const isValid = await verifySolanaSignature(walletAddress, storedMessage, signature);
 
     if (!isValid) {
       return NextResponse.json(
